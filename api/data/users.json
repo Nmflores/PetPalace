@@ -1,0 +1,28 @@
+{
+    "users": {
+      "data": [
+        {
+          "id": "5da9ea674234635bdff45c02",
+          "username": "teuzma",
+          "primeiro_nome": "Jorge",
+          "segundo_nome": "Matheus",
+          "email": "omelhordosertanejo@ibest.com",
+          "cpf": "60041111111",
+          "senha": "12345",
+          "salt": "",
+          "isAdmin": false
+        },
+        {
+            "id": "5da9ea67232635bdff45c02",
+            "username": "andreos",
+            "primeiro_nome": "Andre",
+            "segundo_nome": "da Silva",
+            "email": "andrezinhopk@ibest.com",
+            "cpf": "60041234111",
+            "senha": "12345",
+            "salt": "",
+            "isAdmin": false
+          }
+      ]
+    }
+  }
