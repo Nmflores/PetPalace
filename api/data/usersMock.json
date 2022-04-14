@@ -1,0 +1,28 @@
+{
+    "users": {
+      "data": [
+        {
+          "userId": "5da9ea674234635bdff45c02",
+          "username": "teuzma",
+          "firstName": "Jorge",
+          "secondName": "Matheus",
+          "email": "omelhordosertanejo@ibest.com",
+          "cpf": "60041111111",
+          "password": "12345",
+          "salt": "",
+          "isAdmin": false,
+          "isPrestador":false,
+          "isCliente": true,
+          "lealdade" : "",
+          "pets":[
+              {
+                "donoId": "5da9ea674234635bdff45c02",
+                "petId": "5d6742bdff45c02",
+                "nomePet" : "doguinho",
+                "racaPet": "pastor" 
+              }
+          ]
+        }
+      ]
+    }
+  }

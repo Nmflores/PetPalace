@@ -20,7 +20,9 @@
   "homepage": "https://github.com/Nmflores/PetPalace#readme",
   "dependencies": {
     "config": "^3.3.7",
+    "consign": "^0.1.6",
     "express": "^4.17.3",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "uuid": "^8.3.2"
   }
 }
