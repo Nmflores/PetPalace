@@ -1,0 +1,16 @@
+{
+    "servicoes": {
+      "data": [
+        {
+          "servicoId": 1,
+          "servicoNome": "passeio"
+          
+        },
+        {
+            "servicoId": 2,
+            "servicoNome": "banho"
+            
+        }
+      ]
+    }
+  }

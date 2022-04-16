@@ -8,4 +8,8 @@ module.exports = app => {
     app.route('/api/v1/usuarios/:userId')
       .delete(controller.removeUser)
       .put(controller.updateUser);
+
+      app.route('/api/v1/usuarios/prestador')
+      .get(controller.listPrestadores)
+      
   }
