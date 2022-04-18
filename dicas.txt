@@ -4,3 +4,7 @@
 ./api/routes/ => Contém as rotas da api.
 ./config/ => Contém as configurações do servidor.
 ./package.json => Listagem das dependências do projeto.
+
+
+
+// adicionar corretamente funcionalidade de HASH para os password

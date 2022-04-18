@@ -1,4 +1,7 @@
 const bcrypt = require('bcryptjs');
+const accessToken = require('../services/jwt');
+const encrypt = require('../services/encrypt');
+
 
 
 
@@ -27,19 +30,22 @@ module.exports = app => {
       });
     } else {
         // generate salt to hash password
-        const salt =  usersMock.data[foundUserIndex].salt;
+        const user = usersMock.data[foundUserIndex];
+        const salt =  user.salt;
         // now we set user password to hashed password
-        let userHashed = usersMock.data[foundUserIndex].password;
-        let newHashedPassword  = await bcrypt.hash(password, salt);
+        let userHashed  = await bcrypt.hashSync(password, salt);
         // check user password with hashed password stored in the database
         // user input pass -- database pass
-        let validPassword = await bcrypt.compare(newHashedPassword, userHashed);
+        let validPassword = await bcrypt.compare(user.password, userHashed);
         console.log("VERIFICANDO VARIAVEIS SENHA");
         console.log(`USER INPUT: ${password}`);
         console.log(`USER SALT: ${salt}`);
         console.log(`USER HASHED PASSWORD: ${userHashed}`);
-        console.log(`LOGIN REHASH PASSWORD: ${newHashedPassword}`);
         console.log(`EVALUATES: ${validPassword}`);
+
+        // Gerando JWT, token de acesso
+        let jaywabliuT = accessToken.jwtGenAccess(user);
+        console.log(`JWT ACCESS TOKEN: ${jaywabliuT}`);
 
         
         

@@ -1,5 +1,6 @@
 const { v4: uuidV4 } = require('uuid');
 const bcrypt = require('bcryptjs');
+const encrypt = require('../services/encrypt');
 
 module.exports = app => {
   const usersMockDB = app.data.usersMock;
@@ -9,15 +10,19 @@ module.exports = app => {
     users: usersMock,
   } = usersMockDB;
 
+  const {
+    usersRole: usersRoleMock,
+  } = usersMockDB;
+
   controller.listUsers = (req, res) => {
     res.status(200).json(usersMockDB);
   }
 
-  controller.listPrestadores= (req, res) => {
+  controller.listPrestadores = (req, res) => {
     let result = {} ;
 
-    for(let prestador of usersMock.data){
-        if(prestador.isPrestador === true){
+    for(let prestador of usersRoleMock.data){
+        if(prestador.userRole === 1){
           console.log(prestador);
           result = JSON.parse(JSON.stringify(prestador));
         }
@@ -32,7 +37,7 @@ module.exports = app => {
     // generate salt to hash password
     const salt = await bcrypt.genSalt(10);
     // now we set user password to hashed password
-    let hashedPass = await bcrypt.hash(req.body.password, salt);  
+    let hashedPass = await encrypt.generatePass(req.body.password, salt);  
     usersMock.data.push({
       userId: uuidV4(),
       username: req.body.username,
@@ -42,10 +47,10 @@ module.exports = app => {
       email: req.body.email,
       password: hashedPass,
       salt: salt,
-      isAdmin: req.body.isAdmin,
-      isPrestador: req.body.isPrestador,
-      isCliente: req.body.isCliente,
-      pets: req.body.pets
+      userRole: req.body.userRole,
+      lealdade: req.body.lealdade,
+      pets: req.body.pets,
+      servicos: req.body.servicos
     });
 
     res.status(201).json(usersMock);

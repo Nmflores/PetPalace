@@ -1,15 +1,15 @@
 module.exports = app => {
     const controller = app.controllers.users;
   
-    app.route('/api/v1/usuarios')
+    app.route('/api/v1/users')
       .get(controller.listUsers)
       .post(controller.saveUser);
   
-    app.route('/api/v1/usuarios/:userId')
+    app.route('/api/v1/users/:userId')
       .delete(controller.removeUser)
       .put(controller.updateUser);
 
-      app.route('/api/v1/usuarios/prestador')
+      app.route('/api/v1/users/prestador')
       .get(controller.listPrestadores)
       
   }

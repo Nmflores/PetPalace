@@ -32,12 +32,9 @@
           "cpf": "6005465473",
           "password": "112233",
           "salt": "",
-          "isAdmin": true,
-          "isPrestador":false,
-          "isCliente": false,
+          "userRole" : 1,
           "lealdade" : "",
-          "pets":[
-              ]
+          "servicos":[]
         },
         {
           "userId": "a762f4d9-6fe9-46fa-b635-751090fa7254",
@@ -48,14 +45,11 @@
           "email": "valadaresSan@ibest.com",
           "password": "$2a$10$QAZ9ESF5M5PVk02cZYpxnO9g/Z4uYWfgTPcMB42QZWfP2RxzVKeE2",
           "salt": "$2a$10$QAZ9ESF5M5PVk02cZYpxnO",
-          "isAdmin": false,
-          "isPrestador": true,
-          "isCliente": false,
-          "pets": [],
-          "servicos": [1, 2]
+          "userRole": 1,
+          "pets": []
         },
         {
-          "userId": "a762f4d9-6fe9-46fa-b635-751090fa7254",
+          "userId": "a762f4d9-46fa-b635-751090fa7254",
           "username": "tonho",
           "firstName": "Antonio",
           "secondName": "Valadares",
@@ -63,11 +57,26 @@
           "email": "valadaresSan@ibest.com",
           "password": "$2a$10$QAZ9ESF5M5PVk02cZYpxnO9g/Z4uYWfgTPcMB42QZWfP2RxzVKeE2",
           "salt": "$2a$10$QAZ9ESF5M5PVk02cZYpxnO",
-          "isAdmin": false,
-          "isPrestador": true,
-          "isCliente": false,
-          "pets": [],
+          "userRole": 1,
+          "lealdade": "",
           "servicos": [2]
+        }
+      ]
+
+    },
+    "usersRole":{
+      "data":[
+        {
+          "roleId": 0,
+          "role": "admin"
+        },
+        {
+          "roleId": 1,
+          "role": "prestador"
+        },
+        {
+          "roleId": 2,
+          "role": "cliente"
         }
       ]
     }
