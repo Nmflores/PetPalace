@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const encrypt = require('../services/encrypt');
 
 module.exports = app => {
-  const usersMockDB = app.data.usersMock;
+  const usersMockDB = app.data.dbMock;
   const controller = {};
 
   const {
@@ -19,24 +19,37 @@ module.exports = app => {
   }
 
   controller.listPrestadores = (req, res) => {
-    let result = {} ;
+    let foundUser = [];
 
-    for(let prestador of usersRoleMock.data){
+    for(let prestador of usersMock.data){
         if(prestador.userRole === 1){
-          console.log(prestador);
-          result = JSON.parse(JSON.stringify(prestador));
+           console.log("Prestador found");
+           foundUser.push(prestador);
         }
     }
-    
-    res.status(200).json(result);
+    res.status(200).json({message: "Prestador Found", result: foundUser});
+  }
+
+  controller.listClients = (req, res) => {
+    let foundUser = [];
+
+    for(let client of usersMock.data){
+        if(client.userRole === 2){
+           foundUser.push(client);
+        }
+    }
+    res.status(200).json({message: "Client Found", result: foundUser});
   }
 
 
 
   controller.saveUser = async (req, res) => {
-    // generate salt to hash password
+    // Criar condicionais para cadastro de cada tipo de usuario !!IMPORTANTE
+
+
+    // Gerar Salt para Encriptar Password
     const salt = await bcrypt.genSalt(10);
-    // now we set user password to hashed password
+    // Setar user.password sendo o password encriptado
     let hashedPass = await encrypt.generatePass(req.body.password, salt);  
     usersMock.data.push({
       userId: uuidV4(),
@@ -49,30 +62,37 @@ module.exports = app => {
       salt: salt,
       userRole: req.body.userRole,
       lealdade: req.body.lealdade,
-      pets: req.body.pets,
-      servicos: req.body.servicos
+      servicos: req.body.servicos,
+      pets: req.body.pets
     });
 
     res.status(201).json(usersMock);
   };
   
 
+  // Remover Usuario por UserID
   controller.removeUser = (req, res) => {
+    // Pegando userID dos parametros de requerimento
     const {
       userId,
     } = req.params;
 
+    // Achar index do usuario X com userID passado
     const foundUserIndex = usersMock.data.findIndex(user => user.userId === userId);
 
+    // Caso Usuario nao exista
     if (foundUserIndex === -1) {
       res.status(404).json({
         message: 'Usuario não encontrado na base.',
         success: false,
         users: usersMock,
       });
+    // Caso Usuario Exista
     } else {
+      // Pegando Usuario do mock e setando na variavel
       let resultUser = usersMock.data.splice(foundUserIndex, 1);
-      res.status(200).json({
+      // Entregando resposta com mensagem de sucesso e usuario que foi deletado
+      res.status(201).json({
         message: 'Usuario encontrado e deletado com sucesso!',
         success: true,
         users: resultUser,
@@ -80,6 +100,8 @@ module.exports = app => {
     }
   };
 
+
+  // Alterar Usuario por userID
   controller.updateUser = (req, res) => {
     const { 
       userId,
@@ -93,6 +115,7 @@ module.exports = app => {
         success: false,
         users: usersMock,
       });
+
     } else {
       const newUser = {
         userId: userId ,

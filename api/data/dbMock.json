@@ -1,0 +1,122 @@
+{
+  "users": {
+    "data": [
+      {
+        "userId": "5da9ea674234635bdff45c02",
+        "username": "teuzma",
+        "firstName": "Jorge",
+        "secondName": "Matheus",
+        "email": "omelhordosertanejo@ibest.com",
+        "cpf": "60041111111",
+        "password": "12345",
+        "salt": "",
+        "userRole": 2,
+        "lealdade": "",
+        "servicos":[],
+        "pets":[
+            {
+              "donoId": "5da9ea674234635bdff45c02",
+              "petId": "5d6742bdff45c02",
+              "nomePet" : "doguinho",
+              "tipoPet" : 1,
+              "racaPet": "pastor" 
+            }
+        ]
+      },
+      {
+        "userId": "5da9ea674234635b02",
+        "username": "teuzma",
+        "firstName": "Jorge",
+        "secondName": "Matheus",
+        "email": "omelhordosertanejo@ibest.com",
+        "cpf": "60041111111",
+        "password": "12345",
+        "salt": "",
+        "userRole": 2,
+        "lealdade": "",
+        "servicos":[],
+        "pets":[
+            {
+              "donoId": "5da9ea674234635b02",
+              "petId": "5d6742b",
+              "nomePet" : "Norberto",
+              "tipoPet" : 2,
+              "racaPet": "siames" 
+            }
+        ]
+      },
+      {
+        "userId": "a762f4d9-6fe9-46fa-b635-751090fa7254",
+        "username": "max",
+        "firstName": "Maximiliano",
+        "secondName": "Valadares",
+        "cpf": "6005465473",
+        "email": "valadaresSan@ibest.com",
+        "password": "$2a$10$QAZ9ESF5M5PVk02cZYpxnO9g/Z4uYWfgTPcMB42QZWfP2RxzVKeE2",
+        "salt": "$2a$10$QAZ9ESF5M5PVk02cZYpxnO",
+        "userRole": 1,
+        "lealdade": "",
+        "servicos":[1, 3],
+        "pets": []
+      },
+      {
+        "userId": "a762f4d9-6fe9-46fa-b635-751090fa7254",
+        "username": "antu",
+        "firstName": "antunes",
+        "secondName": "Valadares",
+        "cpf": "6005465473",
+        "email": "valadaresSan@ibest.com",
+        "password": "$2a$10$QAZ9ESF5M5PVk02cZYpxnO9g/Z4uYWfgTPcMB42QZWfP2RxzVKeE2",
+        "salt": "$2a$10$QAZ9ESF5M5PVk02cZYpxnO",
+        "userRole": 1,
+        "lealdade": "",
+        "servicos":[2, 4],
+        "pets": []
+      }
+    ]
+
+  },
+  "usersRole":{
+    "data":[
+      {
+        "roleId": 0,
+        "role": "admin"
+      },
+      {
+        "roleId": 1,
+        "role": "prestador"
+      },
+      {
+        "roleId": 2,
+        "role": "cliente"
+      }
+    ]
+  },
+  "servicos": {
+    "data": [
+      {
+        "servicoId": 1,
+        "servicoNome": "passeio"
+        
+      },
+      {
+          "servicoId": 2,
+          "servicoNome": "banho"
+          
+      }
+    ]
+  },
+  "tiposPet": {
+    "data": [
+      {
+        "tipoPetId": 1,
+        "tipoPet": "cachorro"
+        
+      },
+      {
+        "tipoPetId": 2,
+        "tipoPet": "gato"
+      }
+    ]
+  }
+}

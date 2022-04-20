@@ -6,7 +6,7 @@ const encrypt = require('../services/encrypt');
 
 
 module.exports = app => {
-  const usersMockDB = app.data.usersMock;
+  const usersMockDB = app.data.dbMock;
   const controller = {};
 
   const {
@@ -29,24 +29,16 @@ module.exports = app => {
         success: false,
       });
     } else {
-        // generate salt to hash password
+        // Cria variavel user para re-uso
         const user = usersMock.data[foundUserIndex];
-        const salt =  user.salt;
-        // now we set user password to hashed password
-        let userHashed  = await bcrypt.hashSync(password, salt);
-        // check user password with hashed password stored in the database
-        // user input pass -- database pass
-        let validPassword = await bcrypt.compare(user.password, userHashed);
-        console.log("VERIFICANDO VARIAVEIS SENHA");
-        console.log(`USER INPUT: ${password}`);
-        console.log(`USER SALT: ${salt}`);
-        console.log(`USER HASHED PASSWORD: ${userHashed}`);
-        console.log(`EVALUATES: ${validPassword}`);
 
         // Gerando JWT, token de acesso
-        let jaywabliuT = accessToken.jwtGenAccess(user);
-        console.log(`JWT ACCESS TOKEN: ${jaywabliuT}`);
+        let jwtToken = accessToken.jwtGenAccess(user);
+        console.log(`JWT ACCESS TOKEN: ${jwtToken}`);
 
+
+        //Pegando SALT do usuario
+        //Transforma o password inserido em password hashed com o SALT do user, e compara com o user.password(que ja esta encriptado)
         
         
         if(validPassword === false){
