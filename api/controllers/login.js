@@ -39,8 +39,6 @@ module.exports = app => {
 
         //Pegando SALT do usuario
         //Transforma o password inserido em password hashed com o SALT do user, e compara com o user.password(que ja esta encriptado)
-        
-        
         if(validPassword === false){
           res.status(200).json({
             message: 'Usuario encontrado e logado com sucesso!',

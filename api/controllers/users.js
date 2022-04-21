@@ -44,27 +44,45 @@ module.exports = app => {
 
 
   controller.saveUser = async (req, res) => {
-    // Criar condicionais para cadastro de cada tipo de usuario !!IMPORTANTE
-
+    // Setando variavel para verificar o userRole
+    let verifyRole = req.body.userRole;
 
     // Gerar Salt para Encriptar Password
     const salt = await bcrypt.genSalt(10);
+    
     // Setar user.password sendo o password encriptado
     let hashedPass = await encrypt.generatePass(req.body.password, salt);  
-    usersMock.data.push({
-      userId: uuidV4(),
-      username: req.body.username,
-      firstName: req.body.firstName,
-      secondName: req.body.secondName,
-      cpf: req.body.cpf,
-      email: req.body.email,
-      password: hashedPass,
-      salt: salt,
-      userRole: req.body.userRole,
-      lealdade: req.body.lealdade,
-      servicos: req.body.servicos,
-      pets: req.body.pets
-    });
+
+    // Cadastro de Prestadores
+    if(verifyRole === 1){
+      usersMock.data.push({
+        userId: uuidV4(),
+        username: req.body.username,
+        firstName: req.body.firstName,
+        secondName: req.body.secondName,
+        cpf: req.body.cpf,
+        email: req.body.email,
+        password: req.body.password,
+        userRole: req.body.userRole,
+        lealdade: req.body.lealdade,
+        servicos: req.body.servicos,
+      });
+    }
+    // Cadastro de Clientes
+    else if(verifyRole === 2){
+      usersMock.data.push({
+        userId: uuidV4(),
+        username: req.body.username,
+        firstName: req.body.firstName,
+        secondName: req.body.secondName,
+        cpf: req.body.cpf,
+        email: req.body.email,
+        password: req.body.password,
+        userRole: req.body.userRole,
+        lealdade: req.body.lealdade,
+        pets: req.body.pets
+      });
+    }
 
     res.status(201).json(usersMock);
   };

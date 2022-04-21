@@ -12,7 +12,6 @@
         "salt": "",
         "userRole": 2,
         "lealdade": "",
-        "servicos":[],
         "pets":[
             {
               "donoId": "5da9ea674234635bdff45c02",
@@ -34,7 +33,6 @@
         "salt": "",
         "userRole": 2,
         "lealdade": "",
-        "servicos":[],
         "pets":[
             {
               "donoId": "5da9ea674234635b02",
@@ -56,8 +54,7 @@
         "salt": "$2a$10$QAZ9ESF5M5PVk02cZYpxnO",
         "userRole": 1,
         "lealdade": "",
-        "servicos":[1, 3],
-        "pets": []
+        "servicos":[1, 3]
       },
       {
         "userId": "a762f4d9-6fe9-46fa-b635-751090fa7254",
@@ -70,8 +67,7 @@
         "salt": "$2a$10$QAZ9ESF5M5PVk02cZYpxnO",
         "userRole": 1,
         "lealdade": "",
-        "servicos":[2, 4],
-        "pets": []
+        "servicos":[2, 4]
       }
     ]
 
