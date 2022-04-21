@@ -50,8 +50,7 @@
         "secondName": "Valadares",
         "cpf": "6005465473",
         "email": "valadaresSan@ibest.com",
-        "password": "$2a$10$QAZ9ESF5M5PVk02cZYpxnO9g/Z4uYWfgTPcMB42QZWfP2RxzVKeE2",
-        "salt": "$2a$10$QAZ9ESF5M5PVk02cZYpxnO",
+        "password": "12345",
         "userRole": 1,
         "lealdade": "",
         "servicos":[1, 3]

@@ -29,17 +29,14 @@ module.exports = app => {
         success: false,
       });
     } else {
-        // Cria variavel user para re-uso
+        /* Cria variavel user para re-uso
         const user = usersMock.data[foundUserIndex];
-
         // Gerando JWT, token de acesso
         let jwtToken = accessToken.jwtGenAccess(user);
-        console.log(`JWT ACCESS TOKEN: ${jwtToken}`);
+        console.log(`JWT ACCESS TOKEN: ${jwtToken}`);*/
 
 
-        //Pegando SALT do usuario
-        //Transforma o password inserido em password hashed com o SALT do user, e compara com o user.password(que ja esta encriptado)
-        if(validPassword === false){
+        if(usersMock.data[foundUserIndex].password === password){
           res.status(200).json({
             message: 'Usuario encontrado e logado com sucesso!',
             success: true,
