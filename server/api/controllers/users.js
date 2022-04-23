@@ -131,6 +131,45 @@ module.exports = (app) => {
       });
   };
 
+  controller.getUser = (req, res) => {
+    // GET USERID FROM REQ PARAMS
+    const { userId } = req.params;
+    // GET ALL INFO OF THE USER PER USERID
+    const query = "SELECT * FROM USERS A WHERE A.USER_ID = ?;";
+    // CALL THE EXECUTE PASSING THE QUERY
+    cursor
+      .execute(query, [userId])
+      .then((result) => {
+        if (result.length > 0) {
+          // BUILDS THE JSON OBJECT WITH THE RESULT DATA
+          const response = 
+            result.map((user) => {
+              return {
+                userId: user.user_id,
+                username: user.username,
+                firstName: user.first_name,
+                secondName: user.second_name,
+                email: user.email,
+                userGender: user.user_gender,
+                userRole: user.user_role,
+                password: user.password,
+                salt: user.salt,
+                cpf: user.cpf,
+              };
+            })
+          
+          // RETURN THE BUILDED JSON AS RESPONSE
+          return res.status(200).send(response);
+          next();
+        } else {
+          res.status(404).send({ msg: "Nenhum usuario cadastrado" });
+        }
+      })
+      .catch((error) => {
+        res.status(500).send({ msg: `${error.sqlMessage} -- ${error.code}` });
+      });
+  };
+
   controller.saveUser = async (req, res) => {
     // Setando variavel para verificar o userRole
     let verifyRole = req.body.userRole;
@@ -141,7 +180,8 @@ module.exports = (app) => {
     // Setar user.password sendo o password encriptado
     let hashedPass = await encrypt.generatePass(req.body.password, salt);
 
-    // Cadastro de Prestadores
+    // REGISTER OF WORKERS
+    // NEED IMPLEMENTATION OF THE SERVICES(SERVICES THAT THE WORKER PROVIDES)
     if (verifyRole === 1) {
       // DISMEMBER THE REQ.BODY
       const {
@@ -190,7 +230,8 @@ module.exports = (app) => {
           }
         });
     }
-    // Cadastro de Clientes
+    // REGISTER OF CLIENTS
+    // NEED IMPLEMENTATION OF THE PETS(PETS THAT THE CLIENT HAVE)
     else if (verifyRole === 2) {
       // DISMEMBER THE REQ.BODY
       const {
@@ -224,8 +265,7 @@ module.exports = (app) => {
       cursor
         .execute(query, params)
         .then((result) => {
-          console.log(result)
-          if (result.affectedRows > 0 > 0) {
+          if (result.affectedRows > 0) {
             const response = { msg: "Cliente cadastrado com sucesso" };
             return res.status(200).send(response);
             next();
@@ -242,35 +282,29 @@ module.exports = (app) => {
     }
   };
 
-  // Remover Usuario por UserID
-  controller.removeUser = (req, res) => {
-    // Pegando userID dos parametros de requerimento
+
+  // REMOVE USER PER USERID
+  controller.removeUser = (req, res) =>{
+    // GET USERID FROM THE REQ PARAMS
     const { userId } = req.params;
-
-    // Achar index do usuario X com userID passado
-    const foundUserIndex = usersMock.data.findIndex(
-      (user) => user.userId === userId
-    );
-
-    // Caso Usuario nao exista
-    if (foundUserIndex === -1) {
-      res.status(404).json({
-        message: "Usuario não encontrado na base.",
-        success: false,
-        users: usersMock,
-      });
-      // Caso Usuario Exista
-    } else {
-      // Pegando Usuario do mock e setando na variavel
-      let resultUser = usersMock.data.splice(foundUserIndex, 1);
-      // Entregando resposta com mensagem de sucesso e usuario que foi deletado
-      res.status(201).json({
-        message: "Usuario encontrado e deletado com sucesso!",
-        success: true,
-        users: resultUser,
-      });
-    }
-  };
+     // CREATE THE INSERTION QUERY
+    const query = "DELETE FROM USERS WHERE USER_ID = ?;";
+    cursor
+        .execute(query, [userId])
+        .then((result) => {
+          if (result.affectedRows > 0) {
+            const response = { msg: "Usuario excluido com sucesso" };
+            return res.status(200).send(response);
+            next();
+          } else {
+            res.status(404).send({ msg: "Erro ao excluir Usuario" });
+          }
+        })
+        .catch((error) => {
+            res.status(500).send({ msg: error.sqlMessage });
+          
+        });
+  }
 
   // Alterar Usuario por userID
   controller.updateUser = (req, res) => {
