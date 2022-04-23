@@ -9,10 +9,10 @@ module.exports = app => {
       .delete(controller.removeUser)
       .put(controller.updateUser);
 
-      app.route('/api/v1/users/prestador')
-      .get(controller.listPrestadores);
+      app.route('/api/v1/users/workers')
+      .get(controller.listWorkers);
 
-      app.route('/api/v1/users/cliente')
+      app.route('/api/v1/users/clients')
       .get(controller.listClients);
       
   }

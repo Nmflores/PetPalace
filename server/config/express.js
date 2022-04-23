@@ -1,9 +1,9 @@
 const express    = require('express');
 const bodyParser = require('body-parser');
 const config     = require('config');
+const dbConfig = require('./dbConfig');
 const consign    = require('consign');
 const cors       = require('cors');
-const https      = require('https');
 
 
 
@@ -13,9 +13,9 @@ module.exports = () => {
   // SETANDO VARIÁVEIS DA APLICAÇÃO
   app.set('port', process.env.PORT || config.get('server.port'));
   app.set('key', config.get('jwt.key'));
+  app.set('cursor', dbConfig);
 
   // MIDDLEWARES
-  app.use(cors());
   app.use(bodyParser.json());
 
 

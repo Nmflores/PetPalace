@@ -4,5 +4,11 @@
     },
     "jwt":{
       "key" : "somerandomShit"
+    },
+    "database":{
+      "host":"localhost",
+      "user": "root",
+      "password": "",
+      "databaseName":"petpalace"
     }
   }
