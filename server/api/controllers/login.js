@@ -1,10 +1,31 @@
 const bcrypt = require('bcryptjs');
-const accessToken = require('../services/jwt');
-const encrypt = require('../services/encrypt');
+const jwt    = require('jsonwebtoken');
 
+let returnObj = function async(result) {
+  console.log(result)
+  if (result.length > 0) {
+    // CREATE A JSON RESPONSE TO SEND
+    const response = {
+      users: result.map((user) => {
+        return {
+          userId: user.user_id,
+          userRole: user.user_role,
+        };
+      }),
+    };
+    return response;
+  } 
+};
 
+const secretKey = 'chaveMestra';
 
-
+let createAuthJwt = function async (user){
+  const userId = user[0]['USER_ID'];
+  const role = user[0]['USER_ROLE'];
+  const tokenPayload = { userId, role };
+  const accessToken = jwt.sign(tokenPayload, secretKey);
+  return accessToken;
+}
 
 module.exports = app => {
   const cursor = app.get("cursor");
@@ -32,7 +53,11 @@ module.exports = app => {
                     res.status(404).send(err);
                 }else{
                   if(result.length > 0){
-                  res.status(200).send(result);
+                    //CREATES JWT WITH USER_ID AND USER_ROLE
+                    const tokenJWT = createAuthJwt(result);
+                    console.log(tokenJWT)
+                    res.status(200).send({jwt: tokenJWT});
+
                   }else{
                     res.status(404).send({msg : "Password incorreto, digite novamente"});
                   }
