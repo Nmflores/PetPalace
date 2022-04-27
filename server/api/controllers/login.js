@@ -17,18 +17,20 @@ let returnObj = function async(result) {
   } 
 };
 
-const secretKey = 'chaveMestra';
+const JWT_SECRET_KEY = 'chaveMestra';
 
 let createAuthJwt = function async (user){
   const userId = user[0]['USER_ID'];
   const role = user[0]['USER_ROLE'];
   const tokenPayload = { userId, role };
-  const accessToken = jwt.sign(tokenPayload, secretKey);
+  const accessToken = jwt.sign(tokenPayload, JWT_SECRET_KEY);
   return accessToken;
 }
 
+
+
 module.exports = app => {
-  const cursor = app.get("cursor");
+  const dbConn = app.get("dbConn");
   const controller = {};
 
  
@@ -41,14 +43,14 @@ module.exports = app => {
     // VERIFY USERNAME
     const query = "SELECT EMAIL FROM USERS_AUTH A WHERE A.USERNAME = ?;";
     // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
-    cursor.pool.query(query, [username], (err, result) => {
+    dbConn.pool.query(query, [username], (err, result) => {
       if (err) {
         res.status(404).send(err);
       } else {
         if(result.length > 0){
             // CHECK PASSWORD
-            const query = "SELECT A.USER_ID, B.USER_ROLE FROM USERS_AUTH A, USERS B WHERE A.USERNAME = ? AND A.PASSWORD = ? AND A.USER_ID = B.USER_ID;";
-            cursor.pool.query(query, [username, password], (err, result) => {
+            const query = "SELECT A.USER_ID FROM USERS_AUTH A WHERE A.USERNAME = ? AND A.PASSWORD = ?;";
+            dbConn.pool.query(query, [username, password], (err, result) => {
                 if(err){
                     res.status(404).send(err);
                 }else{
@@ -59,12 +61,12 @@ module.exports = app => {
                     res.status(200).send({jwt: tokenJWT});
 
                   }else{
-                    res.status(404).send({msg : "Password incorreto, digite novamente"});
+                    res.status(404).send({msg : "Credenciais incorretas, digite novamente"});
                   }
                 }
             });
         }else{
-            res.status(404).send({msg : `Usernme ${username} nao encontrado no sistema`});
+            res.status(404).send({msg : `Credenciais incorretas, digite novamente`});
         }
       }
     });

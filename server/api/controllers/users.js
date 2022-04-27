@@ -36,14 +36,14 @@ let errorHandler = function async(error){
 }
 
 module.exports = (app) => {
-  const cursor = app.get("cursor");
+  const dbConn = app.get("dbConn");
   const controller = {};
 
   controller.listUsers = async (req, res) => {
     // GET ALL INFO OF THE 10 FIRST USERS ON THE TABLE
     const query = "SELECT * FROM USERS LIMIT 10;";
     // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
-    cursor.pool.query(query, (err, result) => {
+    dbConn.pool.query(query, (err, result) => {
       if (err) {
         res.status(404).send(err);
       } else {
@@ -55,10 +55,10 @@ module.exports = (app) => {
 
   controller.listWorkers = (req, res) => {
     //
-    const query = "SELECT * FROM USERS A WHERE A.USER_ROLE = 1;";
+    const query = "SELECT * FROM USERS A, WORKER_SERVICES B WHERE A.USER_ROLE = 1;";
 
     // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
-    cursor.pool.query(query, [], (err, result) => {
+    dbConn.pool.query(query, [], (err, result) => {
       if (err) res.status(404).send(err);
       else {
         const response = usersResult(result);
@@ -70,7 +70,7 @@ module.exports = (app) => {
   controller.listClients = (req, res) => {
     // GET USERS WITH userRole as 2(CLIENT)
     const query = "SELECT * FROM USERS A WHERE A.USER_ROLE = 2;";
-    cursor.pool.query(query, (err, result) => {
+    dbConn.pool.query(query, (err, result) => {
       if (err) {
         return res.status(404).send("Nenhum Cliente cadastrado");
       } else {
@@ -86,7 +86,7 @@ module.exports = (app) => {
     // GET ALL INFO OF THE USER PER USERID
     const query = "SELECT * FROM USERS A WHERE A.USER_ID = ?;";
     // CALL THE EXECUTE PASSING THE QUERY
-    cursor
+    dbConn
       .execute(query, [userId])
       .then((result) => {
         if (result.length > 0) {
@@ -171,12 +171,12 @@ module.exports = (app) => {
       // CREATE THE INSERTION QUERY FOR THE USERS TABLE
       const query = `INSERT INTO USERS(USER_ID, FIRST_NAME, SECOND_NAME, USER_GENDER, USER_ROLE, CPF, ADDRESS, ADDRESS_NBR, DISTRICT, CEP, STATE) VALUES(?,?,?,?,?,?,?,?,?, ?,?);`;
           // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
-      cursor.pool.query(query, userParams, (err, result) => {
+      dbConn.pool.query(query, userParams, (err, result) => {
         if (err) res.status(404).send({msg : errorHandler(err)});
         else {
           // CREATE THE INSERTION QUERY FOR THE USERS_AUTH TABLE
           const query = `INSERT INTO USERS_AUTH(USER_ID, USERNAME, EMAIL, PASSWORD) VALUES(?, ?, ? ,?)`;  
-          cursor.pool.query(query, loginParams, (err, result) => {
+          dbConn.pool.query(query, loginParams, (err, result) => {
             if (err) res.status(404).send({msg : errorHandler(err)});
             else {
               res.status(200).send({msg: `Prestador ${firstName} cadastrado com sucesso`});
@@ -195,11 +195,11 @@ module.exports = (app) => {
     const { userId } = req.params;
     // CREATE THE INSERTION QUERY
     const query = "DELETE FROM USERS WHERE USER_ID = ?;";
-    cursor
+    dbConn
       .execute(query, [userId])
       .then((result) => {
         if (result.affectedRows > 0) {
-          const response = { msg: "Usuario excluido com sucesso" };
+          const response = { msg: "Usuario excluido com sucesso"};
           return res.status(200).send(response);
           next();
         } else {
