@@ -5,49 +5,45 @@ const encrypt = require('../services/encrypt');
 
 
 
+
 module.exports = app => {
-  const usersMockDB = app.data.dbMock;
+  const cursor = app.get("cursor");
   const controller = {};
 
-  const {
-    users: usersMock,
-  } = usersMockDB;
-
+ 
  
   controller.login = async (req, res) => {
     const {
       username,
       password
     } = req.body;
-
-
-    const foundUserIndex = usersMock.data.findIndex(user => user.username === username);
-
-    if (foundUserIndex === -1) {
-      res.status(404).json({
-        message: 'Usuario nao encontrado na base.',
-        success: false,
-      });
-    } else {
-        /* Cria variavel user para re-uso
-        const user = usersMock.data[foundUserIndex];
-        // Gerando JWT, token de acesso
-        let jwtToken = accessToken.jwtGenAccess(user);
-        console.log(`JWT ACCESS TOKEN: ${jwtToken}`);*/
-
-
-        if(usersMock.data[foundUserIndex].password === password){
-          res.status(200).json({
-            message: 'Usuario encontrado e logado com sucesso!',
-            success: true,
+    // VERIFY USERNAME
+    const query = "SELECT EMAIL FROM USERS_AUTH A WHERE A.USERNAME = ?;";
+    // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
+    cursor.pool.query(query, [username], (err, result) => {
+      if (err) {
+        res.status(404).send(err);
+      } else {
+        if(result.length > 0){
+            // CHECK PASSWORD
+            const query = "SELECT A.USER_ID, B.USER_ROLE FROM USERS_AUTH A, USERS B WHERE A.USERNAME = ? AND A.PASSWORD = ? AND A.USER_ID = B.USER_ID;";
+            cursor.pool.query(query, [username, password], (err, result) => {
+                if(err){
+                    res.status(404).send(err);
+                }else{
+                  if(result.length > 0){
+                  res.status(200).send(result);
+                  }else{
+                    res.status(404).send({msg : "Password incorreto, digite novamente"});
+                  }
+                }
             });
         }else{
-          res.status(404).json({
-            message: 'Senha incorreta.',
-            success: false,
-          });
+            res.status(404).send({msg : `Usernme ${username} nao encontrado no sistema`});
         }
-        }
+      }
+    });
+    
     }
     return controller;
   };

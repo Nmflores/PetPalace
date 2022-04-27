@@ -1,4 +1,4 @@
-module.exports = (app) => {
+module.exports = app => {
     const cursor = app.get("cursor");
     const controller = {};
 
@@ -70,8 +70,17 @@ module.exports = (app) => {
     };
     
 
+    controller.showAll_alternative = (req, res) =>  {
+        // GET ALL WORKS AND USER INFO
+        const query = "SELECT A.user_id, A.first_name, A.second_name, C.service_name FROM USERS A, WORKER_SERVICES B, AVAILABLE_SERVICES C WHERE A.user_role = 1 AND A.user_id = B.worker_id AND C.service_id = B.service_id;";    
+        // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
+        cursor.pool.query(query, (err, result) => {
+          if (err) res.status(404).send(err);
+          else res.status(200).send(result);
+        });
+      }
 
-    controller.showAllById_alternative = (req, res) =>  {
+      controller.showAllById_alternative = (req, res) =>  {
         // GET B.SERVICE_ID FROM REQ.PARAMS
         const { serviceId } = req.params;
         // GET ALL WORKS AND USER INFO
