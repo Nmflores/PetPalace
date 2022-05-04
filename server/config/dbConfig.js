@@ -13,30 +13,8 @@ const pool = mysql.createPool({
   
 
   module.exports = {
-        pool, 
-        execute: async function (query, params = []) {
-        return new Promise((resolve, reject) => {
-            pool.getConnection((error, conn) =>{
-                if(error){
-                  //console.log(result)
-                    reject(error)
-                }
-                else{
-                    conn.query(query, params, (error, result) =>{
-                        conn.release()
-                        if(error){
-                          //console.log(error)
-                            reject(error)
-                        }
-                        else{
-                            //console.log(result)
-                            resolve(result)
-                        }
-                    })
-                }
-            })
-        })
-      },
+        pool: pool, 
+
     }
 
 

@@ -10,10 +10,8 @@ module.exports = app => {
       .delete(controller.removeUser)
       .put(controller.updateUser);
 
-      app.route('/api/v1/users/workers')
-      .get(controller.listWorkers);
+    app.route('/api/v1/workers').get(controller.listWorkers);
 
-      app.route('/api/v1/users/clients')
-      .get(controller.listClients);
+    app.route('/api/v1/clients').get(controller.listClients);
       
   }

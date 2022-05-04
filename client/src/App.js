@@ -1,13 +1,14 @@
-import logo from './logo.svg';
 import './App.css';
-import Login from './components/Login.js';
+import Login from './components/login/Login.component.jsx';
+import Cadastro from './components/cadastro/Cadastro.component.jsx';
 
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-           <Login/>
+          <Login/>
+           <Cadastro/>
       </header>
     </div>
   );

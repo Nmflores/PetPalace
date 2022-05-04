@@ -1,34 +1,19 @@
-const jwt = require('jsonwebtoken');
-//const app = require('config/express')();
-//const key = app.get('key');
-
-const JWT_SECRET_KEY = 'vintesete';
+const jwt    = require('jsonwebtoken');
 
 
-module.exports = {
-    // gera uma chave JWT com os dados userId e userRole do USER passado como parametro
-    // retorna a chave gerada
-    jwtGenAccess: function (user) {
-        const userId = user.userId;
-        const role = user.userRole;
-        const tokenPayload = { userId, role };
-        const accessToken = jwt.sign(tokenPayload, JWT_SECRET_KEY);
-        return accessToken;
-    },
-    // middleware para verificacao do JWT enviado pelo Client-side
-    authenticationMiddleware: function (req, res, nextHandler) {
-        // pegando o token do HEADER de requisicao
-        const accessToken = getAccessTokenFromHeader(req);
-      
-        try {
-          // retirando o tokenPayload atraves das informacoes de acesso
-          const tokenPayload = jwt.verify(accessToken, JWT_SECRET_KEY);
-          // implementado o tokenPayload em uma variavel na response que foi enviada
-          res.locals.user = tokenPayload;
-          nextHandler();
-        } catch (error) {
-          res.status(401).send(error.message);
-        }
-      }
-};
+const JWT_SECRET_KEY = 'chaveMestra';
 
+
+//MIDDLEWARE FOR JWT
+//GET THE TOKEN AND VERIFY, THEN SENDS THE INFO TO THE RESPONSE AS A LOCAL USER VARIABLE((CLIENT-SIDE))
+function authenticationMiddleware(request, response, nextHandler) {
+  const accessToken = getAccessTokenFromHeader(request);
+
+  try {
+    const tokenPayload = jwt.verify(accessToken, JWT_SECRET_KEY);
+    response.locals.user = tokenPayload;
+    nextHandler();
+  } catch (error) {
+    response.status(401).send(error.message);
+  }
+}

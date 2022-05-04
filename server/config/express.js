@@ -13,7 +13,7 @@ module.exports = () => {
   // SETANDO VARIÁVEIS DA APLICAÇÃO
   app.set('port', process.env.PORT || config.get('server.port'));
   app.set('key', config.get('jwt.key'));
-  app.set('cursor', dbConfig);
+  app.set('dbConn', dbConfig);
 
   // MIDDLEWARES
   app.use(bodyParser.json());
@@ -21,7 +21,6 @@ module.exports = () => {
 
   // ENDPOINTS -- ligando pastas a entidade do express
   consign({cwd: 'api'})
-    .then('data')
     .then('controllers')
     .then('routes')
     .then('services')
