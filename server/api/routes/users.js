@@ -3,7 +3,6 @@ module.exports = app => {
   
     app.route('/api/v1/users')
       .get(controller.listUsers)
-      .post(controller.saveUser);
   
     app.route('/api/v1/users/:userId')
       .get(controller.getUser)
@@ -12,6 +11,4 @@ module.exports = app => {
 
     app.route('/api/v1/workers').get(controller.listWorkers);
 
-    app.route('/api/v1/clients').get(controller.listClients);
-      
   }
