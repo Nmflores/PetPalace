@@ -7,7 +7,7 @@ let petsResult = function async(result) {
     result.map((pet) => {
         return {
           ownerId: pet.OWNER_ID,
-          ownerName: pet.FIRST_NAME +' '+ pet.SECOND_NAME,
+          ownerName: pet.FIRST_NAME,
           petId: pet.PET_ID,
           petName: pet.PET_NAME,
           petType: pet.PET_TYPE,
@@ -16,7 +16,7 @@ let petsResult = function async(result) {
       });
     return response;
   } else {
-    return { msg: "Nenhum pet cadastrado" };
+    return [];
   }
 };
 
