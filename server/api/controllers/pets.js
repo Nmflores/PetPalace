@@ -3,19 +3,17 @@ const { v4: uuidV4 } = require("uuid");
 let petsResult = function async(result) {
   if (result.length > 0) {
     // CREATE A JSON RESPONSE TO SEND
-    const response = {
-      pets: result.map((pet) => {
+    const response = 
+    result.map((pet) => {
         return {
-          userId: pet.OWNER_ID,
-          ownerName: pet.FIRST_NAME,
+          ownerId: pet.OWNER_ID,
+          ownerName: pet.FIRST_NAME +' '+ pet.SECOND_NAME,
           petId: pet.PET_ID,
           petName: pet.PET_NAME,
           petType: pet.PET_TYPE,
           petBreed: pet.PET_BREED,
         };
-      }),
-    };
-    console.log(response)
+      });
     return response;
   } else {
     return { msg: "Nenhum pet cadastrado" };
@@ -32,8 +30,44 @@ module.exports = (app) => {
   const dbConn = app.get("dbConn");
   const controller = {};
 
+  let checkPet = async (petId) =>{
+    return new Promise((resolve) => { 
+      const query = "SELECT A.PET_NAME FROM PETS A WHERE PET_ID = ?;";      
+      dbConn.pool.query(query, petId, (err, result) => {                  
+      if (err) { 
+        resolve(false);
+      } 
+      else { 
+        if(result.length > 0){
+          resolve(true);
+        }else{
+          resolve(false);
+        }
+      } 
+    })
+  })
+  }
+
+  let checkUser = async (userId) =>{
+    return new Promise((resolve) => { 
+      const query = "SELECT A.first_name FROM USERS A WHERE USER_ID = ?;";
+      dbConn.pool.query(query, userId, (err, result) => {                  
+      if (err) { 
+        resolve(false);
+      } 
+      else { 
+        if(result.length > 0){
+          resolve(true);
+        }else{
+          resolve(false);
+        }
+      } 
+    })
+  })
+  }
+
   controller.listPets = async (req, res) => {
-    const query = 'SELECT A.OWNER_ID, C.FIRST_NAME ,A.PET_ID, A.PET_NAME, B.PET_TYPE, A.PET_BREED FROM PETS A, PET_TYPES B, USERS C WHERE A.PET_TYPE = B.PET_TYPE_ID AND A.OWNER_ID = C.USER_ID LIMIT 10;';
+    const query = 'SELECT A.OWNER_ID, C.FIRST_NAME, C.SECOND_NAME ,A.PET_ID, A.PET_NAME, B.PET_TYPE, A.PET_BREED FROM PETS A, PET_TYPES B, USERS C WHERE A.PET_TYPE = B.PET_TYPE_ID AND A.OWNER_ID = C.USER_ID LIMIT 10;';
     dbConn.pool.query(query, (err, result) => {
       if (err) {
         res.status(404).send(err);
@@ -47,7 +81,6 @@ module.exports = (app) => {
   controller.addPet = (req, res) => {
     const { ownerId, petName, petType, petBreed } = req.body;
     const petId = uuidV4();
-    if(ownerId && petName && petType && petBreed){
       const query =
       "INSERT INTO PETS(OWNER_ID, PET_ID, PET_NAME, PET_TYPE, PET_BREED) VALUES(?, ? , ? , ?, ?);";
     const params = [ownerId, petId, petName, petType, petBreed]
@@ -55,13 +88,12 @@ module.exports = (app) => {
     dbConn.pool.query(query, params, (err, result) => {
       if (err) res.status(404).send(err);
       else {
-        //const response = petsResult(result);
-        res.status(200).send({msg : result.affectedRows});
+        if(result.affectedRows > 0){
+          res.status(200).send({msg : 'Pet adicionado com sucesso' });
+        }
       }
     });
-    }else{
-      res.status(404).send({msg : `Faltam informaçoes para continuar com cadastro de Pets`});
-    }
+    
   };
 
 
@@ -82,14 +114,11 @@ module.exports = (app) => {
   };
 
   controller.getPetsByPetId = (req, res) => {
-    // GET USERID FROM REQ PARAMS
     const { petId } = req.params;
-    // GET ALL INFO OF THE USER PER USERID
-    const query = 'SELECT A.OWNER_ID, C.FIRST_NAME ,A.PET_ID, A.PET_NAME, B.PET_TYPE, A.PET_BREED FROM PETS A, PET_TYPES B, USERS C WHERE A.PET_TYPE = B.PET_TYPE_ID AND A.OWNER_ID = C.USER_ID AND A.PET_ID = ? LIMIT 10;';
-    // CALL THE EXECUTE PASSING THE QUERY
+    const query = 'SELECT A.OWNER_ID, C.FIRST_NAME , A.PET_ID, A.PET_NAME, B.PET_TYPE, A.PET_BREED FROM PETS A, PET_TYPES B, USERS C WHERE A.PET_TYPE = B.PET_TYPE_ID AND A.OWNER_ID = C.USER_ID AND A.PET_ID = ? LIMIT 10;';
     dbConn.pool.query(query, [petId], (err, result) => {
       if (err) {
-        return res.status(404).send("Usuario nao cadastrado");
+        return res.status(404).send("Pet nao cadastrado");
       } else {
         const response = petsResult(result);
         return res.status(200).send(response);
@@ -99,7 +128,7 @@ module.exports = (app) => {
 
 
 
-  controller.removePet = (req, res) => {
+  controller.removePetByPetId = (req, res) => {
     const { petId } = req.params;
     const query = "DELETE FROM PETS WHERE PET_ID = ?;";
     dbConn.pool.query(query, petId, (err, result) => {
@@ -112,10 +141,9 @@ module.exports = (app) => {
     });
   };
 
-  controller.updatePetByPetId = (req, res) => {
+  controller.updatePetByPetId = async (req, res) => {
     const { petId } = req.params;
-    const query = "SELECT A.PET_NAME FROM PETS A WHERE PET_ID = ?;";
-    dbConn.pool.query(query, petId, (err, result) => {
+    if(await checkPet(petId)){
       if (err) res.status(404).send({ msg: errorHandler(err) });
       else {
         if(result.length > 0){
@@ -127,7 +155,7 @@ module.exports = (app) => {
             petName, petType, petBreed, petId
           ];
       
-          if(petName && petType && petBreed && petId){
+
             const query = `UPDATE PETS SET PET_NAME = ?, PET_TYPE = ?,
           PET_BREED = ? WHERE PET_ID = ?;`;
           dbConn.pool.query(query, petParams, (err, result) => {
@@ -137,14 +165,11 @@ module.exports = (app) => {
             }
             else { res.status(201).send({ msg: 'Pet alterado com sucesso' }); }
           });
-          }else{
-            res.status(404).send({msg : `Faltam informaçoes para continuar com a alteraçao do Pet`});
-          }
-        }else{
-          res.status(404).send({ msg: 'Pet nao encontrado' });
         }
       }
-    })
+    }else{
+      res.status(404).send({ msg: 'Pet nao encontrado' })
+    }
 }
 
   return controller;

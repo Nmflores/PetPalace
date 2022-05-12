@@ -10,12 +10,13 @@ module.exports = (app) => {
       // DELETE THE WORK BY USER_ID AND SERVICE_ID
       .delete(controller.deleteWork);
   
+    //LIST AVAILABLE WORKS BY SERVICE_ID
+    app.route('/api/v1/works/:serviceId')
+      .get(controller.listWorkByServiceId)
 
     //LIST AVAILABLE WORKS OF USER WITH USER_ID X
     app.route('/api/v1/users/works/:userId')
       .get(controller.listWorksByUserId)
     
-    //LIST AVAILABLE WORKS BY SERVICE_ID
-    app.route('/api/v1/works/:serviceId')
-      .get(controller.listWorkByServiceId)
+    
   }

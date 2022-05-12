@@ -2,11 +2,12 @@ const { v4: uuidV4 } = require("uuid");
 const bcrypt = require("bcryptjs");
 const encrypt = require("../services/encrypt");
 
+
 let usersResult = function async(result) {
   if (result.length > 0) {
     // CREATE A JSON RESPONSE TO SEND
-    const response = {
-      users: result.map((user) => {
+    const response = 
+      result.map((user) => {
         return {
           userId: user.user_id,
           firstName: user.first_name,
@@ -21,8 +22,7 @@ let usersResult = function async(result) {
           cep: user.cep,
           state: user.state,
         };
-      }),
-    };
+      });
     return response;
   } else {
     return { msg: "Nenhum usuario cadastrado" };
@@ -38,6 +38,27 @@ let errorHandler = function async(error) {
 module.exports = (app) => {
   const dbConn = app.get("dbConn");
   const controller = {};
+
+  
+
+let checkUser = async (userId) =>{
+  return new Promise((resolve) => { 
+    const query = "SELECT A.first_name FROM USERS A WHERE USER_ID = ?;";
+    dbConn.pool.query(query, userId, (err, result) => {                  
+    if (err) { 
+      resolve(false);
+    } 
+    else { 
+      if(result.length > 0){
+        resolve(true);
+      }else{
+        resolve(false);
+      }
+    } 
+  })
+})
+}
+  
 
   controller.listUsers = async (req, res) => {
     // GET ALL INFO OF THE 10 FIRST USERS ON THE TABLE
@@ -68,10 +89,13 @@ module.exports = (app) => {
     });
   };
 
+ 
 
-  controller.getUser = (req, res) => {
+  controller.getUser = async (req, res) => {
     // GET USERID FROM REQ PARAMS
+    
     const { userId } = req.params;
+
     // GET ALL INFO OF THE USER PER USERID
     const query = "SELECT * FROM USERS A WHERE A.USER_ID = ?;";
     // CALL THE EXECUTE PASSING THE QUERY
@@ -103,63 +127,51 @@ module.exports = (app) => {
   };
 
   // UPDATE USER PER USERID
-  controller.updateUser = (req, res) => {
+  controller.updateUser = async (req, res) => {
     const { userId } = req.params;
     const {
       firstName, secondName, userGender, cpf, loyalty,
       address, addressNbr, district, cep, state,
     } = req.body;
-    if(firstName && secondName && userGender && cpf && loyalty && address && addressNbr && district && cep && state){
-      const query = "SELECT A.first_name FROM USERS A WHERE USER_ID = ?;";
-      dbConn.pool.query(query, userId, (err, result) => {
-        if (err) res.status(404).send({ msg: errorHandler(err) });
-        else {
-          if(result.length > 0){
-              // CREATE A CONST PARAMS THAT CONTAINS ALL THE REQ.BODY PARAMS FOR THE INSERTION QUERY
-            // PASSES A GENERATED UUID FOR THE USER_ID
-            const userParams = [
-              firstName,
-              secondName,
-              userGender,
-              cpf,
-              loyalty,
-              address,
-              addressNbr,
-              district,
-              cep,
-              state,
-              userId
-            ];
-        
-            // CREATE THE INSERTION QUERY FOR THE USERS TABLE
-            const query = `UPDATE USERS SET first_name = ?,second_name = ?,
-            user_gender = ?,
-            cpf = ?,
-            loyalty = ?,
-            address = ?,
-            address_nbr = ?,
-            district = ?,
-            cep = ?,
-            state = ? WHERE USER_ID = ?;`;
-            // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
-            dbConn.pool.query(query, userParams, (err, result) => {
-              if (err) {
-                console.log(err);
-                res.status(404).send({ msg: errorHandler(err) })
-              }
-              else { res.status(404).send({ msg: 'Usuario alterado com sucesso' }); }
-            });
-  
-          }else{
-            res.status(200).send({ msg: 'Usuario nao encontrado' });
+    if(await checkUser(userId)){
+        const userParams = [
+          firstName,
+          secondName,
+          userGender,
+          cpf,
+          loyalty,
+          address,
+          addressNbr,
+          district,
+          cep,
+          state,
+          userId
+        ];
+    
+        // CREATE THE INSERTION QUERY FOR THE USERS TABLE
+        const query = `UPDATE USERS SET first_name = ?,second_name = ?,
+        user_gender = ?,
+        cpf = ?,
+        loyalty = ?,
+        address = ?,
+        address_nbr = ?,
+        district = ?,
+        cep = ?,
+        state = ? WHERE USER_ID = ?;`;
+        // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
+        dbConn.pool.query(query, userParams, (err, result) => {
+          if (err) {
+            console.log(err);
+            res.status(404).send({ msg: errorHandler(err) })
           }
-        }
-      })
-    }else{
-      res
-      .status(404)
-      .send({ msg: `Faltam informaçoes para continuar com a alteraçao do Usuario` });
-    }  
+          else { res.status(404).send({ msg: 'Usuario alterado com sucesso' }); }
+        });
+      
+    } 
+    else{
+        res.status(200).send({ msg: 'Usuario nao encontrado' });
+    } 
+
 }
 
   return controller;
