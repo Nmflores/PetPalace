@@ -1,6 +1,12 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+let errorHandler = function async(error) {
+  if (error.errno === 1062) {
+    return `Usuario ja cadastrado no sistema`;
+  }
+};
+
 let returnObj = function async(result) {
   console.log(result);
   if (result.length > 0) {

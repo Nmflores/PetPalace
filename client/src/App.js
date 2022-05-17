@@ -3,6 +3,7 @@ import './App.css';
 import Perfil from "./pages/Perfil";
 import Menu from "./components/menu/Menu.component";
 import Login from "./components/login/Login.component";
+import Cadastro from "./components/cadastro/Cadastro.component";
 
 
 function App() {
@@ -18,7 +19,7 @@ function App() {
     <div className="App">
       <Menu />
        {/*<CardListUsers users={users}/>*/}  
-        
+      <Cadastro />
     </div>
   );
 }
