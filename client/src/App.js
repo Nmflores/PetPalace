@@ -1,22 +1,24 @@
 import { useState, useEffect } from "react";
 import './App.css';
-import CardListUsers from "./components/card-users-list/card-users-list.component";
+import Perfil from "./pages/Perfil";
+import Menu from "./components/menu/Menu.component";
+import Login from "./components/login/Login.component";
+
 
 function App() {
-  const [users, setUsers] = useState([]);
+  {/*const [users, setUsers] = useState([]);
 
   useEffect(() => {
     fetch("http://localhost:8080/api/v1/users")
       .then((response) => response.json())
       .then((users) => setUsers(users));
-  }, []);
-
+  }, []); */}
 
   return (
     <div className="App">
-      <header className="App-header">
-      <CardListUsers users={users}/>
-      </header>
+      <Menu />
+       {/*<CardListUsers users={users}/>*/}  
+        
     </div>
   );
 }

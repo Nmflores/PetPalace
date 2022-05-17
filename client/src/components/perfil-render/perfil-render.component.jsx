@@ -1,9 +1,9 @@
-import './card-users.styles.css'
+import './perfil-render.styles.css'
 import { useState, useEffect } from "react";
-import CardListPets from '../card-pets-list/card-pets-list.component';
-import CardListWorks from '../card-works-list/card-works-list.component';
+import PetsList from '../pets-list/pets-list.component';
+import WorksList from '../works-list/works-list.component';
 
-const CardUsers = ({ user }) => {
+const PerfilRender = ({ user }) => {
   const { userId, firstName, secondName } = user;
   const [pets, setPets] = useState([]);
   const [works, setWorks] = useState([]);
@@ -33,13 +33,13 @@ const CardUsers = ({ user }) => {
 
 
   return (
-    <div key={userId} className='card-container'>
+    <div key={userId} className='perfil-render-container'>
       <h2>{firstName} {secondName}</h2>
-      <p>{userId}</p>
-      <CardListPets pets={pets} />
-      <CardListWorks works={works} />
+      <hr></hr>
+      <PetsList pets={pets} />
+      <WorksList works={works} />
     </div>
   )
 }
 
-export default CardUsers;
+export default PerfilRender;
