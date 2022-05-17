@@ -1,4 +1,6 @@
 import { React, useState, Component } from 'react'
+import { Modal, Button } from 'react-bootstrap'
+import './Cadastro.style.css'
 import Select from 'react-select'
 import Axios from 'axios'
 
@@ -30,6 +32,7 @@ export default function Cadastro() {
   const [districtIpt, setDistrictIpt] = useState('')
   const [cepIpt, setCepIpt] = useState('')
   const [stateIpt, setStateIpt] = useState('')
+
 
   const genderOptions = [
     { value: 'm', label: 'Masculino' },
@@ -66,6 +69,12 @@ export default function Cadastro() {
     { value: "TO", label: "Tocantins" },
   ]
 
+
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   console.log(`
   Username ${usernameIpt}
   FirstName: ${fNameIpt}
@@ -96,136 +105,151 @@ export default function Cadastro() {
       cep: cepIpt,
       state: stateIpt
     })
-    .then(response => console.log(response.data.msg))
-    .catch(error => console.log(error.response.data.msg))
+      .then(response => console.log(response.data.msg))
+      .catch(error => console.log(error.response.data.msg))
   }
 
 
   return (
-    <div className='cadastro-modal'>
-      <h1>Cadastro</h1>
+    <div>
+      <Button variant="primary" onClick={handleShow}>
+        Cadastro
+      </Button>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Cadastro</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
+            <label htmlFor="uname">Username</label>
+            <input
+              placeholder='Digite seu Username'
+              name='uname'
+              type="text"
+              onChange={(e) => { setUsernameIpt(e.target.value) }}
+            />
 
-      <br />
+            <br />
 
-      <label htmlFor="uname">Username</label>
-      <input
-        placeholder='Digite seu Username'
-        name='uname'
-        type="text"
-        onChange={(e) => { setUsernameIpt(e.target.value) }}
-      />
+            <label htmlFor="fName">Primeiro Nome</label>
+            <input
+              placeholder='Digite seu primeiro nome'
+              name='fName'
+              type="text"
+              onChange={(e) => { setFnameIpt(e.target.value) }}
+            />
 
-      <br />
+            <br />
 
-      <label htmlFor="fName">Primeiro Nome</label>
-      <input
-        placeholder='Digite seu primeiro nome'
-        name='fName'
-        type="text"
-        onChange={(e) => { setFnameIpt(e.target.value) }}
-      />
+            <label htmlFor="sName">Segundo Nome</label>
+            <input
+              placeholder='Digite seu segundo nome'
+              name='sName'
+              type="text"
+              onChange={(e) => { setSnameIpt(e.target.value) }}
+            />
 
-      <br />
+            <br />
 
-      <label htmlFor="sName">Segundo Nome</label>
-      <input
-        placeholder='Digite seu segundo nome'
-        name='sName'
-        type="text"
-        onChange={(e) => { setSnameIpt(e.target.value) }}
-      />
+            <label htmlFor="sName">Email</label>
+            <input
+              placeholder='Digite seu email'
+              name='email'
+              type="email"
+              onChange={(e) => { setEmailIpt(e.target.value) }}
+            />
 
-      <br />
+            <br />
 
-      <label htmlFor="sName">Email</label>
-      <input
-        placeholder='Digite seu email'
-        name='email'
-        type="email"
-        onChange={(e) => { setEmailIpt(e.target.value) }}
-      />
+            <label htmlFor="genderSelect">Genero</label>
+            <Select
+              name="genderSelect"
+              options={genderOptions}
+              onChange={selectedOption => setGenderIpt(selectedOption.value)}
+            />
 
-      <br />
+            <br />
 
-      <label htmlFor="genderSelect">Genero</label>
-      <Select
-        name="genderSelect"
-        options={genderOptions}
-        onChange={selectedOption  =>  setGenderIpt(selectedOption.value) }
-      />
+            <label htmlFor="pass">Password</label>
+            <input
+              placeholder='Digite sua Senha'
+              name='pass'
+              type="password"
+              onChange={(e) => { setPasswordIpt(e.target.value) }}
+            />
 
-      <br />
+            <br />
 
-      <label htmlFor="pass">Password</label>
-      <input
-        placeholder='Digite sua Senha'
-        name='pass'
-        type="password"
-        onChange={(e) => { setPasswordIpt(e.target.value) }}
-      />
+            <label htmlFor="cpf">Cpf</label>
+            <input
+              placeholder='Digite seu Cpf'
+              name='cpf'
+              type="text"
+              onChange={(e) => { setCpfIpt(e.target.value) }}
+            />
 
-      <br />
+            <br />
 
-      <label htmlFor="cpf">Cpf</label>
-      <input
-        placeholder='Digite seu Cpf'
-        name='cpf'
-        type="text"
-        onChange={(e) => { setCpfIpt(e.target.value) }}
-      />
+            <label htmlFor="address">Endereço</label>
+            <input
+              placeholder='Digite seu Endereço/Rua'
+              name='address'
+              type="text"
+              onChange={(e) => { setAddressIpt(e.target.value) }}
+            />
 
-      <br />
+            <br />
 
-      <label htmlFor="address">Endereço</label>
-      <input
-        placeholder='Digite seu Endereço/Rua'
-        name='address'
-        type="text"
-        onChange={(e) => { setAddressIpt(e.target.value) }}
-      />
+            <label htmlFor="addressNbr">Numero do Endereço</label>
+            <input
+              placeholder='Digite seu numero residencial'
+              name='addressNbr'
+              type="number"
+              onChange={(e) => { setAddressNbrIpt(e.target.value) }}
+            />
 
-      <br />
+            <br />
 
-      <label htmlFor="addressNbr">Numero do Endereço</label>
-      <input
-        placeholder='Digite seu numero residencial'
-        name='addressNbr'
-        type="number"
-        onChange={(e) => { setAddressNbrIpt(e.target.value) }}
-      />
+            <label htmlFor="district">Bairro</label>
+            <input
+              placeholder='Digite seu Bairro'
+              name='district'
+              type="text"
+              onChange={(e) => { setDistrictIpt(e.target.value) }}
+            />
 
-      <br />
+            <br />
 
-      <label htmlFor="district">Bairro</label>
-      <input
-        placeholder='Digite seu Bairro'
-        name='district'
-        type="text"
-        onChange={(e) => { setDistrictIpt(e.target.value) }}
-      />
+            <label htmlFor="cep">Cep</label>
+            <input
+              placeholder='Digite seu Cep'
+              name='cep'
+              type="text"
+              onChange={(e) => { setCepIpt(e.target.value) }}
+            />
 
-      <br />
+            <br />
 
-      <label htmlFor="cep">Cep</label>
-      <input
-        placeholder='Digite seu Cep'
-        name='cep'
-        type="text"
-        onChange={(e) => { setCepIpt(e.target.value) }}
-      />
+            <label htmlFor="stateSelect">Estado</label>
+            <Select
+              name="stateSelect"
+              options={stateOptions}
+              onChange={selectedOption => setStateIpt(selectedOption.value)}
+            />
 
-      <br />
+            <br />
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={registerTo}>
+            Register
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
-      <label htmlFor="stateSelect">Estado</label>
-      <Select
-        name="stateSelect"
-        options={stateOptions}
-        onChange={ selectedOption =>  setStateIpt(selectedOption.value) }
-      />
-
-      <br />
-
-      <button onClick={registerTo}>Cadastrar</button>
     </div>
   )
 }

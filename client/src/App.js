@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import Perfil from "./pages/Perfil";
 import Menu from "./components/menu/Menu.component";
 import Login from "./components/login/Login.component";
@@ -18,8 +19,7 @@ function App() {
   return (
     <div className="App">
       <Menu />
-       {/*<CardListUsers users={users}/>*/}  
-      <Cadastro />
+       {/*<CardListUsers users={users}/>*/} 
     </div>
   );
 }

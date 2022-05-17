@@ -60,18 +60,18 @@ module.exports = (app) => {
                   //CREATES JWT WITH USER_ID AND USER_ROLE
                   const tokenJWT = createAuthJwt(result);
                   console.log(tokenJWT);
-                  res.status(200).send({ jwt: tokenJWT });
+                  res.status(200).send({ loginStatus: 1, jwt: tokenJWT });
                 } else {
                   res
                     .status(404)
-                    .send({ msg: "Credenciais incorretas, digite novamente" });
+                    .send({ loginStatus: 0, msg: "Credenciais incorretas, digite novamente" });
                 }
               }
             });
           } else {
             res
               .status(404)
-              .send({ msg: `Credenciais incorretas, digite novamente` });
+              .send({  loginStatus: 0, msg: `Credenciais incorretas, digite novamente` });
           }
         }
       });
@@ -136,11 +136,11 @@ module.exports = (app) => {
         else {
           const query = `INSERT INTO USERS_AUTH(USER_ID, USERNAME, EMAIL, PASSWORD) VALUES(?, ?, ? ,?)`;
           dbConn.pool.query(query, loginParams, (err, result) => {
-            if (err) res.status(404).send({ msg: errorHandler(err) });
+            if (err) res.status(404).send({ registerStatus: 0,  msg: errorHandler(err) });
             else {
               res
                 .status(200)
-                .send({ msg: `Usuario ${firstName} cadastrado com sucesso` });
+                .send({ registerStatus: 1, msg: `Usuario ${firstName} cadastrado com sucesso` });
             }
           });
         }
