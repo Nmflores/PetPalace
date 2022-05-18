@@ -1,4 +1,4 @@
-import PerfilCard from "../components/perfil-card/perfil-card.component";
+import PerfilCard from "../../components/perfil-card/perfil-card.component";
 import { useState, useEffect } from 'react'
 
 export default function Perfil (){

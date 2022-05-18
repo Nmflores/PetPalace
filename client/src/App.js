@@ -1,25 +1,32 @@
 import { useState, useEffect } from "react";
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Perfil from "./pages/Perfil";
+import {Routes, Route, Outlet} from 'react-router-dom';
+import Perfil from "./routes/perfil/Perfil.component";
 import Menu from "./components/menu/Menu.component";
 import Login from "./components/login/Login.component";
 import Cadastro from "./components/cadastro/Cadastro.component";
 
 
 function App() {
-  {/*const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    fetch("http://localhost:8080/api/v1/users")
-      .then((response) => response.json())
-      .then((users) => setUsers(users));
-  }, []); */}
+  const Navigation = () => {
+      return(
+        <div>
+          <div><h1>Nav Placeholder</h1></div>
+          <Outlet />
+        </div>
+        
+      )
+  }
 
   return (
     <div className="App">
-      <Menu />
-       {/*<CardListUsers users={users}/>*/} 
+      <Routes>
+        <Route path="/" element={<Navigation />}>
+          <Route path="profile" element={<Perfil />}>
+        </Route>
+        </Route>
+      </Routes>
     </div>
   );
 }
