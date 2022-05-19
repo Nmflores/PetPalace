@@ -1,0 +1,14 @@
+{
+    "server": {
+      "port" : 8080
+    },
+    "jwt":{
+      "key" : "somerandomShit"
+    },
+    "database":{
+      "host":"localhost",
+      "user": "root",
+      "password": "",
+      "databaseName":"petpalace"
+    }
+  }

@@ -1,0 +1,72 @@
+-- Inserting a new USER -- VALUES(user_id, username, first_name, second_name, email, user_gender, user_role. password, salt, cpf);
+insert into users VALUES("1asdj3123djhsd", "rogerin", "rogerio", "alves", "rogerioalves@ibest.com", 0, 1, "12345", "", "0374238752");
+
+
+-- Inserting a new GENDER -- VALUES(gender_id, gender);
+INSERT into genders VALUES(0, "masculino"), (1, "feminino");
+
+-- Inserting a new ROLE -- VALUES(role_id, role);
+INSERT into roles VALUES(0, "admin"), (1, "prestador"), (2, "cliente");
+
+-- Inserting a new AVAILABLE SERVICE -- VALUES(service_id, service_name);
+insert into available_services VALUES(0, "hospedagem"),(1, "passeio");
+
+-- Inserting a new WORKER SERVICE -- VALUES(worker_id,  service_id);
+insert into worker_services VALUES("1asdj3123djhsd", 0);
+
+
+
+==================================================================================================================================================
+
+
+-- SELECT ALL ADMINS -- ROLE ID 0
+SELECT USERS.FIRST_NAME, ROLES.ROLE FROM USERS, ROLES WHERE USERS.USER_ROLE = 0 AND ROLES.ROLE_ID = 0;
+
+-- SELECT ALL WORKERS -- ROLE ID 1
+SELECT USERS.FIRST_NAME, ROLES.ROLE FROM USERS, ROLES WHERE USERS.USER_ROLE = 1 AND ROLES.ROLE_ID = 1;
+
+-- SELECT ALL CLIENTS -- ROLE ID 2
+SELECT USERS.FIRST_NAME, ROLES.ROLE FROM USERS, ROLES WHERE USERS.USER_ROLE = 2 AND ROLES.ROLE_ID = 2;
+
+
+-- SELECT ALL USERS THAT HAVE A WORK
+SELECT A.first_name, B.role, C.service_name FROM USERS A, ROLES B, AVAILABLE_SERVICES C, WORKER_SERVICES D WHERE A.user_role = B.role_id AND D.worker_id = A.user_id AND D.service_id = C.service_id;
+
+
+
+-- SELECT FEMALE WORKERS -- user_gender = 1 AND user_role = 1
+SELECT A.FIRST_NAME, A.SECOND_NAME FROM USERS A WHERE A.user_gender = 1 AND A.user_role = 1;
+
+
+-- SELECT FEMALE CLIENTS -- user_gender = 1 AND user_role = 2
+SELECT A.FIRST_NAME, A.SECOND_NAME FROM USERS A WHERE A.user_gender = 1 AND A.user_role = 2;
+
+
+
+-- SELECT FEMALE WORKERS AND HER JOBS -- user_gender = 1 AND user_role = 1
+SELECT A.FIRST_NAME, A.SECOND_NAME, B.service_name FROM USERS A, AVAILABLE_SERVICES B, WORKER_SERVICES C WHERE A.user_gender = 1 AND A.user_role = 1 AND C.worker_id = A.user_id AND B.service_id = C.service_id;
+
+
+-- SELECT MALE WORKERS -- user_gender = 0 AND user_role = 1
+SELECT A.FIRST_NAME, A.SECOND_NAME FROM USERS A WHERE A.user_gender = 0 AND A.user_role = 1;
+
+
+-- SELECT MALE CLIENTS -- user_gender = 0 AND user_role = 2
+SELECT A.FIRST_NAME, A.SECOND_NAME FROM USERS A WHERE A.user_gender = 0 AND A.user_role = 2;
+
+
+
+-- SELECT MALE WORKERS AND HER JOBS -- user_gender = 0 AND user_role = 1
+SELECT A.FIRST_NAME, A.SECOND_NAME, B.service_name FROM USERS A, AVAILABLE_SERVICES B, WORKER_SERVICES C WHERE A.user_gender = 0 AND A.user_role = 1 AND C.worker_id = A.user_id AND B.service_id = C.service_id;
+
+
+-- SELECT ALL USERS WITH ROLE 1 AND THEIR JOBS
+SELECT A.user_id, A.first_name, A.second_name, C.service_name FROM USERS A, WORKER_SERVICES B, AVAILABLE_SERVICES C WHERE A.user_role = 1 AND A.user_id = B.worker_id AND C.service_id = B.service_id
+
+
+-- SHOW ALL USERS WITH ROLE 1(WORKERS) AND WITH SERVICE ID X
+SELECT A.user_id, A.first_name, A.second_name, C.service_name FROM USERS A, WORKER_SERVICES B, AVAILABLE_SERVICES C WHERE A.user_role = 1 AND A.user_id = B.worker_id AND C.service_id = B.service_id AND B.service_id = ?;
+
+
+-- SELECT USERS THAT HAVE PETS, AND EXPLICIT THE PETS
+SELECT A.USER_ID, A.FIRST_NAME, B.PET_NAME, C.PET_TYPE FROM USERS A, PETS B, PET_TYPES C WHERE A.USER_ID = B.owner_id AND B.pet_type = C.pet_type_id; 
