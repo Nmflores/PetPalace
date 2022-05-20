@@ -10,10 +10,8 @@ module.exports = (app) => {
   const dbConn = app.repositories.dbConfig
   const pool = dbConn.initPool();
 
-  const checks = app.services.checks
-  const {
-    checkUser
-  } = checks
+  const { checkUser } = app.services.checks
+
 
   const { usersResult , errorHandler, messages} = app.services.output
   const controller = {};
@@ -78,8 +76,7 @@ module.exports = (app) => {
     const {
       userId
     } = req.params;
-    const isRegistered = await checkUser(userId)
-    if (isRegistered) {
+    if (await checkUser(userId)) {
       const query = "DELETE FROM USERS WHERE USER_ID = ?;";
       pool.query(query, userId, (err, result) => {
         if (err) res.status(404).send({

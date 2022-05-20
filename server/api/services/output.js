@@ -25,6 +25,24 @@ module.exports = app => {
         }
     };
 
+    services.petsResult = async(result) => {
+        if (result.length > 0) {
+          // CREATE A JSON RESPONSE TO SEND
+          const response = 
+          result.map((pet) => {
+              return {
+                ownerId: pet.OWNER_ID,
+                ownerName: pet.FIRST_NAME,
+                petId: pet.PET_ID,
+                petName: pet.PET_NAME,
+                petType: pet.PET_TYPE,
+                petBreed: pet.PET_BREED,
+              };
+            });
+          return response;
+        } else {
+        }
+
     services.errorHandler = (error) => {
       if (error.errno === 1062) {
         services.messages(1)
@@ -34,7 +52,9 @@ module.exports = app => {
     services.messages = (msgNbr) => {
         const messages = [
             'Usuario ja cadastrado no sistema',
-            'Usuario nao cadastrado no sistema'
+            'Usuario nao cadastrado no sistema',
+            "Pet nao cadastrado no sistema"
+
         ];
         return messages[msgNbr];
       };

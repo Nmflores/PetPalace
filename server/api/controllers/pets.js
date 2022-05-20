@@ -1,24 +1,6 @@
 const { v4: uuidV4 } = require("uuid");
 
-let petsResult = function async(result) {
-  if (result.length > 0) {
-    // CREATE A JSON RESPONSE TO SEND
-    const response = 
-    result.map((pet) => {
-        return {
-          ownerId: pet.OWNER_ID,
-          ownerName: pet.FIRST_NAME,
-          petId: pet.PET_ID,
-          petName: pet.PET_NAME,
-          petType: pet.PET_TYPE,
-          petBreed: pet.PET_BREED,
-        };
-      });
-    return response;
-  } else {
-    return [];
-  }
-};
+
 
 let errorHandler = function async(error) {
   if (error.errno === 1062) {
@@ -29,6 +11,7 @@ let errorHandler = function async(error) {
 module.exports = (app) => {
   const dbConn = app.repositories.dbConfig
   const pool = dbConn.initPool();
+  const { petsResult, errorHandler, messages } = app.services.output
   const controller = {};
 
   let checkPet = async (petId) =>{
@@ -106,7 +89,7 @@ module.exports = (app) => {
     // CALL THE EXECUTE PASSING THE QUERY
     pool.query(query, [userId], (err, result) => {
       if (err) {
-        return res.status(404).send("Usuario nao cadastrado");
+        return res.status(404).send(messages(1));
       } else {
         const response = petsResult(result);
         return res.status(200).send(response);
@@ -119,7 +102,7 @@ module.exports = (app) => {
     const query = 'SELECT A.OWNER_ID, C.FIRST_NAME , A.PET_ID, A.PET_NAME, B.PET_TYPE, A.PET_BREED FROM PETS A, PET_TYPES B, USERS C WHERE A.PET_TYPE = B.PET_TYPE_ID AND A.OWNER_ID = C.USER_ID AND A.PET_ID = ? LIMIT 10;';
     pool.query(query, [petId], (err, result) => {
       if (err) {
-        return res.status(404).send("Pet nao cadastrado");
+        return res.status(404).send(messages(2));
       } else {
         const response = petsResult(result);
         return res.status(200).send(response);
@@ -169,7 +152,7 @@ module.exports = (app) => {
         }
       }
     }else{
-      res.status(404).send({ msg: 'Pet nao encontrado' })
+      res.status(404).send(messages(2))
     }
 }
 
