@@ -1,7 +1,7 @@
 const express    = require('express');
+const path       = require('path');
 const bodyParser = require('body-parser');
 const config     = require('config');
-const dbConfig = require('./dbConfig');
 const consign    = require('consign');
 const cors       = require('cors');
 
@@ -12,23 +12,23 @@ module.exports = () => {
 
   // SETANDO VARIÁVEIS DA APLICAÇÃO
   app.set('port', process.env.PORT || config.get('server.port'));
-  app.set('key', config.get('jwt.key'));
-  app.set('dbConn', dbConfig);
+  app.set('jwtKey', config.get('jwt.key'));
 
   // MIDDLEWARES
   app.use(bodyParser.json());
-  app.use(function(req, res, next) {
+  app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
   });
 
   // ENDPOINTS -- ligando pastas a entidade do express
-  consign({cwd: 'api'})
-    .then('controllers')
-    .then('routes')
-    .then('services')
-    .into(app);
+  consign({ cwd: 'api' })
+  .then('repositories')
+  .then('services')  
+  .then('controllers')
+  .then('routes')
+  .into(app);
 
   return app;
 };

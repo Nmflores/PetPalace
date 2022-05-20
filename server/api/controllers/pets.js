@@ -27,13 +27,14 @@ let errorHandler = function async(error) {
 };
 
 module.exports = (app) => {
-  const dbConn = app.get("dbConn");
+  const dbConn = app.repositories.dbConfig
+  const pool = dbConn.initPool();
   const controller = {};
 
   let checkPet = async (petId) =>{
     return new Promise((resolve) => { 
       const query = "SELECT A.PET_NAME FROM PETS A WHERE PET_ID = ?;";      
-      dbConn.pool.query(query, petId, (err, result) => {                  
+      pool.query(query, petId, (err, result) => {                  
       if (err) { 
         resolve(false);
       } 
@@ -51,7 +52,7 @@ module.exports = (app) => {
   let checkUser = async (userId) =>{
     return new Promise((resolve) => { 
       const query = "SELECT A.first_name FROM USERS A WHERE USER_ID = ?;";
-      dbConn.pool.query(query, userId, (err, result) => {                  
+      pool.query(query, userId, (err, result) => {                  
       if (err) { 
         resolve(false);
       } 
@@ -68,7 +69,7 @@ module.exports = (app) => {
 
   controller.listPets = async (req, res) => {
     const query = 'SELECT A.OWNER_ID, C.FIRST_NAME, C.SECOND_NAME ,A.PET_ID, A.PET_NAME, B.PET_TYPE, A.PET_BREED FROM PETS A, PET_TYPES B, USERS C WHERE A.PET_TYPE = B.PET_TYPE_ID AND A.OWNER_ID = C.USER_ID LIMIT 10;';
-    dbConn.pool.query(query, (err, result) => {
+    pool.query(query, (err, result) => {
       if (err) {
         res.status(404).send(err);
       } else {
@@ -85,7 +86,7 @@ module.exports = (app) => {
       "INSERT INTO PETS(OWNER_ID, PET_ID, PET_NAME, PET_TYPE, PET_BREED) VALUES(?, ? , ? , ?, ?);";
     const params = [ownerId, petId, petName, petType, petBreed]
     // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
-    dbConn.pool.query(query, params, (err, result) => {
+    pool.query(query, params, (err, result) => {
       if (err) res.status(404).send(err);
       else {
         if(result.affectedRows > 0){
@@ -103,7 +104,7 @@ module.exports = (app) => {
     // GET ALL INFO OF THE USER PER USERID
     const query = 'SELECT A.OWNER_ID, C.FIRST_NAME ,A.PET_ID, A.PET_NAME, B.PET_TYPE, A.PET_BREED FROM PETS A, PET_TYPES B, USERS C WHERE A.PET_TYPE = B.PET_TYPE_ID AND A.OWNER_ID = C.USER_ID AND A.OWNER_ID = ? LIMIT 10;';
     // CALL THE EXECUTE PASSING THE QUERY
-    dbConn.pool.query(query, [userId], (err, result) => {
+    pool.query(query, [userId], (err, result) => {
       if (err) {
         return res.status(404).send("Usuario nao cadastrado");
       } else {
@@ -116,7 +117,7 @@ module.exports = (app) => {
   controller.getPetsByPetId = (req, res) => {
     const { petId } = req.params;
     const query = 'SELECT A.OWNER_ID, C.FIRST_NAME , A.PET_ID, A.PET_NAME, B.PET_TYPE, A.PET_BREED FROM PETS A, PET_TYPES B, USERS C WHERE A.PET_TYPE = B.PET_TYPE_ID AND A.OWNER_ID = C.USER_ID AND A.PET_ID = ? LIMIT 10;';
-    dbConn.pool.query(query, [petId], (err, result) => {
+    pool.query(query, [petId], (err, result) => {
       if (err) {
         return res.status(404).send("Pet nao cadastrado");
       } else {
@@ -131,7 +132,7 @@ module.exports = (app) => {
   controller.removePetByPetId = (req, res) => {
     const { petId } = req.params;
     const query = "DELETE FROM PETS WHERE PET_ID = ?;";
-    dbConn.pool.query(query, petId, (err, result) => {
+    pool.query(query, petId, (err, result) => {
       if (err) res.status(404).send({ msg: errorHandler(err) });
       else {
         if (result.affectedRows === 1) {
@@ -156,9 +157,9 @@ module.exports = (app) => {
           ];
       
 
-            const query = `UPDATE PETS SET PET_NAME = ?, PET_TYPE = ?,
+          const query = `UPDATE PETS SET PET_NAME = ?, PET_TYPE = ?,
           PET_BREED = ? WHERE PET_ID = ?;`;
-          dbConn.pool.query(query, petParams, (err, result) => {
+          pool.query(query, petParams, (err, result) => {
             if (err) {
               console.log(err);
               res.status(404).send({ msg: errorHandler(err) })
