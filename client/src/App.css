@@ -5,8 +5,10 @@
   justify-content: center;
 }
 
-
-
 .show{
   display: block !important;
+}
+
+.main-content {
+  padding: 4rem;
 }
