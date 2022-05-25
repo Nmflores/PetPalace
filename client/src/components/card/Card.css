@@ -4,11 +4,11 @@
   padding: 0.9375rem 1.25rem;
   display: flex;
   flex-direction: row;
-  border-radius: 5px;
+  border-radius: 0.3125rem;
   justify-content: left;
   color: #eee;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.625rem;
 }
 
 .card-description {
