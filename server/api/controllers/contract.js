@@ -10,7 +10,8 @@ module.exports = app => {
     const pool = dbConn.initPool();
     const controller = {};
     const {
-        registerPetTypesForContract
+        registerPetTypesForContract,
+        updateLoyalty
     } = app.services.queries;
     const {
         checkUser,
@@ -133,6 +134,11 @@ module.exports = app => {
                     res.status(201).json({
                         msg: 'Feedback criado com sucesso'
                     })
+                    const updateUsersLoyalty = async () =>{
+                        await updateLoyalty(worker_id, owner_rating)
+                        await updateLoyalty(owner_id, worker_rating)
+                    }
+                    updateUsersLoyalty()
                 } else {
                     res.status(404).json({
                         msg: 'Erro durante cadastro de feedback'

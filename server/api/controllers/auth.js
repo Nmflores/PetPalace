@@ -18,14 +18,16 @@ module.exports = app => {
     createAccessToken
   } = app.services.accessToken;
   const {
-    createLoyalty
+    createLoyalty, updateLoyalty
   }= app.services.queries;
   const {
     errorHandler,
     messages
   } = app.services.output;
 
+
   controller.login = async (req, res) => {
+    console.log(await updateLoyalty("169abf14-7dd2-48c6-b7e3-626c90574f7d", 5))
     const {
       username,
       password

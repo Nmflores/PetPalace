@@ -49,6 +49,7 @@ module.exports = app => {
 
     //NEED TO CERTIFY THAT THE LOYALTY SYSTEM IS REGISTERING AUTOMATICALY FOR ALL NEW USERS
     //NEED TO MAKE A NEW USER TO CERTIFY THAT
+    //DONE, WORKING GREAT
     
     //LOYALTY SYSTEM
     //LVL 0 TO 1 -- NEEDS 10 TOTAL STARS OF RATING ON THE FEEDBACKS
@@ -64,7 +65,42 @@ module.exports = app => {
     // SUM THE RECEIVED ON THE FEEDBACK RATING ON THE ACTUAL RATING, UPDATING THE LAST UPDATED AT AND THE LAST RATING VALUE.
     // 2 --
     // MAKE A MICROSERVICE TO MAKE ALL THE PROCEDURE OF ABOVE, MAYBE HARDER
+    services.updateLoyalty = async (userId, plusFactor) =>{
+      return new Promise((resolve) => {
+        if(plusFactor <= 5){
+          let ratingSum = plusFactor;
+  
+          const query = "SELECT ACTUAL_RATING FROM LOYALTY WHERE USER_ID = ?;";
+          pool.query(query, [userId], (err, result) => {
+              if (err) {
+                  console.log(err)
+              } else {
+                if (result.length > 0) {
+                    let lastRating = result[0].ACTUAL_RATING
+                    ratingSum += result[0].ACTUAL_RATING
+                    const query = `UPDATE LOYALTY SET ACTUAL_RATING = ?, LAST_RATING = ?, LAST_UPDATED_AT = NOW() WHERE USER_ID = ?;`
+                    const params = [ratingSum, lastRating, userId]
+                    pool.query(query, params, (err, result) => {
+                      if(err){
+                        resolve(false)
+                      }else{
+                        if(result.affectedRows > 0){
+                          resolve(true)
+                        }
+                      }
+                    })
+                } else {
+                  resolve(false)
 
+                }
+              }
+          })
+        }else{
+          resolve(false)
+
+        }
+      })
+      }
 
     return services;
 }
