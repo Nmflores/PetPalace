@@ -2,53 +2,13 @@ const { v4: uuidV4 } = require("uuid");
 
 
 
-let errorHandler = function async(error) {
-  if (error.errno === 1062) {
-    return `Usuario ja cadastrado no sistema`;
-  }
-};
-
 module.exports = (app) => {
   const dbConn = app.repositories.dbConfig
   const pool = dbConn.initPool();
+  const { checkUser, checkPet } = app.services.checks
   const { petsResult, errorHandler, messages } = app.services.output
   const controller = {};
 
-  let checkPet = async (petId) =>{
-    return new Promise((resolve) => { 
-      const query = "SELECT A.PET_NAME FROM PETS A WHERE PET_ID = ?;";      
-      pool.query(query, petId, (err, result) => {                  
-      if (err) { 
-        resolve(false);
-      } 
-      else { 
-        if(result.length > 0){
-          resolve(true);
-        }else{
-          resolve(false);
-        }
-      } 
-    })
-  })
-  }
-
-  let checkUser = async (userId) =>{
-    return new Promise((resolve) => { 
-      const query = "SELECT A.first_name FROM USERS A WHERE USER_ID = ?;";
-      pool.query(query, userId, (err, result) => {                  
-      if (err) { 
-        resolve(false);
-      } 
-      else { 
-        if(result.length > 0){
-          resolve(true);
-        }else{
-          resolve(false);
-        }
-      } 
-    })
-  })
-  }
 
   controller.listPets = async (req, res) => {
     const query = 'SELECT A.OWNER_ID, C.FIRST_NAME, C.SECOND_NAME ,A.PET_ID, A.PET_NAME, B.PET_TYPE, A.PET_BREED FROM PETS A, PET_TYPES B, USERS C WHERE A.PET_TYPE = B.PET_TYPE_ID AND A.OWNER_ID = C.USER_ID LIMIT 10;';
@@ -81,48 +41,57 @@ module.exports = (app) => {
   };
 
 
-  controller.getPetsByUserId = (req, res) => {
+  controller.getPetsByUserId = async (req, res) => {
     // GET USERID FROM REQ PARAMS
     const { userId } = req.params;
     // GET ALL INFO OF THE USER PER USERID
-    const query = 'SELECT A.OWNER_ID, C.FIRST_NAME ,A.PET_ID, A.PET_NAME, B.PET_TYPE, A.PET_BREED FROM PETS A, PET_TYPES B, USERS C WHERE A.PET_TYPE = B.PET_TYPE_ID AND A.OWNER_ID = C.USER_ID AND A.OWNER_ID = ? LIMIT 10;';
+    if(await checkUser(userId)){
+      const query = 'SELECT A.OWNER_ID, C.FIRST_NAME ,A.PET_ID, A.PET_NAME, B.PET_TYPE, A.PET_BREED FROM PETS A, PET_TYPES B, USERS C WHERE A.PET_TYPE = B.PET_TYPE_ID AND A.OWNER_ID = C.USER_ID AND A.OWNER_ID = ? LIMIT 10;';
     // CALL THE EXECUTE PASSING THE QUERY
     pool.query(query, [userId], (err, result) => {
       if (err) {
-        return res.status(404).send(messages(1));
+        return res.status(404).send({msg : errorHandler(err)});
       } else {
         const response = petsResult(result);
         return res.status(200).send(response);
       }
     });
+    }
+
   };
 
-  controller.getPetsByPetId = (req, res) => {
+  controller.getPetsByPetId = async (req, res) => {
     const { petId } = req.params;
-    const query = 'SELECT A.OWNER_ID, C.FIRST_NAME , A.PET_ID, A.PET_NAME, B.PET_TYPE, A.PET_BREED FROM PETS A, PET_TYPES B, USERS C WHERE A.PET_TYPE = B.PET_TYPE_ID AND A.OWNER_ID = C.USER_ID AND A.PET_ID = ? LIMIT 10;';
-    pool.query(query, [petId], (err, result) => {
+    if(await checkPet(petId)){
+      const query = 'SELECT A.OWNER_ID, C.FIRST_NAME , A.PET_ID, A.PET_NAME, B.PET_TYPE, A.PET_BREED FROM PETS A, PET_TYPES B, USERS C WHERE A.PET_TYPE = B.PET_TYPE_ID AND A.OWNER_ID = C.USER_ID AND A.PET_ID = ? LIMIT 10;';
+      pool.query(query, [petId], (err, result) => {
       if (err) {
-        return res.status(404).send(messages(2));
+        return res.status(404).send({msg: errorHandler(err)});
       } else {
         const response = petsResult(result);
         return res.status(200).send(response);
       }
     });
+    }
   };
 
 
 
-  controller.removePetByPetId = (req, res) => {
+  controller.removePetByPetId = async (req, res) => {
     const { petId } = req.params;
-    const query = "DELETE FROM PETS WHERE PET_ID = ?;";
-    pool.query(query, petId, (err, result) => {
-      if (err) res.status(404).send({ msg: errorHandler(err) });
-      else {
-        if (result.affectedRows === 1) {
-          res.status(200).send({ msg: "Pet deletado com sucesso" });
+    if(await checkPet(petId)){
+      const query = "DELETE FROM PETS WHERE PET_ID = ?;";
+      pool.query(query, petId, (err, result) => {
+        if (err) res.status(404).send({ msg: errorHandler(err) });
+        else {
+          if (result.affectedRows === 1) {
+            res.status(200).send({ msg: "Pet deletado com sucesso" });
+          }
         }
-      }
-    });
+      }); 
+    }else{
+      res.status(200).send({ msg: messages(2) });
+    }
   };
 
   controller.updatePetByPetId = async (req, res) => {
@@ -139,7 +108,6 @@ module.exports = (app) => {
             petName, petType, petBreed, petId
           ];
       
-
           const query = `UPDATE PETS SET PET_NAME = ?, PET_TYPE = ?,
           PET_BREED = ? WHERE PET_ID = ?;`;
           pool.query(query, petParams, (err, result) => {
@@ -152,7 +120,7 @@ module.exports = (app) => {
         }
       }
     }else{
-      res.status(404).send(messages(2))
+      res.status(404).send({msg : messages(3)})
     }
 }
 

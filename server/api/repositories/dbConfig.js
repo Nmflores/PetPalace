@@ -3,9 +3,6 @@ const config     = require('config');
 const app        = require('express')();
 
 
-
-
-
 module.exports = app => {
     const dbConfig = {};
 

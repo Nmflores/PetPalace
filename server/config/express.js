@@ -1,9 +1,10 @@
-const express    = require('express');
-const path       = require('path');
-const bodyParser = require('body-parser');
-const config     = require('config');
-const consign    = require('consign');
-const cors       = require('cors');
+const express      = require('express');
+const path         = require('path');
+const bodyParser   = require('body-parser');
+const config       = require('config');
+const consign      = require('consign');
+const cors         = require('cors');
+const cookieParser = require('cookie-parser')
 
 
 
@@ -15,6 +16,7 @@ module.exports = () => {
   app.set('jwtKey', config.get('jwt.key'));
 
   // MIDDLEWARES
+  app.use(cookieParser())
   app.use(bodyParser.json());
   app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");

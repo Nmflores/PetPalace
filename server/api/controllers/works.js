@@ -1,12 +1,9 @@
-let errorHandler = function async (err) {
-  if (err.errno === 1062) {
-    return `Servico ja cadastrado para Usuario`;
-  }
-};
+
 
 module.exports = (app) => {
   const dbConn = app.repositories.dbConfig
   const pool = dbConn.initPool();
+  const { errorHandler, messages } = app.services.output
   const controller = {};
 
   let checkUser = async (userId) => {
@@ -104,7 +101,7 @@ module.exports = (app) => {
         else {
           if (result.affectedRows > 0) {
             res.status(200).send({
-              msg: 'Servico cadastrado com sucesso'
+              msg: messages(4)
             });
           } else {
             res.status(200).send({
@@ -115,7 +112,7 @@ module.exports = (app) => {
       });
     } else {
       res.status(404).send({
-        msg: `Usuario nao encontrado`
+        msg: messages(1)
       });
     }
   };

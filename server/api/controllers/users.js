@@ -20,7 +20,7 @@ module.exports = (app) => {
 
   controller.listUsers = async (req, res) => {
     // GET ALL INFO OF THE 10 FIRST USERS ON THE TABLE
-    const query = "SELECT * FROM USERS LIMIT 10;";
+    const query = "SELECT * FROM USERS;";
     // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
     pool.query(query, (err, result) => {
       if (err) {

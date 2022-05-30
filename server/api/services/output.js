@@ -25,7 +25,7 @@ module.exports = app => {
         }
     };
 
-    services.petsResult = async(result) => {
+    services.petsResult = function async (result) {
         if (result.length > 0) {
           // CREATE A JSON RESPONSE TO SEND
           const response = 
@@ -40,7 +40,7 @@ module.exports = app => {
               };
             });
           return response;
-        } else {
+        } 
         }
 
     services.errorHandler = (error) => {
@@ -51,10 +51,14 @@ module.exports = app => {
 
     services.messages = (msgNbr) => {
         const messages = [
-            'Usuario ja cadastrado no sistema',
-            'Usuario nao cadastrado no sistema',
-            "Pet nao cadastrado no sistema"
-
+            "Usuario já cadastrado no sistema",
+            "Usuario não cadastrado no sistema",
+            "Pet não cadastrado no sistema",
+            "Serviço cadastrado com sucesso",
+            "Serviço não encontrado no sistema",
+            "Serviço já cadastrado no sistema",
+            "Serviço adicionado a fila de espera",
+            "Serviço não foi adicionado a fila de espera"
         ];
         return messages[msgNbr];
       };

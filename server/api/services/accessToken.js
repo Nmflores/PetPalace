@@ -1,6 +1,5 @@
 const jwt    = require('jsonwebtoken');
 
-
 module.exports = app => {
   const services = {};
   const JWT_SECRET_KEY = app.get('jwtKey');
