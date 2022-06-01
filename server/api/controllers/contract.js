@@ -128,16 +128,24 @@ module.exports = app => {
             "INSERT INTO USERS_FEEDBACK(queue_id,worker_id,owner_id,worker_feedback,worker_rating, owner_feedback, owner_rating) VALUES(?);";
         pool.query(query, [params], (err, result) => {
             if (err) {
-                res.status(404).send(err);
+                // IN CASE QUEUE_ID HAS ALREADY BEEN REGISTERED
+                res.status(404).json({
+                    msg: 'Feedback já registrado para este Contrato'
+                });
             } else {
+                // IN CASE THE FEEDBACK INSERTION GOES RIGHT
                 if (result.affectedRows > 0) {
                     res.status(201).json({
                         msg: 'Feedback criado com sucesso'
                     })
-                    const updateUsersLoyalty = async () =>{
+                    // CREATE A FUNCTION TO CALL THE UPDATE LOYALTY FOR THE 2 USERS INVOLVED
+                    const updateUsersLoyalty = async () => {
+                        // FOR THE WORKER RATING WE GET THE OWNER RATED VALUE
                         await updateLoyalty(worker_id, owner_rating)
+                        // FOR THE OWNER RATING WE GET THE WORKER RATED VALUE
                         await updateLoyalty(owner_id, worker_rating)
                     }
+                    // CALL THE FUNCTIONS THAT WILL UPDATE THE USERS LOYALTY
                     updateUsersLoyalty()
                 } else {
                     res.status(404).json({
@@ -149,6 +157,7 @@ module.exports = app => {
         });
     }
 
+    // GET ALL THE FEEDBACKS
     controller.getFeedBacks = async (req, res) => {
         const query =
             "SELECT * FROM USERS_FEEDBACK;";
@@ -167,6 +176,27 @@ module.exports = app => {
 
         });
     }
+
+        // GET THE FEEDBACK BASED ON THE CONTRACT/QUEUE
+        controller.getFeedBackByQueueId = async (req, res) => {
+            const { queueId } = req.params
+            const query =
+                "SELECT * FROM USERS_FEEDBACK WHERE QUEUE_ID = ?;";
+            pool.query(query, [queueId], (err, result) => {
+                if (err) {
+                    res.status(404).send(err);
+                } else {
+                    if (result.length > 0) {
+                        res.status(201).json(result)
+                    } else {
+                        res.status(404).json({
+                            msg: 'Nenhum feedback cadastrado para esta fila'
+                        })
+                    }
+                }
+    
+            });
+        }
 
 
     return controller;

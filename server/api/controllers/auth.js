@@ -18,7 +18,7 @@ module.exports = app => {
     createAccessToken
   } = app.services.accessToken;
   const {
-    createLoyalty, updateLoyalty
+    registerUser, registerUserAuth ,createLoyalty, updateLoyalty
   }= app.services.queries;
   const {
     errorHandler,
@@ -32,12 +32,8 @@ module.exports = app => {
       username,
       password
     } = req.body;
-    console.log(req.body)
     if (username && password) {
-      // VERIFY USERNAME
       if (await checkUserPerUserName(username)) {
-        // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
-              // CHECK PASSWORD
               const query =
                 "SELECT A.USER_ID FROM USERS_AUTH A WHERE A.USERNAME = ? AND A.PASSWORD = ?;";
               pool.query(query, [username, password], (err, result) => {
@@ -131,46 +127,10 @@ module.exports = app => {
 
       const loginParams = [userId, username, email, password];
 
-      const query = `INSERT INTO USERS(USER_ID, FIRST_NAME, SECOND_NAME, USER_GENDER, CPF, ADDRESS, ADDRESS_NBR, DISTRICT, CEP, STATE) VALUES(?,?,?,?,?,?,?,?,?,?);`;
+      const result = await registerUser(userId, userParams,  loginParams)
+      console.log("1",result)
+      res.status(201).send(result)
 
-      pool.query(query, userParams, (err, result) => {
-        if (err) res.status(404).send({
-          msg: errorHandler(err)
-        });
-        else {
-          const query = `INSERT INTO USERS_AUTH(USER_ID, USERNAME, EMAIL, PASSWORD) VALUES(?, ?, ? ,?)`;
-          pool.query(query, loginParams, (err, result) => {
-            if (err) res.status(404).json({
-              registerStatus: 0,
-              msg: errorHandler(err)
-            });
-            else {
-              if(createLoyalty(userId)){
-                res
-                .status(200)
-                .json({
-                  registerStatus: 1,
-                  msg: `Usuario ${firstName} cadastrado com sucesso`
-                });
-              }else{
-                res
-                .status(200)
-                .json({
-                  registerStatus: 0,
-                  msg: `Erro ao cadastrar lealdade de usuario`
-                });
-              }
-              
-            }
-          });
-        }
-      });
-    } else {
-      res
-        .status(200)
-        .json({
-          msg: `Faltam informaçoes para continuar com o cadastro`
-        });
     }
   };
 
