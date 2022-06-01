@@ -4,7 +4,6 @@ module.exports = app => {
   const pool = dbConn.initPool();
 
   const {
-    errorHandler,
     messages
   } = app.services.output;
 
@@ -17,7 +16,7 @@ module.exports = app => {
         if (err.sqlMessage.includes('cpf')) {
           resolve('cpf duplicado')
         } else if (err.sqlMessage.includes('user_id')) {
-          console.log('user id duplicado')
+          resolve('user id duplicado')
         }
       } else {
         if (result.affectedRows > 0) {
@@ -44,20 +43,15 @@ module.exports = app => {
             resolve('email duplicado')
           }
 
-          //resolve({registerStatus: 0, msg: errorHandler(err)})
         } else {
           if (result.affectedRows > 0) {
             if (services.createLoyalty(userId)) {
-              //console.log("credenciais de login cadastradas")
-              resolve("credenciais de login cadastradas")
+              resolve("Usuario cadastrado com sucesso")
             } else {
-              //console.log("erro durante cadastro de lealdade")
               resolve("erro durante cadastro de lealdade")
               }
           } else {
-            //console.log("Erro ao cadastrar usuario")
             resolve("Erro ao cadastrar usuario")
-            //resolve({registerStatus: 0, msg: `Erro ao cadastrar usuario`})
           }
         }
       })

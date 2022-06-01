@@ -43,11 +43,6 @@ module.exports = app => {
         } 
         }
 
-    services.errorHandler = (error) => {
-      if (error.errno === 1062) {
-        services.messages(1)
-      }
-    };
 
     services.messages = (msgNbr) => {
         const messages = [
@@ -58,7 +53,8 @@ module.exports = app => {
             "Serviço não encontrado no sistema",
             "Serviço já cadastrado no sistema",
             "Serviço adicionado a fila de espera",
-            "Serviço não foi adicionado a fila de espera"
+            "Serviço não foi adicionado a fila de espera", 
+            ""
         ];
         return messages[msgNbr];
       };
