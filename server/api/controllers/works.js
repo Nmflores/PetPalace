@@ -1,121 +1,64 @@
-
-
 module.exports = (app) => {
   const dbConn = app.repositories.dbConfig
   const pool = dbConn.initPool();
-  const { errorHandler, messages } = app.services.output
+  const {
+    errorHandler,
+    messages
+  } = app.services.output
   const controller = {};
 
-  let checkUser = async (userId) => {
-    return new Promise((resolve) => {
-      const query = "SELECT A.first_name FROM USERS A WHERE USER_ID = ?;";
-      pool.query(query, userId, (err, result) => {
-        if (err) {
-          resolve(false);
-        } else {
-          if (result.length > 0) {
-            resolve(true);
-          } else {
-            resolve(false);
-          }
-        }
-      })
-    })
-  }
+  const {
+    getWorkers,
+    getWorkersByUserId,
+    getWorkersByServiceId,
+    registerWork, 
+  } = app.services.queries
 
-  controller.listWorks = (req, res) => {
-    const query =
-      "SELECT A.user_id, A.first_name, A.second_name, B.service_id, C.service_name FROM USERS A, WORKER_SERVICES B, AVAILABLE_SERVICES C WHERE A.user_id = B.user_id AND C.service_id = B.service_id;";
-    // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
-    pool.query(query, (err, result) => {
-      if (err) res.status(404).send(err);
-      else res.status(200).send(result);
-    });
+  controller.listWorks = async (req, res) => {
+    const result = await getWorkers()
+    res.status(result.status).json({
+      data: result.data
+    })
   };
 
-  controller.listWorksByUserId = (req, res) => {
+  controller.listWorksByUserId = async (req, res) => {
     const {
       userId
     } = req.params;
-    if (userId) {
-      const query =
-        "SELECT A.user_id, A.first_name, A.second_name, B.service_id, C.service_name FROM USERS A, WORKER_SERVICES B, AVAILABLE_SERVICES C WHERE A.user_id = B.user_id AND C.service_id = B.service_id AND A.user_id = ?;";
-      pool.query(query, [userId], (err, result) => {
-        if (err) res.status(404).send(err);
-        else res.status(200).send(result);
-      });
-    } else {
-      res.status(404).send({
-        msg: `Faltam informaçoes para continuar com a busca de Serviços`
-      });
-    }
-  };
+    const result = await getWorkersByUserId(userId)
+    res.status(result.status).json({
+      data: result.data
+    })
+  }
 
-  controller.listWorkByServiceId = (req, res) => {
+  controller.listWorkByServiceId = async (req, res) => {
     // GET B.SERVICE_ID FROM REQ.PARAMS
     let {
       serviceId
     } = req.params;
     serviceId = Number.parseInt(serviceId);
     if (Number.isInteger(serviceId)) {
-      const query =
-        "SELECT A.user_id, A.first_name, A.second_name, B.service_id, C.service_name FROM USERS A, WORKER_SERVICES B, AVAILABLE_SERVICES C WHERE A.user_id = B.user_id AND C.service_id = B.service_id AND B.service_id = ?;";
-
-      // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
-      pool.query(query, serviceId, (err, result) => {
-        if (err) res.status(404).send(err);
-        else {
-          if (result.length > 0) {
-            res.status(200).send(result);
-          } else {
-            res
-              .status(404)
-              .send({
-                msg: `Serviço de Id:[${serviceId}] nao possui Prestadores`
-              });
-          }
-        }
-      });
-    } else {
+      const result = await getWorkersByServiceId(serviceId)
+      res.status(result.status).json({
+        data: result.data
+      })
+    } else
       res.status(500).send({
         msg: "Id de servico deve ser numerico"
-      });
-    }
-  };
+      })
+
+  }
 
   controller.addWork = async (req, res) => {
-    // GET B.SERVICE_ID FROM REQ.PARAMS
     const {
       userId,
       serviceId
     } = req.body;
-    if (await checkUser(userId)) {
-      // GET ALL WORKS AND USER INFO
-      const query =
-        "INSERT INTO WORKER_SERVICES(USER_ID, SERVICE_ID) VALUES(?,?);";
-      // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
-      pool.query(query, [userId, serviceId], (err, result) => {
-        if (err) res.status(404).send({
-          msg: errorHandler(err)
-        });
-        else {
-          if (result.affectedRows > 0) {
-            res.status(200).send({
-              msg: messages(4)
-            });
-          } else {
-            res.status(200).send({
-              msg: 'Erro ao cadastrar servico'
-            });
-          }
-        }
-      });
-    } else {
-      res.status(404).send({
-        msg: messages(1)
-      });
-    }
-  };
+    const result = await registerWork(userId, serviceId)
+    res.status(result.status).json({
+      data: result.data
+    })
+  }
 
   controller.deleteWork = (req, res) => {
     const {

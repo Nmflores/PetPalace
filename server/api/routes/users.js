@@ -9,6 +9,5 @@ module.exports = app => {
       .delete(controller.removeUser)
       .put(controller.updateUser);
 
-    app.route('/api/v1/workers').get(controller.listWorkers);
 
   }

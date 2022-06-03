@@ -25,6 +25,23 @@ module.exports = app => {
         }
     };
 
+    services.workersResult = function async (result) {
+      if (result.length > 0) {
+        // CREATE A JSON RESPONSE TO SEND
+        const response = 
+        result.map((worker) => {
+            return {
+              workerId: worker.user_id,
+              firstName: worker.first_name,
+              secondName: worker.second_name,
+              serviceId: worker.service_id,
+              serviceName: worker.service_name,
+            };
+          });
+        return response;
+      } 
+      }
+
     services.petsResult = function async (result) {
         if (result.length > 0) {
           // CREATE A JSON RESPONSE TO SEND
