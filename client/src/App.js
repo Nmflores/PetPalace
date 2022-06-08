@@ -4,6 +4,8 @@ import {Routes, Route} from 'react-router-dom';
 import {Home,Profile} from './pages';
 import {Navbar,Footer} from './components';
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 function App() {
   return (
     <div>
@@ -11,7 +13,8 @@ function App() {
       <div className='main-content'>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="profile/:id" element={<Profile />} />          
+          <Route path="profile/:id" element={<Profile />} />
+          <Route path="services" element={<></>} />
         </Routes>
       </div>      
       <Footer />

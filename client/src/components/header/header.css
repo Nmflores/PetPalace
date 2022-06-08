@@ -1,0 +1,18 @@
+.header-container {
+  background-color: rgb(0, 78, 97);
+  margin-left: 25%;
+  margin-right: 25%;
+  padding: 5px 2px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.3125rem;
+  justify-content: left;
+  color: #eee;
+  align-items: center;
+}
+
+.header-container button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
