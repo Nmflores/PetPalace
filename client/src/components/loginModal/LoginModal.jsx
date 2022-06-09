@@ -21,7 +21,7 @@ const LoginModal = () => {
           <Modal.Title>Login</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>          
+          <Form>
             <FloatingLabel
               controlId="floatingInput"
               label="Email"
@@ -31,10 +31,10 @@ const LoginModal = () => {
             </FloatingLabel>
             <FloatingLabel controlId="floatingPassword" label="Senha">
               <Form.Control type="password" placeholder="Sua senha" />
-            </FloatingLabel>                      
+            </FloatingLabel>
           </Form>
         </Modal.Body>
-        <Modal.Footer>          
+        <Modal.Footer>
           <Button variant="primary" type="submit" onClick={handleClose}>
             Entrar
           </Button>

@@ -15,10 +15,12 @@ const Navbar = () => {
           <img src={logo} alt='logo' width='32px' height='32px' />
           <Link to="/"> 
             <h1>PetPalace</h1>
-          </Link>
-          <LoginModal />
-          <RegisterModal />
-        </div>
+          </Link>          
+        </div>        
+      </div>
+      <div className='navbarButtons'>
+        <div className='loginBtn' ><LoginModal /></div>          
+        <RegisterModal className='registerBtn'/>
       </div>
     </div>
   );

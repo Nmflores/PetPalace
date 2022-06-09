@@ -3,6 +3,9 @@ import {Header, CardList,Filter } from '../../components'
 
 
 const Home = () => {
+
+  const [isExpanded, setExpanded] = React.useState(true);
+
   const [cards, setCards] = useState([
     {
       id: "1",
@@ -45,7 +48,7 @@ const Home = () => {
   return <div>
    <Header />
    <Filter />
-   <CardList cards={cards} />
+   <CardList cards={cards} isActive={isExpanded} />
   </div>;
 };
 
