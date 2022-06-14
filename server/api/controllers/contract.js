@@ -10,8 +10,12 @@ module.exports = app => {
     const pool = dbConn.initPool();
     const controller = {};
     const {
-        registerPetTypesForContract,
-        updateLoyalty
+        createContract,
+        updateLoyalty,
+        getQueuesByUserId,
+        updateContractStatus,
+        updateContractPrice,
+        deleteContractByQueueId
     } = app.services.queries;
     const {
         checkUser,
@@ -26,51 +30,25 @@ module.exports = app => {
         let queueId = uuidV4();
         const {
             workerId,
-            clientId,
+            ownerId,
             serviceId,
-            status,
             price,
             petTypes
         } = req.body;
 
-        // VERIFY USERNAME
-        if (await checkUser(clientId)) {
-            // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
+        if (await checkUser(ownerId)) {
             const params = [
                 queueId,
                 workerId,
-                clientId,
+                ownerId,
                 serviceId,
-                status,
                 price
             ];
-            const query =
-                "INSERT INTO SERVICES_QUEUE(QUEUE_ID, WORKER_ID, CLIENT_ID, SERVICE_ID, STATUS, PRICE) VALUES(?);";
-            pool.query(query, [params], (err, result) => {
-                if (err) {
-                    res.status(404).send(err);
-                } else {
-                    if (result.affectedRows > 0) {
-                        if (registerPetTypesForContract(queueId, petTypes)) {
-                            res.status(201).json({
-                                msg: 'Contrato de serviço cadastrado com sucesso'
-                            })
-                        } else {
-                            res.status(404).json({
-                                msg: 'Erro ao cadastrar Contrato de serviço'
-                            })
-                        }
 
-
-                    } else {
-                        res
-                            .status(404)
-                            .send({
-                                msg: "Detalhes incorretos, digite novamente"
-                            });
-                    }
-                }
-            });
+            const result = await createContract(params, queueId, petTypes)
+            res.status(result.status).json({
+                data: result.data
+            })
 
         } else {
             return res.status(404).send({
@@ -80,6 +58,7 @@ module.exports = app => {
 
 
     };
+
 
     controller.getQueues = async (req, res) => {
         const query =
@@ -100,11 +79,71 @@ module.exports = app => {
         });
     }
 
+
+
+
+    controller.getQueuesByUserId = async (req, res) => {
+        const { userId } = req.params
+        const result = await getQueuesByUserId(userId)
+            res.status(result.status).json({
+                data: result.data
+            })
+    }
+
+    controller.updateContractPrice = async (req, res) => {
+        const {
+            queueId,
+            price
+        } = req.body
+
+        if (price > 0) {
+            const result = await updateContractPrice(queueId, price)
+            res.status(result.status).json({
+                data: result.data
+            })
+        } else {
+            res.status(500).json({
+                data: "Atribuição de preço não pode ser 0"
+            })
+        }
+    }
+
+    controller.updateContractStatus = async (req, res) => {
+        const {
+            queueId,
+            status
+        } = req.body
+
+        if (status >= 1 && status <= 3) {
+            const result = await updateContractStatus(queueId, status)
+            res.status(result.status).json({
+                data: result.data
+            })
+        } else {
+            res.status(500).json({
+                data: "Status range: 0-3"
+            })
+        }
+    }
+
+
+    controller.deleteContract = async (req, res) => {
+        const {
+            queueId
+        } = req.body
+
+        const result = await deleteContractByQueueId(queueId)
+        res.status(result.status).json({
+            data: result.data
+        })
+    }
+
+
+
     //queue_id -- worker_id -- owner_id -- worker_feedback -- worker_rating(1-5)  
     //owner_feedback -- owner_rating(1-5) -- (entry_date) -- (end_date) 	 	
     //VERIFICAR SE OS PARAMETROS REQUERIDOS EXISTEM EXISTEM 
     //VERIFICAR SE OS USUARIOS EXISTEM, WORKER E OWNER_ID
-
 
     controller.createFeedBacks = async (req, res) => {
         const {
@@ -177,26 +216,28 @@ module.exports = app => {
         });
     }
 
-        // GET THE FEEDBACK BASED ON THE CONTRACT/QUEUE
-        controller.getFeedBackByQueueId = async (req, res) => {
-            const { queueId } = req.params
-            const query =
-                "SELECT * FROM USERS_FEEDBACK WHERE QUEUE_ID = ?;";
-            pool.query(query, [queueId], (err, result) => {
-                if (err) {
-                    res.status(404).send(err);
+    // GET THE FEEDBACK BASED ON THE CONTRACT/QUEUE
+    controller.getFeedBackByQueueId = async (req, res) => {
+        const {
+            queueId
+        } = req.params
+        const query =
+            "SELECT * FROM USERS_FEEDBACK WHERE QUEUE_ID = ?;";
+        pool.query(query, [queueId], (err, result) => {
+            if (err) {
+                res.status(404).send(err);
+            } else {
+                if (result.length > 0) {
+                    res.status(201).json(result)
                 } else {
-                    if (result.length > 0) {
-                        res.status(201).json(result)
-                    } else {
-                        res.status(404).json({
-                            msg: 'Nenhum feedback cadastrado para esta fila'
-                        })
-                    }
+                    res.status(404).json({
+                        msg: 'Nenhum feedback cadastrado para esta fila'
+                    })
                 }
-    
-            });
-        }
+            }
+
+        });
+    }
 
 
     return controller;

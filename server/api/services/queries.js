@@ -17,10 +17,11 @@ module.exports = app => {
     checkUser
   } = app.services.checks
 
-  services.registerUser = async (userId, userParams, loginParams) => {
+  {/*services.registerUser = async function (userId, userParams, loginParams){
+    
     return new Promise((resolve) => {
-      const query = `INSERT INTO USERS(USER_ID, FIRST_NAME, SECOND_NAME, USER_GENDER, CPF, ADDRESS, ADDRESS_NBR, DISTRICT, CEP, STATE) VALUES(?,?,?,?,?,?,?,?,?,?);`;
-      pool.query(query, userParams, (err, result) => {
+      const query = `INSERT INTO USERS(USER_ID, FIRST_NAME, SECOND_NAME, USER_GENDER, CPF, STATE) VALUES(?);`;
+      pool.query(query, [userParams], (err, result) => {
         if (err) {
           if (err.sqlMessage.includes('cpf')) {
             resolve({
@@ -47,18 +48,16 @@ module.exports = app => {
     })
   }
 
-
   services.registerUserAuth = async (userId, loginParams) => {
+    const callCreateLoyalty = async () => {
+      await services.createLoyalty(userId)
+    }
+
     return new Promise((resolve) => {
-      const query = `INSERT INTO USERS_AUTH(USER_ID, USERNAME, EMAIL, PASSWORD) VALUES(?, ?, ? ,?)`;
-      pool.query(query, loginParams, (err, result) => {
+      const query = `INSERT INTO USERS_AUTH(USER_ID, EMAIL, PASSWORD) VALUES(?)`;
+      pool.query(query, [loginParams], (err, result) => {
         if (err) {
-          if (err.sqlMessage.includes('username')) {
-            resolve({
-              status: 500,
-              data: 'Usuario com este Username já esta cadastrado'
-            })
-          } else if (err.sqlMessage.includes('email')) {
+         if (err.sqlMessage.includes('email')) {
             resolve({
               status: 500,
               data: 'Usuario com este email já esta cadastrado'
@@ -67,27 +66,25 @@ module.exports = app => {
 
         } else {
           if (result.affectedRows > 0) {
-            if (services.createLoyalty(userId)) {
-              resolve({
-                status: 201,
-                data: "Usuario cadastrado com sucesso"
-              })
-            } else {
-              resolve({
-                status: 500,
-                data: "Cadastro de lealdade falhou"
-              })
-            }
+            console.log(12)
+            callCreateLoyalty()
+            resolve({
+              status: 201,
+              data: 'Usuario cadastrado com sucesso'
+            })
           } else {
+            console.log(2)
             resolve({
               status: 500,
-              data: "Cadastro de Usuario falhou"
+              data: 'Cadastro de usuario falhou'
             })
           }
         }
       })
     })
   }
+*/}
+
 
   services.logIn = async (username, password) => {
     return new Promise((resolve) => {
@@ -239,6 +236,10 @@ module.exports = app => {
     })
   }
 
+
+
+
+
   services.getWorkers = async () => {
     return new Promise((resolve) => {
       const query =
@@ -277,29 +278,36 @@ module.exports = app => {
 
   services.getWorkersByServiceId = async (serviceId) => {
     return new Promise((resolve => {
-        const query =
-          "SELECT A.user_id, A.first_name, A.second_name, B.service_id, C.service_name FROM USERS A, WORKER_SERVICES B, AVAILABLE_SERVICES C WHERE A.user_id = B.user_id AND C.service_id = B.service_id AND B.service_id = ?;";
+      const query =
+        "SELECT A.user_id, A.first_name, A.second_name, B.service_id, C.service_name FROM USERS A, WORKER_SERVICES B, AVAILABLE_SERVICES C WHERE A.user_id = B.user_id AND C.service_id = B.service_id AND B.service_id = ?;";
 
-        // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
-        pool.query(query, serviceId, (err, result) => {
-          if (err){
-            if(err.code === "ECONNREFUSED") resolve({status: 500, data: "Banco de dados inacessivel"})
-          }else {
-            if (result.length > 0) resolve({
-              status: 200,
-              data: workersResult(result)
-            })
-            else resolve({
-              status: 500,
-              data: `Serviço de Id:[${serviceId}] nao possui Prestadores`
-            })
-          }
-        })
+      // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
+      pool.query(query, serviceId, (err, result) => {
+        if (err) {
+          if (err.code === "ECONNREFUSED") resolve({
+            status: 500,
+            data: "Banco de dados inacessivel"
+          })
+        } else {
+          if (result.length > 0) resolve({
+            status: 200,
+            data: workersResult(result)
+          })
+          else resolve({
+            status: 500,
+            data: `Serviço de Id:[${serviceId}] nao possui Prestadores`
+          })
+        }
+      })
     }))
   }
 
 
-  services.registerWork = async (userId, serviceId) =>{
+
+
+
+
+  services.registerWork = async (userId, serviceId) => {
     const checkBefore = await checkUser(userId)
     return new Promise((resolve) => {
       if (checkBefore) {
@@ -308,17 +316,54 @@ module.exports = app => {
           "INSERT INTO WORKER_SERVICES(USER_ID, SERVICE_ID) VALUES(?,?);";
         // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
         pool.query(query, [userId, serviceId], (err, result) => {
-          if (err){
-            if(err.code === "ER_DUP_ENTRY")  resolve({status: 500, data: "Serviço já cadastrado para este Usuario"})
-            else if(err.code === "ECONNREFUSED") resolve({status: 500, data: "Banco de dados inacessivel"})
+          if (err) {
+            if (err.code === "ER_DUP_ENTRY") resolve({
+              status: 500,
+              data: "Serviço já cadastrado para este Usuario"
+            })
+            else if (err.code === "ECONNREFUSED") resolve({
+              status: 500,
+              data: "Banco de dados inacessivel"
+            })
+          } else {
+            if (result.affectedRows > 0) resolve({
+              status: 200,
+              data: "Serviço cadastrado para o Usuario"
+            })
+            else resolve({
+              status: 500,
+              data: 'Cadastro de serviço falhou'
+            })
           }
-          else {
-            if (result.affectedRows > 0) resolve({status: 200, data: "Serviço cadastrado para o Usuario"})
-            else resolve({status: 500, data: 'Cadastro de serviço falhou'})
-            }
         })
-      } else resolve({status: 500, data: "Nenhum Usuario Cadastrado com este ID" })
-      
+      } else resolve({
+        status: 500,
+        data: "Nenhum Usuario Cadastrado com este ID"
+      })
+
+    })
+  }
+
+
+
+  services.deleteAvailableWork = async (userId, serviceId) => {
+    const query =
+      "DELETE FROM WORKER_SERVICES WHERE USER_ID = ? AND SERVICE_ID = ?;";
+    pool.query(query, [userId, serviceId], (err, result) => {
+      if (err) res.status(404).send(err);
+      else {
+        if (result.affectedRows > 0) {
+          resolve({
+            status: 201,
+            data: "Serviço deletado com sucesso"
+          })
+        } else {
+          resolve({
+            status: 500,
+            data: "Erro ao deletar serviço"
+          })
+        }
+      }
     })
   }
 
@@ -330,9 +375,195 @@ module.exports = app => {
 
 
 
+  services.createContract = async (params, queueId, petTypes) => {
+    const callRegisterPetTypes = async () => {
+      await services.registerPetTypesForContract(queueId, petTypes)
+    }
+    return new Promise((resolve) => {
+      const query =
+        "INSERT INTO SERVICES_QUEUE(QUEUE_ID, WORKER_ID, OWNER_ID, SERVICE_ID, PRICE) VALUES(?);";
+      pool.query(query, [params], (err, result) => {
+        if (err) {
+          if (err.code === "ECONNREFUSED") {
+            resolve({
+              status: 500,
+              data: "Banco de dados inacessivel"
+            })
+          } else if (err.sqlMessage.includes('QUEUE_ID')) {
+            resolve({
+              status: 500,
+              data: "Contrato com este ID ja esta registrado"
+            })
+          }
+
+        } else {
+          if (result.affectedRows > 0) {
+            callRegisterPetTypes()
+            resolve({
+              status: 201,
+              data: 'Contrato de serviço cadastrado com sucesso'
+            })
+          } else {
+            resolve({
+              status: 500,
+              data: 'Erro ao cadastrar Contrato de serviço'
+            })
+          }
+        }
+      })
+
+    })
+  }
 
 
+  services.getQueuesByUserId = async (userId) => {
+    return new Promise((resolve) => {
+      const query =
+        "SELECT * FROM SERVICES_QUEUE WHERE OWNER_ID = ? OR WORKER_ID = ?;";
+      pool.query(query, [userId, userId], (err, result) => {
+        if (err) {
+          resolve({
+            status: 500,
+            data: result
+          })
+        } else {
+          if (result.length > 0) {
+            resolve({
+              status: 200,
+              data: result
+            })
+          } else {
+            resolve({
+              status: 500,
+              data: 'Nenhum serviço na fila'
+            })
+          }
+        }
 
+      });
+    })
+  }
+
+  services.deleteContractByQueueId = async (queueId) => {
+    return new Promise((resolve) => {
+      const query =
+        "DELETE FROM SERVICES_QUEUE WHERE QUEUE_ID = ?;";
+      pool.query(query, [queueId], (err, result) => {
+        if (err) {
+          console.log(1)
+          if (err.code === "ECONNREFUSED") {
+            resolve({
+              status: 500,
+              data: "Banco de dados inacessivel"
+            })
+          } else if (err.sqlMessage.includes('QUEUE_ID')) {
+            resolve({
+              status: 500,
+              data: "Contrato com este ID ja esta registrado"
+            })
+          }
+
+        } else {
+          if (result.affectedRows > 0) {
+            console.log(2)
+            resolve({
+              status: 201,
+              data: 'Contrato de serviço deletado com sucesso'
+            })
+          } else {
+            console.log(3)
+            resolve({
+              status: 500,
+              data: 'Erro ao deletar Contrato de serviço'
+            })
+          }
+        }
+      })
+
+    })
+  }
+
+  services.updateContractStatus = async (queueId, status) => {
+    // STATUS : 0 - DEFAULT, SIGNIFICA NA FILA
+    // STATUS : 1 - SIGNIFICA ACEITO
+    // STATUS : 2 - SIGNIFICA TERMINADO, DEVE SER SETADO END_DATE COMO DATE.NOW
+    // STATUS : 3 - SIGNIFICA REJEITADO, DEVE SER SETADO END_DATE COMO DATE.NOW
+
+    return new Promise((resolve) => {
+      let query = ""
+      if (status === 1) {
+        query =
+          "UPDATE SERVICES_QUEUE SET STATUS = ? WHERE QUEUE_ID = ?;";
+      } else if (status === 2) {
+        query =
+          "UPDATE SERVICES_QUEUE SET STATUS = ? AND END_DATE = NOW() WHERE QUEUE_ID = ?;";
+
+      } else if (status === 3) {
+        query =
+          "UPDATE SERVICES_QUEUE SET STATUS = ? AND END_DATE = NOW() WHERE QUEUE_ID = ?;";
+      }
+
+
+      pool.query(query, [status, queueId], (err, result) => {
+        if (err) {
+          if (err.code === "ECONNREFUSED") {
+            resolve({
+              status: 500,
+              data: "Banco de dados inacessivel"
+            })
+          }
+
+
+        } else {
+          if (result.affectedRows > 0) {
+            resolve({
+              status: 201,
+              data: 'Status de serviço alterado com sucesso'
+            })
+          } else {
+            resolve({
+              status: 500,
+              data: 'Erro ao alterar Status do Contrato de serviço'
+            })
+          }
+        }
+      })
+
+    })
+  }
+
+  services.updateContractPrice = async (queueId, price) => {
+    return new Promise((resolve) => {
+
+      const query = "UPDATE SERVICES_QUEUE SET PRICE = ? WHERE QUEUE_ID = ?;";
+
+      pool.query(query, [price, queueId], (err, result) => {
+        if (err) {
+          if (err.code === "ECONNREFUSED") {
+            resolve({
+              status: 500,
+              data: "Banco de dados inacessivel"
+            })
+          }
+
+
+        } else {
+          if (result.affectedRows > 0) {
+            resolve({
+              status: 201,
+              data: 'Preço de serviço alterado com sucesso'
+            })
+          } else {
+            resolve({
+              status: 500,
+              data: 'Erro ao alterar Preço do serviço'
+            })
+          }
+        }
+      })
+
+    })
+  }
 
 
   services.registerPetTypesForContract = async (queueId, petTypes) => {
@@ -355,6 +586,17 @@ module.exports = app => {
 
     })
   }
+
+
+
+
+
+
+
+
+
+
+
 
   services.createLoyalty = async (userId) => {
     return new Promise((resolve) => {

@@ -12,6 +12,7 @@ module.exports = (app) => {
     getWorkersByUserId,
     getWorkersByServiceId,
     registerWork, 
+    deleteAvailableWork,
   } = app.services.queries
 
   controller.listWorks = async (req, res) => {
@@ -60,29 +61,19 @@ module.exports = (app) => {
     })
   }
 
-  controller.deleteWork = (req, res) => {
+  controller.deleteWork = async (req, res) => {
     const {
       userId,
       serviceId
     } = req.body;
-    const query =
-      "DELETE FROM WORKER_SERVICES WHERE USER_ID = ? AND SERVICE_ID = ?;";
-    // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
-    pool.query(query, [userId, serviceId], (err, result) => {
-      if (err) res.status(404).send(err);
-      else {
-        if (result.affectedRows > 0) {
-          res.status(201).send({
-            msg: "Serviço deletado com sucesso"
-          });
-        } else {
-          res.status(500).send({
-            msg: "Erro ao deletar serviço"
-          });
-        }
-      }
-    });
-  };
+
+    const result = await deleteAvailableWork(userId, serviceId)
+    res.status(result.status).json({
+      data: result.data
+    })
+
+  }
+
 
   return controller;
-};
+}

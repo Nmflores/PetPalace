@@ -11,13 +11,9 @@ module.exports = app => {
                         firstName: user.first_name,
                         secondName: user.second_name,
                         userGender: user.user_gender,
-                        userRole: user.user_role,
+                        contactNbr: user.contact_nbr,
                         cpf: user.cpf,
                         loyalty: user.loyalty,
-                        address: user.address,
-                        addressNbr: user.address_nbr,
-                        district: user.district,
-                        cep: user.cep,
                         state: user.state,
                     };
                 });
