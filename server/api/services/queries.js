@@ -109,7 +109,7 @@ module.exports = app => {
 
           } else {
             resolve({
-              status: 500,
+              status: 400,
               data: "Credenciais de Login incorretas, tente novamente",
               isLogged: false
             })

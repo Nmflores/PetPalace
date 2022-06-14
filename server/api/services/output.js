@@ -1,6 +1,10 @@
 module.exports = app => {
     const services = {};
 
+    //400 arquivo nao encontrado ou ja existe
+    //401 proibido devido a autorização
+
+
     services.usersResult = function async (result) {
         if (result.length > 0) {
             // CREATE A JSON RESPONSE TO SEND

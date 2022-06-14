@@ -108,7 +108,7 @@ module.exports = app => {
         pool.query(query, [loginParams], (err, result) => {
           if (err) {
             if (err.sqlMessage.includes('email')) {
-              res.status(500).json({
+              res.status(400).json({
                 data: 'Usuario com este email já esta cadastrado'
               })
             }
@@ -119,7 +119,7 @@ module.exports = app => {
                 data: 'Usuario cadastrado com sucesso'
               })
             } else {
-              res.status(500).json({
+              res.status(400).json({
                 data: 'Cadastro de usuario falhou'
               })
             }
@@ -136,11 +136,11 @@ module.exports = app => {
       pool.query(query, [userParams], (err, result) => {
         if (err) {
           if (err.sqlMessage.includes('cpf')) {
-            res.status(500).json({
+            res.status(400).json({
               data: 'Usuario com este CPF ja esta cadastrado'
             })
           } else if (err.sqlMessage.includes('user_id')) {
-            res.status(500).json({
+            res.status(400).json({
               data: 'Usuario com este ID ja esta cadastrado'
             })
           }
@@ -148,7 +148,7 @@ module.exports = app => {
           if (result.affectedRows > 0) {
             callRegisterAuth(loginParams)
           } else {
-            res.status(500).json({
+            res.status(400).json({
               data: "Cadastro de Usuario falhou"
             })
           }
