@@ -1,117 +1,94 @@
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const {
+  v4: uuidV4
+} = require("uuid");
 
-let errorHandler = function async(error) {
-  if (error.errno === 1062) {
-    return `Usuario ja cadastrado no sistema`;
-  }
-};
 
-let returnObj = function async(result) {
-  console.log(result);
-  if (result.length > 0) {
-    // CREATE A JSON RESPONSE TO SEND
-    const response = {
-      users: result.map((user) => {
-        return {
-          userId: user.user_id,
-          userRole: user.user_role,
-        };
-      }),
-    };
-    return response;
-  }
-};
 
-const JWT_SECRET_KEY = "chaveMestra";
 
-let createAuthJwt = function async(user) {
-  const userId = user[0]["USER_ID"];
-  const role = user[0]["USER_ROLE"];
-  const tokenPayload = { userId, role };
-  const accessToken = jwt.sign(tokenPayload, JWT_SECRET_KEY);
-  return accessToken;
-};
-const { v4: uuidV4 } = require("uuid");
 
-module.exports = (app) => {
-  const dbConn = app.get("dbConn");
+module.exports = app => {
+  const dbConn = app.repositories.dbConfig;
+  const pool = dbConn.initPool();
   const controller = {};
+  const {
+    checkUserPerEmail
+  } = app.services.checks;
+
+  const {
+    logIn,
+    createLoyalty
+  } = app.services.queries;
+  const {
+    errorHandler,
+    messages
+  } = app.services.output;
+
 
   controller.login = async (req, res) => {
-    const { username, password } = req.body;
-    if (username && password) {
-      // VERIFY USERNAME
-      const query = "SELECT EMAIL FROM USERS_AUTH A WHERE A.USERNAME = ?;";
-      // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
-      dbConn.pool.query(query, [username], (err, result) => {
-        if (err) {
-          res.status(404).send(err);
+    const {
+      email,
+      password
+    } = req.body;
+    if (email && password) {
+      if (await checkUserPerEmail(email)) {
+        const result = await logIn(email, password)
+        console.log("1", result)
+        const {accessToken, data} = result
+        if (result.isLogged === true) {
+          res.cookie('accessToken', accessToken, {
+            maxAge: 60 * 60 * 1000, // 1 hour
+            httpOnly: true,
+            secure: false,
+            sameSite: false,
+          })
+          res.status(200).json({
+            data: result.data
+          })
         } else {
-          if (result.length > 0) {
-            // CHECK PASSWORD
-            const query =
-              "SELECT A.USER_ID FROM USERS_AUTH A WHERE A.USERNAME = ? AND A.PASSWORD = ?;";
-            dbConn.pool.query(query, [username, password], (err, result) => {
-              if (err) {
-                res.status(404).send(err);
-              } else {
-                if (result.length > 0) {
-                  //CREATES JWT WITH USER_ID AND USER_ROLE
-                  const tokenJWT = createAuthJwt(result);
-                  console.log(tokenJWT);
-                  res.status(200).send({ loginStatus: 1, jwt: tokenJWT });
-                } else {
-                  res
-                    .status(404)
-                    .send({ loginStatus: 0, msg: "Credenciais incorretas, digite novamente" });
-                }
-              }
-            });
-          } else {
-            res
-              .status(404)
-              .send({  loginStatus: 0, msg: `Credenciais incorretas, digite novamente` });
-          }
+          res.status(result.status).json({
+            data: result.data
+          })
         }
-      });
+
+      } else {
+        return res.status(404).send({
+          msg: messages(1)
+        })
+      }
     } else {
       res
         .status(404)
-        .send({ msg: `Faltam informaçoes para continuar com o login` });
+        .send({
+          msg: `Faltam informaçoes para continuar com o login`
+        });
     }
+
+
   };
 
   controller.register = async (req, res) => {
     let userId = uuidV4();
 
     const {
-      username,
+      email,
+      password,
       firstName,
       secondName,
-      email,
       userGender,
-      password,
+      contactNbr,
       cpf,
-      address,
-      addressNbr,
-      district,
-      cep,
-      state,
+      state
     } = req.body;
 
     if (
-      username &&
+      email &&
+      password &&
       firstName &&
       secondName &&
-      email &&
       userGender &&
-      password &&
+      contactNbr &&
       cpf &&
-      address &&
-      addressNbr &&
-      district &&
-      cep &&
       state
     ) {
       const userParams = [
@@ -119,36 +96,66 @@ module.exports = (app) => {
         firstName,
         secondName,
         userGender,
+        contactNbr,
         cpf,
-        address,
-        addressNbr,
-        district,
-        cep,
-        state,
+        state
       ];
 
-      const loginParams = [userId, username, email, password];
+      const loginParams = [userId, email, password];
 
-      const query = `INSERT INTO USERS(USER_ID, FIRST_NAME, SECOND_NAME, USER_GENDER, CPF, ADDRESS, ADDRESS_NBR, DISTRICT, CEP, STATE) VALUES(?,?,?,?,?,?,?,?,?,?);`;
 
-      dbConn.pool.query(query, userParams, (err, result) => {
-        if (err) res.status(404).send({ msg: errorHandler(err) });
-        else {
-          const query = `INSERT INTO USERS_AUTH(USER_ID, USERNAME, EMAIL, PASSWORD) VALUES(?, ?, ? ,?)`;
-          dbConn.pool.query(query, loginParams, (err, result) => {
-            if (err) res.status(404).send({ registerStatus: 0,  msg: errorHandler(err) });
-            else {
-              res
-                .status(200)
-                .send({ registerStatus: 1, msg: `Usuario ${firstName} cadastrado com sucesso` });
+      const callRegisterAuth = async (loginParams) => {
+        const query = `INSERT INTO USERS_AUTH(USER_ID, EMAIL, PASSWORD) VALUES(?)`;
+        pool.query(query, [loginParams], (err, result) => {
+          if (err) {
+            if (err.sqlMessage.includes('email')) {
+              res.status(400).json({
+                data: 'Usuario com este email já esta cadastrado'
+              })
             }
-          });
+          } else {
+            if (result.affectedRows > 0) {
+              callCreateLoyalty()
+              res.status(201).json({
+                data: 'Usuario cadastrado com sucesso'
+              })
+            } else {
+              res.status(400).json({
+                data: 'Cadastro de usuario falhou'
+              })
+            }
+          }
+        })
+      }
+
+      const callCreateLoyalty = async () => {
+        await createLoyalty(userId)
+      }
+
+
+      const query = `INSERT INTO USERS(USER_ID, FIRST_NAME, SECOND_NAME, USER_GENDER, CONTACT_NBR, CPF, STATE) VALUES(?);`;
+      pool.query(query, [userParams], (err, result) => {
+        if (err) {
+          if (err.sqlMessage.includes('cpf')) {
+            res.status(400).json({
+              data: 'Usuario com este CPF ja esta cadastrado'
+            })
+          } else if (err.sqlMessage.includes('user_id')) {
+            res.status(400).json({
+              data: 'Usuario com este ID ja esta cadastrado'
+            })
+          }
+        } else {
+          if (result.affectedRows > 0) {
+            console.log(userParams, loginParams)
+            callRegisterAuth(loginParams)
+          } else {
+            res.status(400).json({
+              data: "Cadastro de Usuario falhou"
+            })
+          }
         }
-      });
-    } else {
-      res
-        .status(200)
-        .send({ msg: `Faltam informaçoes para continuar com o cadastro` });
+      })
     }
   };
 

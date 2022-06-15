@@ -12,6 +12,7 @@ const Home = () => {
       name: "Bruno Martins",
       title: "Passeio",
       price: 25.00,
+      fone: "(51) 998652312",
       petTypes: [
         {
           petType: "canino",
@@ -26,6 +27,7 @@ const Home = () => {
       name: "Bruno Aguiar",
       title: "Hospedagem",
       price: 50.00,
+      fone: "(51) 998652312",
       petTypes: [
         {
           petType: "canino",
@@ -37,6 +39,7 @@ const Home = () => {
       name: "Bruno Aguiar",
       title: "Hospedagem",
       price: 50.00,
+      fone: "(51) 998652312",
       petTypes: [
         {
           petType: "felino",

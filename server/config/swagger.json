@@ -1,0 +1,389 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "PetPalace",
+        "description": "Endpoints for a pet care platform",
+        "contact": {
+            "email": "joaopedro.ads2021@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "host": "http://localhost:8080/api/v1/",
+    "servers": [{
+        "main": "http://localhost:8080/api/v1/",
+        "description": "Main API"
+    }],
+    "paths": {
+        "/register": {
+            "post": {
+                "summary": "Register",
+                "description": "This route will process the register of the user",
+                "tags": ["Authentication"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserAuthRegister"
+                            },
+                            "examples": {
+                                "UserAuthRegister": {
+                                    "value": {
+                                        "userId": "random generated uuid",
+                                        "email": "joaopedro.ads2021@gmail.com",
+                                        "password": "12345",
+                                        "confirmPassword": "12345",
+                                        "firstName": "Paolo",
+                                        "secondName": "Alves",
+                                        "userGender": "M",
+                                        "contactNbr": "051998196334",
+                                        "cpf": "03789012831",
+                                        "state": "RS"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "400": {
+                        "description": "Error while register"
+                    },
+                    "201": {
+                        "description": "Registered"
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "summary": "Login",
+                "description": "This route will process the login of the user",
+                "tags": ["Authentication"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserAuthLogin"
+                            },
+                            "examples": {
+                                "UserAuthLogin": {
+                                    "value": {
+                                        "email": "joaopedro.ads2021@gmail.com",
+                                        "password": "12345"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "400": {
+                        "description": "Error while logging, check credentials"
+                    },
+                    "200": {
+                        "description": "Logged in"
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "summary": "Users",
+                "description": "This route will a list with the users",
+                "tags": ["Users"],
+                "responses": {
+                    "400": {
+                        "description": "Error while getting Users"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Users"
+                                    }
+
+                                },
+                                "examples": {
+                                    "Users": {
+                                        "value": {
+                                            "userId": "random generated uuid",
+                                            "firstName": "Paolo",
+                                            "secondName": "Alves",
+                                            "userGender": "M",
+                                            "contactNbr": "051998196334",
+                                            "cpf": "03789012831",
+                                            "state": "RS"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+        },
+        "/users/{userId}": {
+            "get": {
+                "summary": "User by UserID",
+                "description": "This route will a get a user by its UserID",
+                "tags": ["Users"],
+                "parameters": [{
+                    "name": "UserId",
+                    "in": "path",
+                    "description": "User per UserId",
+                    "required": true
+                }],
+                "responses": {
+                    "400": {
+                        "description": "Error while getting User"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Users"
+                                },
+                                "examples": {
+                                    "Users": {
+                                        "value": {
+                                            "userId": "random generated uuid",
+                                            "firstName": "Paolo",
+                                            "secondName": "Alves",
+                                            "userGender": "M",
+                                            "contactNbr": "051998196334",
+                                            "cpf": "03789012831",
+                                            "state": "RS"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update User by UserID",
+                "description": "This route will update a user by its UserID",
+                "tags": ["Users"],
+                "parameters": [{
+                    "name": "UserId",
+                    "in": "path",
+                    "description": "Update User per UserId",
+                    "required": true
+                }],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Users"
+                            },
+                            "examples": {
+                                "UserUpdate": {
+                                    "value": {
+                                        "firstName": "Paolo",
+                                        "secondName": "Alves",
+                                        "userGender": "M",
+                                        "contactNbr": "051998196334",
+                                        "cpf": "03789012831",
+                                        "state": "RS"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "400": {
+                        "description": "Error while updating User"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "201": {
+                        "description": "Updated"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete User by UserID",
+                "description": "This route will delete a user by its UserID",
+                "tags": ["Users"],
+                "parameters": [{
+                    "name": "UserId",
+                    "in": "path",
+                    "description": "Delete User per UserId",
+                    "required": true
+                }],
+                "responses": {
+                    "400": {
+                        "description": "Error while deleting User"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "201": {
+                        "description": "Deleted"
+                    }
+                }
+            }
+        },
+        "/works": {
+            "get": {
+                "summary": "Works",
+                "description": "This route will a list with the available services and their workers",
+                "tags": ["works"],
+                "responses": {
+                    "400": {
+                        "description": "Error while getting Available services and Workers"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AvailableWorkers"
+                                    }
+
+                                },
+                                "examples": {
+                                    "AvailableWorkers": {
+                                        "value": {
+                                            "workerId": "1d424d03-72c5-4343-978a-bf33784fb370",
+                                            "firstName": "paulo",
+                                            "secondName": "guedes",
+                                            "serviceId": 0,
+                                            "serviceName": "hospedagem"
+                                          }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+        },
+    "components": {
+        "schemas": {
+            "UserAuthRegister": {
+                "type": "object",
+                "properties": {
+                    "userId": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "confirmPassword": {
+                        "type": "string"
+                    },
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "secondName": {
+                        "type": "string"
+                    },
+                    "userGender": {
+                        "type": "string"
+                    },
+                    "contactNbr": {
+                        "type": "string"
+                    },
+                    "cpf": {
+                        "type": "string"
+                    },
+                    "state": {
+                        "type": "string"
+                    }
+                }
+            },
+            "UserAuthLogin": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Users": {
+                "type": "object",
+                "properties": {
+                    "userId": {
+                        "type": "string"
+                    },
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "secondName": {
+                        "type": "string"
+                    },
+                    "userGender": {
+                        "type": "string"
+                    },
+                    "contactNbr": {
+                        "type": "string"
+                    },
+                    "cpf": {
+                        "type": "string"
+                    },
+                    "state": {
+                        "type": "string"
+                    }
+                }
+            },
+            "AvailableWorkers":{
+                "type": "object",
+                "properties": {
+                    "workerId": {
+                        "type": "string"
+                    },
+                    "firstName":  {
+                        "type": "string"
+                    },
+                    "secondName": {
+                        "type": "string"
+                    },
+                    "serviceId": {
+                        "type": "number"
+                    },
+                    "serviceName": {
+                        "type": "string"
+                    }
+                  }
+                }
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "HTTP",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    }
+   

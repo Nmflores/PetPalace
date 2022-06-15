@@ -42,6 +42,7 @@ const Card = ({card, isActive}) => {
       {...getCollapseProps()}
       className='details'
       >
+        <h3>Telefone: {card.fone}</h3>
         <Button>Contratar</Button>
       </div>
     </>
