@@ -15,6 +15,7 @@ module.exports = app => {
         getQueuesByUserId,
         updateContractStatus,
         updateContractPrice,
+        updateUserLoyaltyLevel,
         deleteContractByQueueId
     } = app.services.queries;
     const {
@@ -83,11 +84,13 @@ module.exports = app => {
 
 
     controller.getQueuesByUserId = async (req, res) => {
-        const { userId } = req.params
+        const {
+            userId
+        } = req.params
         const result = await getQueuesByUserId(userId)
-            res.status(result.status).json({
-                data: result.data
-            })
+        res.status(result.status).json({
+            data: result.data
+        })
     }
 
     controller.updateContractPrice = async (req, res) => {
@@ -147,53 +150,72 @@ module.exports = app => {
 
     controller.createFeedBacks = async (req, res) => {
         const {
-            queue_id,
-            worker_id,
-            owner_id,
-            worker_feedback,
-            worker_rating,
-            owner_feedback,
-            owner_rating,
+            queueId,
+            workerId,
+            ownerId,
+            workerFeedback,
+            workerRating,
+            ownerFeedback,
+            ownerRating,
         } = req.body
-        const params = [queue_id,
-            worker_id,
-            owner_id,
-            worker_feedback,
-            worker_rating,
-            owner_feedback,
-            owner_rating,
+        const params = [
+            queueId,
+            workerId,
+            ownerId,
+            workerFeedback,
+            workerRating,
+            ownerFeedback,
+            ownerRating,
         ]
-        const query =
-            "INSERT INTO USERS_FEEDBACK(queue_id,worker_id,owner_id,worker_feedback,worker_rating, owner_feedback, owner_rating) VALUES(?);";
-        pool.query(query, [params], (err, result) => {
-            if (err) {
-                // IN CASE QUEUE_ID HAS ALREADY BEEN REGISTERED
-                res.status(404).json({
-                    msg: 'Feedback já registrado para este Contrato'
-                });
-            } else {
-                // IN CASE THE FEEDBACK INSERTION GOES RIGHT
-                if (result.affectedRows > 0) {
-                    res.status(201).json({
-                        msg: 'Feedback criado com sucesso'
-                    })
-                    // CREATE A FUNCTION TO CALL THE UPDATE LOYALTY FOR THE 2 USERS INVOLVED
-                    const updateUsersLoyalty = async () => {
-                        // FOR THE WORKER RATING WE GET THE OWNER RATED VALUE
-                        await updateLoyalty(worker_id, owner_rating)
-                        // FOR THE OWNER RATING WE GET THE WORKER RATED VALUE
-                        await updateLoyalty(owner_id, worker_rating)
-                    }
-                    // CALL THE FUNCTIONS THAT WILL UPDATE THE USERS LOYALTY
-                    updateUsersLoyalty()
-                } else {
-                    res.status(404).json({
-                        msg: 'Erro durante cadastro de feedback'
-                    })
-                }
-            }
 
-        });
+        // CREATE A FUNCTION TO CALL THE UPDATE LOYALTY FOR THE 2 USERS INVOLVED
+        const callUpdateUsersLoyalty = async () => {
+            // FOR THE WORKER RATING WE GET THE OWNER RATED VALUE
+            await updateLoyalty(workerId, ownerRating)
+            // FOR THE OWNER RATING WE GET THE WORKER RATED VALUE
+            await updateLoyalty(ownerId, workerRating)
+        }
+
+
+
+        if (checkUser(workerId) && checkUser(ownerId)) {
+            const query =
+                "INSERT INTO USERS_FEEDBACK(queue_id, worker_id,owner_id, worker_feedback,worker_rating, owner_feedback, owner_rating) VALUES(?);";
+            pool.query(query, [params], (err, result) => {
+                if (err) {
+                    // IN CASE QUEUE_ID HAS ALREADY BEEN REGISTERED
+                    res.status(400).json({
+                        data: 'Feedback já registrado para este Contrato'
+                    });
+                } else {
+                    // IN CASE THE FEEDBACK INSERTION GOES RIGHT
+                    if (result.affectedRows > 0) {
+                        // CALL THE FUNCTIONS THAT WILL UPDATE THE USERS LOYALTY
+                        callUpdateUsersLoyalty()
+
+                        // WILL MAKE THE LOYALTY LEVEL CALCULUS FOR THE 2 USERS INVOLVE
+                        // UPDATE THE LOYALTY LVL BASED ON THE ACTUAL RATING     
+                        // UPDATE THE LOYALTY IN THE USER_INFO TABLE AS WELL    
+                        updateUserLoyaltyLevel(workerId)
+                        updateUserLoyaltyLevel(ownerId)
+
+                        res.status(201).json({
+                            data: 'Feedback criado com sucesso'
+                        })
+
+                    } else {
+                        res.status(400).json({
+                            data: 'Erro durante cadastro de feedback'
+                        })
+                    }
+                }
+
+            })
+        } else {
+            res.status(400).json({
+                data: 'Um ou ambos Usuario não existem'
+            })
+        }
     }
 
     // GET ALL THE FEEDBACKS

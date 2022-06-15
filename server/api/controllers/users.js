@@ -11,7 +11,6 @@ module.exports = (app) => {
   const pool = dbConn.initPool();
 
   const { getUsers, getUserByUserId, deleteUser, updateUserQ} = app.services.queries
-  const { checkUser } = app.services.checks
   const { usersResult , messages} = app.services.output
   const controller = {};
 

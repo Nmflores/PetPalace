@@ -17,80 +17,82 @@ module.exports = app => {
     checkUser
   } = app.services.checks
 
-  {/*services.registerUser = async function (userId, userParams, loginParams){
-    
-    return new Promise((resolve) => {
-      const query = `INSERT INTO USERS(USER_ID, FIRST_NAME, SECOND_NAME, USER_GENDER, CPF, STATE) VALUES(?);`;
-      pool.query(query, [userParams], (err, result) => {
-        if (err) {
-          if (err.sqlMessage.includes('cpf')) {
-            resolve({
-              status: 500,
-              data: 'Usuario com este CPF ja esta cadastrado'
-            })
-          } else if (err.sqlMessage.includes('user_id')) {
-            resolve({
-              status: 500,
-              data: 'Usuario com este ID ja esta cadastrado'
-            })
-          }
-        } else {
-          if (result.affectedRows > 0) {
-            services.registerUserAuth(userId, loginParams)
-          } else {
-            resolve({
-              status: 500,
-              data: "Cadastro de Usuario falhou"
-            })
-          }
+  {
+    /*services.registerUser = async function (userId, userParams, loginParams){
+        
+        return new Promise((resolve) => {
+          const query = `INSERT INTO USERS(USER_ID, FIRST_NAME, SECOND_NAME, USER_GENDER, CPF, STATE) VALUES(?);`;
+          pool.query(query, [userParams], (err, result) => {
+            if (err) {
+              if (err.sqlMessage.includes('cpf')) {
+                resolve({
+                  status: 500,
+                  data: 'Usuario com este CPF ja esta cadastrado'
+                })
+              } else if (err.sqlMessage.includes('user_id')) {
+                resolve({
+                  status: 500,
+                  data: 'Usuario com este ID ja esta cadastrado'
+                })
+              }
+            } else {
+              if (result.affectedRows > 0) {
+                services.registerUserAuth(userId, loginParams)
+              } else {
+                resolve({
+                  status: 500,
+                  data: "Cadastro de Usuario falhou"
+                })
+              }
+            }
+          })
+        })
+      }
+
+      services.registerUserAuth = async (userId, loginParams) => {
+        const callCreateLoyalty = async () => {
+          await services.createLoyalty(userId)
         }
-      })
-    })
+
+        return new Promise((resolve) => {
+          const query = `INSERT INTO USERS_AUTH(USER_ID, EMAIL, PASSWORD) VALUES(?)`;
+          pool.query(query, [loginParams], (err, result) => {
+            if (err) {
+             if (err.sqlMessage.includes('email')) {
+                resolve({
+                  status: 500,
+                  data: 'Usuario com este email já esta cadastrado'
+                })
+              }
+
+            } else {
+              if (result.affectedRows > 0) {
+                console.log(12)
+                callCreateLoyalty()
+                resolve({
+                  status: 201,
+                  data: 'Usuario cadastrado com sucesso'
+                })
+              } else {
+                console.log(2)
+                resolve({
+                  status: 500,
+                  data: 'Cadastro de usuario falhou'
+                })
+              }
+            }
+          })
+        })
+      }
+    */
   }
 
-  services.registerUserAuth = async (userId, loginParams) => {
-    const callCreateLoyalty = async () => {
-      await services.createLoyalty(userId)
-    }
 
-    return new Promise((resolve) => {
-      const query = `INSERT INTO USERS_AUTH(USER_ID, EMAIL, PASSWORD) VALUES(?)`;
-      pool.query(query, [loginParams], (err, result) => {
-        if (err) {
-         if (err.sqlMessage.includes('email')) {
-            resolve({
-              status: 500,
-              data: 'Usuario com este email já esta cadastrado'
-            })
-          }
-
-        } else {
-          if (result.affectedRows > 0) {
-            console.log(12)
-            callCreateLoyalty()
-            resolve({
-              status: 201,
-              data: 'Usuario cadastrado com sucesso'
-            })
-          } else {
-            console.log(2)
-            resolve({
-              status: 500,
-              data: 'Cadastro de usuario falhou'
-            })
-          }
-        }
-      })
-    })
-  }
-*/}
-
-
-  services.logIn = async (username, password) => {
+  services.logIn = async (email, password) => {
     return new Promise((resolve) => {
       const query =
-        "SELECT A.USER_ID FROM USERS_AUTH A WHERE A.USERNAME = ? AND A.PASSWORD = ?;";
-      pool.query(query, [username, password], (err, result) => {
+        "SELECT A.USER_ID FROM USERS_AUTH A WHERE A.EMAIL = ? AND A.PASSWORD = ?;";
+      pool.query(query, [email, password], (err, result) => {
         if (err) {
           resolve({
             status: 500,
@@ -103,7 +105,8 @@ module.exports = app => {
             const accessToken = createAccessToken(result)
             resolve({
               status: 200,
-              data: accessToken,
+              accessToken: accessToken,
+              data: "Logado com sucesso 😊 👌",
               isLogged: true
             })
 
@@ -350,8 +353,12 @@ module.exports = app => {
     const query =
       "DELETE FROM WORKER_SERVICES WHERE USER_ID = ? AND SERVICE_ID = ?;";
     pool.query(query, [userId, serviceId], (err, result) => {
-      if (err) res.status(404).send(err);
-      else {
+      if (err) {
+        resolve({
+          status: 404,
+          data: err
+        })
+      } else {
         if (result.affectedRows > 0) {
           resolve({
             status: 201,
@@ -359,7 +366,7 @@ module.exports = app => {
           })
         } else {
           resolve({
-            status: 500,
+            status: 400,
             data: "Erro ao deletar serviço"
           })
         }
@@ -596,7 +603,9 @@ module.exports = app => {
 
 
 
-
+  //NEED TO CERTIFY THAT THE LOYALTY SYSTEM IS REGISTERING AUTOMATICALY FOR ALL NEW USERS
+  //NEED TO MAKE A NEW USER TO CERTIFY THAT
+  //DONE, WORKING GREAT
 
   services.createLoyalty = async (userId) => {
     return new Promise((resolve) => {
@@ -621,33 +630,70 @@ module.exports = app => {
   }
 
 
-  //NEED TO CERTIFY THAT THE LOYALTY SYSTEM IS REGISTERING AUTOMATICALY FOR ALL NEW USERS
-  //NEED TO MAKE A NEW USER TO CERTIFY THAT
-  //DONE, WORKING GREAT
+  
 
   //LOYALTY SYSTEM
   //LVL 0 TO 1 -- NEEDS 10 TOTAL STARS OF RATING ON THE FEEDBACKS
   //LVL 1 TO 2 -- NEEDS 15 TOTAL STARS OF RATING ON THE FEEDBACKS
   //LVL 2 TO 3 -- NEEDS 25 TOTAL STARS OF RATING ON THE FEEDBACKS
   //LVL 3 TO 4 -- NEEDS 35 TOTAL STARS OF RATING ON THE FEEDBACKS
-  //LVL 4 TO 5 -- NEEDS 25 TOTAL STARS OF RATING ON THE FEEDBACKS 
-  // HOW TO PROCEED ??? 2 OPTIONS
-  // 1 -- 
-  // NEED TO CREATE DATABASE PROCEDURE TO GET OWNER_ID AND WORKER_ID AS TWO MAIN VARIABLES
-  // FOR EACH TIME A NEW FEEDBACK IS MADE
-  // COMPARE EACH VARIABLES WITH THE LOYALTY TABLE
-  // SUM THE RECEIVED ON THE FEEDBACK RATING ON THE ACTUAL RATING, UPDATING THE LAST UPDATED AT AND THE LAST RATING VALUE.
-  // 2 --
-  // MAKE A MICROSERVICE TO MAKE ALL THE PROCEDURE OF ABOVE, MAYBE HARDER
+  //LVL 4 TO 5 -- NEEDS 45 TOTAL STARS OF RATING ON THE FEEDBACKS 
+  // 
+  services.updateUserLoyaltyLevel = async (userId) =>{
+    return new Promise((resolve) => {
+      const query = "SELECT ACTUAL_RATING FROM LOYALTY WHERE USER_ID = ?;"
+      pool.query(query, [userId], (err, result) => {
+        if(err){
+          console.log(err)
+            resolve(false)
+        }else{
+            let query = ""
+            let rating = result[0].ACTUAL_RATING
+            console.log(rating)
+            if(rating >= 10){
+               query = `UPDATE USERS SET LOYALTY = 1 WHERE USER_ID = ?;`
+            }
+            if(rating >= 15){
+              query = `UPDATE USERS SET LOYALTY = 2 WHERE USER_ID = ?;`
+            }
+            if(rating >= 25){
+              query = `UPDATE USERS SET LOYALTY = 3 WHERE USER_ID = ?;`
+            }
+            if(rating >= 35){
+              query = `UPDATE USERS SET LOYALTY = 4 WHERE USER_ID = ?;`
+            }
+            if(rating >= 45){
+              query = `UPDATE USERS SET LOYALTY = 5 WHERE USER_ID = ?;`
+            }
+            console.log(query)
+            pool.query(query, [userId], (err, result) => {
+              if (err) {
+                console.log(err)
+                resolve(false)
+              } else {
+                if (result.affectedRows > 0) {
+                  console.log("passou")
+                  resolve(true)
+                }
+              }
+            })
+        }
+      })
+    })
+  }
+
+
+
+  //UPDATES THE LOYALTY OF THE USER_ID ON THE LOYALTY TABLE
   services.updateLoyalty = async (userId, plusFactor) => {
     return new Promise((resolve) => {
-      if (plusFactor <= 5) {
+      if (plusFactor > 1 && plusFactor <= 5) {
         let ratingSum = plusFactor;
 
-        const query = "SELECT ACTUAL_RATING FROM LOYALTY WHERE USER_ID = ?;";
+        const query = "SELECT ACTUAL_RATING FROM LOYALTY WHERE USER_ID = ?;"
         pool.query(query, [userId], (err, result) => {
           if (err) {
-            console.log(err)
+            resolve(false)
           } else {
             if (result.length > 0) {
               let lastRating = result[0].ACTUAL_RATING
@@ -665,7 +711,6 @@ module.exports = app => {
               })
             } else {
               resolve(false)
-
             }
           }
         })

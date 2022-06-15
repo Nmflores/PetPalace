@@ -12,7 +12,7 @@ module.exports = app => {
   const pool = dbConn.initPool();
   const controller = {};
   const {
-    checkUserPerUserName
+    checkUserPerEmail
   } = app.services.checks;
 
   const {
@@ -27,23 +27,23 @@ module.exports = app => {
 
   controller.login = async (req, res) => {
     const {
-      username,
+      email,
       password
     } = req.body;
-    if (username && password) {
-      if (await checkUserPerUserName(username)) {
-        const result = await logIn(username, password)
+    if (email && password) {
+      if (await checkUserPerEmail(email)) {
+        const result = await logIn(email, password)
         console.log("1", result)
-        const accessToken = result.data
+        const {accessToken, data} = result
         if (result.isLogged === true) {
-          res.cookie('x-access-token', accessToken, {
+          res.cookie('accessToken', accessToken, {
             maxAge: 60 * 60 * 1000, // 1 hour
             httpOnly: true,
-            secure: true,
-            sameSite: true,
+            secure: false,
+            sameSite: false,
           })
           res.status(200).json({
-            data: "Usuario logado com sucesso"
+            data: result.data
           })
         } else {
           res.status(result.status).json({
@@ -103,6 +103,7 @@ module.exports = app => {
 
       const loginParams = [userId, email, password];
 
+
       const callRegisterAuth = async (loginParams) => {
         const query = `INSERT INTO USERS_AUTH(USER_ID, EMAIL, PASSWORD) VALUES(?)`;
         pool.query(query, [loginParams], (err, result) => {
@@ -132,7 +133,7 @@ module.exports = app => {
       }
 
 
-      const query = `INSERT INTO USERS(USER_ID, FIRST_NAME, SECOND_NAME, USER_GENDER, CPF, STATE) VALUES(?);`;
+      const query = `INSERT INTO USERS(USER_ID, FIRST_NAME, SECOND_NAME, USER_GENDER, CONTACT_NBR, CPF, STATE) VALUES(?);`;
       pool.query(query, [userParams], (err, result) => {
         if (err) {
           if (err.sqlMessage.includes('cpf')) {
@@ -146,6 +147,7 @@ module.exports = app => {
           }
         } else {
           if (result.affectedRows > 0) {
+            console.log(userParams, loginParams)
             callRegisterAuth(loginParams)
           } else {
             res.status(400).json({

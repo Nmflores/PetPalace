@@ -21,10 +21,10 @@ services.checkUser = async (userId) => {
           })
       })
   }
-services.checkUserPerUserName = async (username) => {
-  const query = "SELECT A.USER_ID FROM USERS_AUTH A WHERE USERNAME = ?;";
+services.checkUserPerEmail = async (email) => {
+  const query = "SELECT A.USER_ID FROM USERS_AUTH A WHERE EMAIL = ?;";
   return new Promise((resolve) => {
-    pool.query(query, username, (err, result) => {
+    pool.query(query, email, (err, result) => {
         if (err) {
             resolve(false);
         } else {

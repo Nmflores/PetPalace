@@ -181,7 +181,7 @@
                 "parameters": [{
                     "name": "UserId",
                     "in": "path",
-                    "description": "User per UserId",
+                    "description": "Update User per UserId",
                     "required": true
                 }],
                 "requestBody": {
@@ -216,9 +216,72 @@
                         "description": "Updated"
                     }
                 }
+            },
+            "delete": {
+                "summary": "Delete User by UserID",
+                "description": "This route will delete a user by its UserID",
+                "tags": ["Users"],
+                "parameters": [{
+                    "name": "UserId",
+                    "in": "path",
+                    "description": "Delete User per UserId",
+                    "required": true
+                }],
+                "responses": {
+                    "400": {
+                        "description": "Error while deleting User"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "201": {
+                        "description": "Deleted"
+                    }
+                }
             }
-        }
-    },
+        },
+        "/works": {
+            "get": {
+                "summary": "Works",
+                "description": "This route will a list with the available services and their workers",
+                "tags": ["works"],
+                "responses": {
+                    "400": {
+                        "description": "Error while getting Available services and Workers"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AvailableWorkers"
+                                    }
+
+                                },
+                                "examples": {
+                                    "AvailableWorkers": {
+                                        "value": {
+                                            "workerId": "1d424d03-72c5-4343-978a-bf33784fb370",
+                                            "firstName": "paulo",
+                                            "secondName": "guedes",
+                                            "serviceId": 0,
+                                            "serviceName": "hospedagem"
+                                          }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+        },
     "components": {
         "schemas": {
             "UserAuthRegister": {
@@ -292,6 +355,27 @@
                         "type": "string"
                     }
                 }
+            },
+            "AvailableWorkers":{
+                "type": "object",
+                "properties": {
+                    "workerId": {
+                        "type": "string"
+                    },
+                    "firstName":  {
+                        "type": "string"
+                    },
+                    "secondName": {
+                        "type": "string"
+                    },
+                    "serviceId": {
+                        "type": "number"
+                    },
+                    "serviceName": {
+                        "type": "string"
+                    }
+                  }
+                }
             }
         },
         "securitySchemes": {
@@ -302,4 +386,4 @@
             }
         }
     }
-}
+   

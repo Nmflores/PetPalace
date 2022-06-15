@@ -11,7 +11,7 @@ module.exports = (app) => {
     getWorkers,
     getWorkersByUserId,
     getWorkersByServiceId,
-    registerWork, 
+    registerWork,
     deleteAvailableWork,
   } = app.services.queries
 
@@ -67,10 +67,16 @@ module.exports = (app) => {
       serviceId
     } = req.body;
 
-    const result = await deleteAvailableWork(userId, serviceId)
-    res.status(result.status).json({
-      data: result.data
-    })
+    if (userId && serviceId) {
+      const result = await deleteAvailableWork(userId, serviceId)
+      res.status(result.status).json({
+        data: result.data
+      })
+    } else {
+      res.status(400).json({
+        data: "Faltam informações para deletar o serviço"
+      })
+    }
 
   }
 
