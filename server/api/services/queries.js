@@ -595,22 +595,12 @@ module.exports = app => {
   }
 
 
-
-
-
-
-
-
-
-
   //NEED TO CERTIFY THAT THE LOYALTY SYSTEM IS REGISTERING AUTOMATICALY FOR ALL NEW USERS
   //NEED TO MAKE A NEW USER TO CERTIFY THAT
   //DONE, WORKING GREAT
-
   services.createLoyalty = async (userId) => {
     return new Promise((resolve) => {
       const query = "INSERT INTO LOYALTY(USER_ID) VALUES(?);";
-
       pool.query(query, [userId], (err, result) => {
         if (err) {
           console.log(err)
@@ -630,7 +620,38 @@ module.exports = app => {
   }
 
 
-  
+  services.getActualRating = async (userId) => {
+    return new Promise((resolve) => {
+      const query = "SELECT ACTUAL_RATING FROM LOYALTY WHERE USER_ID = ?;"
+      pool.query(query, [userId], (err, result) => {
+        if (err) {
+          resolve(false)
+        } else {
+          resolve(result[0].ACTUAL_RATING)
+        }
+      })
+    })
+  }
+
+  services.checkUserRatingOutputQuery = function (rating) {
+    let query = ""
+    if (rating >= 10) {
+      query = `UPDATE USERS SET LOYALTY = 1 WHERE USER_ID = ?;`
+      if (rating >= 15) {
+        query = `UPDATE USERS SET LOYALTY = 2 WHERE USER_ID = ?;`
+        if (rating >= 25) {
+          query = `UPDATE USERS SET LOYALTY = 3 WHERE USER_ID = ?;`
+          if (rating >= 35) {
+            query = `UPDATE USERS SET LOYALTY = 4 WHERE USER_ID = ?;`
+            if (rating >= 45) {
+              query = `UPDATE USERS SET LOYALTY = 5 WHERE USER_ID = ?;`
+            }
+          }
+        }
+      }
+    }
+    return query
+  }
 
   //LOYALTY SYSTEM
   //LVL 0 TO 1 -- NEEDS 10 TOTAL STARS OF RATING ON THE FEEDBACKS
@@ -638,48 +659,34 @@ module.exports = app => {
   //LVL 2 TO 3 -- NEEDS 25 TOTAL STARS OF RATING ON THE FEEDBACKS
   //LVL 3 TO 4 -- NEEDS 35 TOTAL STARS OF RATING ON THE FEEDBACKS
   //LVL 4 TO 5 -- NEEDS 45 TOTAL STARS OF RATING ON THE FEEDBACKS 
-  // 
-  services.updateUserLoyaltyLevel = async (userId) =>{
-    return new Promise((resolve) => {
-      const query = "SELECT ACTUAL_RATING FROM LOYALTY WHERE USER_ID = ?;"
+
+  services.updateUserLoyaltyLevel = async (workerId, ownerId) => {
+    const updateInfo = async (query, userId) => {
       pool.query(query, [userId], (err, result) => {
-        if(err){
+        if (err) {
           console.log(err)
-            resolve(false)
-        }else{
-            let query = ""
-            let rating = result[0].ACTUAL_RATING
-            console.log(rating)
-            if(rating >= 10){
-               query = `UPDATE USERS SET LOYALTY = 1 WHERE USER_ID = ?;`
-            }
-            if(rating >= 15){
-              query = `UPDATE USERS SET LOYALTY = 2 WHERE USER_ID = ?;`
-            }
-            if(rating >= 25){
-              query = `UPDATE USERS SET LOYALTY = 3 WHERE USER_ID = ?;`
-            }
-            if(rating >= 35){
-              query = `UPDATE USERS SET LOYALTY = 4 WHERE USER_ID = ?;`
-            }
-            if(rating >= 45){
-              query = `UPDATE USERS SET LOYALTY = 5 WHERE USER_ID = ?;`
-            }
-            console.log(query)
-            pool.query(query, [userId], (err, result) => {
-              if (err) {
-                console.log(err)
-                resolve(false)
-              } else {
-                if (result.affectedRows > 0) {
-                  console.log("passou")
-                  resolve(true)
-                }
-              }
-            })
+          return false
+        } else {
+          if (result.affectedRows > 0) {
+            return true
+          }
         }
       })
-    })
+    }
+
+    const workerRating = await services.getActualRating(workerId)
+    const workerQuery = await services.checkUserRatingOutputQuery(workerRating)
+    console.log(workerRating, workerQuery)
+
+    const ownerRating = await services.getActualRating(ownerId)
+    const ownerQuery = await services.checkUserRatingOutputQuery(ownerRating)
+    console.log(ownerRating, ownerQuery)
+
+    const callFunction = async (userQuery, userId)=>{
+        await updateInfo(userQuery, userId)
+    }
+      callFunction(workerQuery, workerId)
+      callFunction(ownerQuery, ownerId)
   }
 
 

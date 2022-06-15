@@ -19,7 +19,7 @@ module.exports = app => {
         .put(authorization, controller.updateContractPrice)
 
 
-    app.route('/api/v1/contracts/feedbacks')
+    app.route('/api/v1/feedbacks')
         .get(authorization, controller.getFeedBacks)
         .post(authorization, controller.createFeedBacks)
 }

@@ -72,7 +72,7 @@ module.exports = app => {
                     res.status(201).json(result)
                 } else {
                     res.status(404).json({
-                        msg: 'Nenhum serviço na fila'
+                        data: 'Nenhum serviço na fila'
                     })
                 }
             }
@@ -169,11 +169,19 @@ module.exports = app => {
         ]
 
         // CREATE A FUNCTION TO CALL THE UPDATE LOYALTY FOR THE 2 USERS INVOLVED
-        const callUpdateUsersLoyalty = async () => {
+        const callUpdateLoyalty = async () => {
             // FOR THE WORKER RATING WE GET THE OWNER RATED VALUE
             await updateLoyalty(workerId, ownerRating)
             // FOR THE OWNER RATING WE GET THE WORKER RATED VALUE
             await updateLoyalty(ownerId, workerRating)
+        }
+
+
+        // WILL MAKE THE LOYALTY LEVEL CALCULUS FOR THE 2 USERS INVOLVE
+        // UPDATE THE LOYALTY LVL BASED ON THE ACTUAL RATING     
+        // UPDATE THE LOYALTY IN THE USER_INFO TABLE AS WELL
+        const callUpdateUsersInfoLoyalty = async () => {
+            await updateUserLoyaltyLevel(workerId, ownerId)
         }
 
 
@@ -190,14 +198,11 @@ module.exports = app => {
                 } else {
                     // IN CASE THE FEEDBACK INSERTION GOES RIGHT
                     if (result.affectedRows > 0) {
-                        // CALL THE FUNCTIONS THAT WILL UPDATE THE USERS LOYALTY
-                        callUpdateUsersLoyalty()
+                        // CALL THE FUNCTIONS THAT WILL UPDATE THE USERS LOYALTY 
+                        callUpdateLoyalty()
 
-                        // WILL MAKE THE LOYALTY LEVEL CALCULUS FOR THE 2 USERS INVOLVE
-                        // UPDATE THE LOYALTY LVL BASED ON THE ACTUAL RATING     
-                        // UPDATE THE LOYALTY IN THE USER_INFO TABLE AS WELL    
-                        updateUserLoyaltyLevel(workerId)
-                        updateUserLoyaltyLevel(ownerId)
+                        // CALL THE FUNCTIONS THAT WILL UPDATE THE USERS LOYALTY
+                        callUpdateUsersInfoLoyalty()
 
                         res.status(201).json({
                             data: 'Feedback criado com sucesso'
@@ -224,13 +229,13 @@ module.exports = app => {
             "SELECT * FROM USERS_FEEDBACK;";
         pool.query(query, [], (err, result) => {
             if (err) {
-                res.status(404).send(err);
+                res.status(400).send(err);
             } else {
                 if (result.length > 0) {
-                    res.status(201).json(result)
+                    res.status(200).json({data : result})
                 } else {
                     res.status(404).json({
-                        msg: 'Nenhum feedback cadastrado'
+                        data: 'Nenhum feedback cadastrado'
                     })
                 }
             }
