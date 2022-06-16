@@ -1,7 +1,9 @@
 module.exports = app => {
     const controller = app.controllers.contract
-    const services = app.services.accessToken 
-    const { authorization } = services
+    const services = app.services.accessToken
+    const {
+        authorization
+    } = services
 
     app.route('/api/v1/contracts')
         .get(authorization, controller.getQueues)
@@ -22,4 +24,8 @@ module.exports = app => {
     app.route('/api/v1/feedbacks')
         .get(authorization, controller.getFeedBacks)
         .post(authorization, controller.createFeedBacks)
+
+    app.route('/api/v1/feedbacks/:queueId')
+        .get(authorization, controller.getFeedBacksByQueueId)
+
 }

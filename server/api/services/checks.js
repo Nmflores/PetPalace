@@ -37,6 +37,23 @@ services.checkUserPerEmail = async (email) => {
       })
   })
 }
+
+services.checkPet = async (petId) => {
+  const query = "SELECT A.PET_NAME FROM PETS A WHERE PET_ID = ?;";
+  return new Promise((resolve) => {
+    pool.query(query, petId, (err, result) => {
+        if (err) {
+            resolve(false);
+        } else {
+          if (result.length > 0) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        }
+      })
+  })
+}
   
 
   return services;

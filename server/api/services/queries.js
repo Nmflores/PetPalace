@@ -500,19 +500,19 @@ module.exports = app => {
       let query = ""
       if (status === 1) {
         query =
-          "UPDATE SERVICES_QUEUE SET STATUS = ? WHERE QUEUE_ID = ?;";
-      } else if (status === 2) {
-        query =
-          "UPDATE SERVICES_QUEUE SET STATUS = ? AND END_DATE = NOW() WHERE QUEUE_ID = ?;";
-
-      } else if (status === 3) {
-        query =
-          "UPDATE SERVICES_QUEUE SET STATUS = ? AND END_DATE = NOW() WHERE QUEUE_ID = ?;";
+          "UPDATE services_queue SET status = 1 WHERE queue_id = ?;"
       }
-
-
-      pool.query(query, [status, queueId], (err, result) => {
+      if (status === 2) {
+        query =
+        "UPDATE services_queue SET status = 2 , end_date = CURRENT_DATE WHERE queue_id = ?"
+      }
+        if (status === 3) {
+        query =
+        "UPDATE services_queue SET status = 3 , end_date = CURRENT_DATE WHERE queue_id = ?"
+      }
+      pool.query(query, [queueId], (err, result) => {
         if (err) {
+          console.log(err)
           if (err.code === "ECONNREFUSED") {
             resolve({
               status: 500,
@@ -520,9 +520,9 @@ module.exports = app => {
             })
           }
 
-
         } else {
           if (result.affectedRows > 0) {
+            console.log(result)
             resolve({
               status: 201,
               data: 'Status de serviço alterado com sucesso'
@@ -541,9 +541,7 @@ module.exports = app => {
 
   services.updateContractPrice = async (queueId, price) => {
     return new Promise((resolve) => {
-
       const query = "UPDATE SERVICES_QUEUE SET PRICE = ? WHERE QUEUE_ID = ?;";
-
       pool.query(query, [price, queueId], (err, result) => {
         if (err) {
           if (err.code === "ECONNREFUSED") {

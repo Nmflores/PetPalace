@@ -66,14 +66,16 @@ module.exports = (app) => {
       const query = 'SELECT A.OWNER_ID, C.FIRST_NAME , A.PET_ID, A.PET_NAME, B.PET_TYPE, A.PET_BREED FROM PETS A, PET_TYPES B, USERS C WHERE A.PET_TYPE = B.PET_TYPE_ID AND A.OWNER_ID = C.USER_ID AND A.PET_ID = ? LIMIT 10;';
       pool.query(query, [petId], (err, result) => {
       if (err) {
-        return res.status(404).send({msg: errorHandler(err)});
+        return res.status(404).send({data: errorHandler(err)});
       } else {
         const response = petsResult(result);
-        return res.status(200).send(response);
+        return res.status(200).send({data: response});
       }
-    });
+    })
+    }else{
+      return res.status(200).send({data: "Pet não existe"});  
     }
-  };
+  }
 
 
 
@@ -85,21 +87,18 @@ module.exports = (app) => {
         if (err) res.status(404).send({ msg: errorHandler(err) });
         else {
           if (result.affectedRows === 1) {
-            res.status(200).send({ msg: "Pet deletado com sucesso" });
+            res.status(201).send({ data: "Pet deletado com sucesso" });
           }
         }
       }); 
     }else{
-      res.status(200).send({ msg: messages(2) });
+      res.status(400).send({ data: messages(2) });
     }
   };
 
   controller.updatePetByPetId = async (req, res) => {
     const { petId } = req.params;
     if(await checkPet(petId)){
-      if (err) res.status(404).send({ msg: errorHandler(err) });
-      else {
-        if(result.length > 0){
           const {
               petName, petType, petBreed 
           } = req.body;
@@ -113,16 +112,14 @@ module.exports = (app) => {
           pool.query(query, petParams, (err, result) => {
             if (err) {
               console.log(err);
-              res.status(404).send({ msg: errorHandler(err) })
+              res.status(404).send({ data: errorHandler(err) })
             }
-            else { res.status(201).send({ msg: 'Pet alterado com sucesso' }); }
-          });
+            else { res.status(201).send({ data: 'Pet alterado com sucesso' }); }
+          })
         }
       }
-    }else{
-      res.status(404).send({msg : messages(3)})
-    }
-}
+
+
 
   return controller;
-};
+}

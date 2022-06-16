@@ -124,7 +124,7 @@ module.exports = app => {
             })
         } else {
             res.status(500).json({
-                data: "Status range: 0-3"
+                data: "Status range: 1-3"
             })
         }
     }
@@ -244,7 +244,7 @@ module.exports = app => {
     }
 
     // GET THE FEEDBACK BASED ON THE CONTRACT/QUEUE
-    controller.getFeedBackByQueueId = async (req, res) => {
+    controller.getFeedBacksByQueueId = async (req, res) => {
         const {
             queueId
         } = req.params
