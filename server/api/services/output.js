@@ -36,6 +36,7 @@ module.exports = app => {
               secondName: worker.second_name,
               serviceId: worker.service_id,
               serviceName: worker.service_name,
+              price: worker.price
             };
           });
         return response;
@@ -60,7 +61,7 @@ module.exports = app => {
         } 
         }
 
-
+    services.errorHandler = (err) => {}
     services.messages = (msgNbr) => {
         const messages = [
             "Usuario já cadastrado no sistema",

@@ -17,75 +17,6 @@ module.exports = app => {
     checkUser
   } = app.services.checks
 
-  {
-    /*services.registerUser = async function (userId, userParams, loginParams){
-        
-        return new Promise((resolve) => {
-          const query = `INSERT INTO USERS(USER_ID, FIRST_NAME, SECOND_NAME, USER_GENDER, CPF, STATE) VALUES(?);`;
-          pool.query(query, [userParams], (err, result) => {
-            if (err) {
-              if (err.sqlMessage.includes('cpf')) {
-                resolve({
-                  status: 500,
-                  data: 'Usuario com este CPF ja esta cadastrado'
-                })
-              } else if (err.sqlMessage.includes('user_id')) {
-                resolve({
-                  status: 500,
-                  data: 'Usuario com este ID ja esta cadastrado'
-                })
-              }
-            } else {
-              if (result.affectedRows > 0) {
-                services.registerUserAuth(userId, loginParams)
-              } else {
-                resolve({
-                  status: 500,
-                  data: "Cadastro de Usuario falhou"
-                })
-              }
-            }
-          })
-        })
-      }
-
-      services.registerUserAuth = async (userId, loginParams) => {
-        const callCreateLoyalty = async () => {
-          await services.createLoyalty(userId)
-        }
-
-        return new Promise((resolve) => {
-          const query = `INSERT INTO USERS_AUTH(USER_ID, EMAIL, PASSWORD) VALUES(?)`;
-          pool.query(query, [loginParams], (err, result) => {
-            if (err) {
-             if (err.sqlMessage.includes('email')) {
-                resolve({
-                  status: 500,
-                  data: 'Usuario com este email já esta cadastrado'
-                })
-              }
-
-            } else {
-              if (result.affectedRows > 0) {
-                console.log(12)
-                callCreateLoyalty()
-                resolve({
-                  status: 201,
-                  data: 'Usuario cadastrado com sucesso'
-                })
-              } else {
-                console.log(2)
-                resolve({
-                  status: 500,
-                  data: 'Cadastro de usuario falhou'
-                })
-              }
-            }
-          })
-        })
-      }
-    */
-  }
 
 
   services.logIn = async (email, password) => {
@@ -95,7 +26,7 @@ module.exports = app => {
       pool.query(query, [email, password], (err, result) => {
         if (err) {
           resolve({
-            status: 500,
+            status: 400,
             data: err,
             isLogged: false
           })
@@ -118,7 +49,7 @@ module.exports = app => {
             })
           }
         }
-      });
+      })
 
     })
   }
@@ -151,106 +82,80 @@ module.exports = app => {
 
 
   services.getUserByUserId = async (userId) => {
-    const checkBefore = await checkUser(userId)
     return new Promise((resolve) => {
-      if (checkBefore) {
-        const query = "SELECT * FROM USERS A WHERE A.USER_ID = ?;";
-        pool.query(query, [userId], (err, result) => {
-          if (err) {
-            resolve({
-              status: 500,
-              data: err
-            })
-          } else {
-            resolve({
-              status: 200,
-              data: usersResult(result)
-            })
-          }
-        })
-      } else resolve({
-        status: 500,
-        data: "Nenhum Usuario Cadastrado com este ID"
+      const query = "SELECT * FROM USERS A WHERE A.USER_ID = ?;";
+      pool.query(query, [userId], (err, result) => {
+        if (err) {
+          resolve({
+            status: 400,
+            data: err
+          })
+        } else {
+          resolve({
+            status: 200,
+            data: usersResult(result)
+          })
+        }
       })
+
     })
   }
 
   services.updateUserQ = async (userId, userParams) => {
-    const checkBefore = await checkUser(userId)
     return new Promise((resolve) => {
-      if (checkBefore) {
-        // CREATE THE INSERTION QUERY FOR THE USERS TABLE
-        const query = `UPDATE USERS SET first_name = ?,second_name = ?,
+      // CREATE THE UPDATE QUERY FOR THE USERS TABLE
+      const query = `UPDATE USERS SET first_name = ?,second_name = ?,
       user_gender = ?,
+      contact_nbr = ?, 
       cpf = ?,
-      loyalty = ?,
-      address = ?,
-      address_nbr = ?,
-      district = ?,
-      cep = ?,
       state = ? WHERE USER_ID = ?;`;
-        // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
-        pool.query(query, userParams, (err, result) => {
-          if (err) resolve({
-            status: 500,
-            data: err
-          })
-          else resolve({
-            status: 201,
-            data: 'Usuario alterado com sucesso'
-          })
+      // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
+      pool.query(query, userParams, (err, result) => {
+        if (err) resolve({
+          status: 400,
+          data: err
         })
-      } else resolve({
-        status: 500,
-        data: "Nenhum Usuario Cadastrado com este ID"
+        else resolve({
+          status: 201,
+          data: 'Usuario alterado com sucesso'
+        })
       })
     })
   }
 
   services.deleteUser = async (userId) => {
-    const checkBefore = await checkUser(userId)
     return new Promise((resolve) => {
-      if (checkBefore) {
-        const query = "DELETE FROM USERS WHERE USER_ID = ?;";
-        pool.query(query, userId, (err, result) => {
-          if (err) {
-            resolve({
-              status: 500,
-              data: err
-            })
-          } else {
-            if (result.affectedRows === 1) resolve({
-              status: 201,
-              data: "Usuario deletado com sucesso"
-            })
-            else resolve({
-              status: 500,
-              data: "Erro ao deletar Usuario"
-            })
-          }
-        })
-
-      } else {
-        resolve({
-          status: 500,
-          data: "Nenhum Usuario Cadastrado com este ID"
-        })
-      }
+      const query = "DELETE FROM USERS WHERE USER_ID = ?;";
+      pool.query(query, userId, (err, result) => {
+        if (err) {
+          resolve({
+            status: 400,
+            data: err
+          })
+        } else {
+          if (result.affectedRows === 1) resolve({
+            status: 201,
+            data: "Usuario deletado com sucesso"
+          })
+          else resolve({
+            status: 500,
+            data: "Erro ao deletar Usuario"
+          })
+        }
+      })
     })
   }
-
-
 
 
 
   services.getWorkers = async () => {
     return new Promise((resolve) => {
       const query =
-        "SELECT A.user_id, A.first_name, A.second_name, B.service_id, C.service_name FROM USERS A, WORKER_SERVICES B, AVAILABLE_SERVICES C WHERE A.user_id = B.user_id AND C.service_id = B.service_id;";
+        "SELECT A.user_id, A.first_name, A.second_name, B.service_id, C.service_name, B.price FROM USERS A, WORKER_SERVICES B, AVAILABLE_SERVICES C WHERE A.user_id = B.user_id AND C.service_id = B.service_id;";
       // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
       pool.query(query, (err, result) => {
         if (err) resolve({
-          status: 500,
+          status: 400,
           data: err
         })
         else resolve({
@@ -264,10 +169,10 @@ module.exports = app => {
   services.getWorkersByUserId = async (userId) => {
     return new Promise((resolve => {
       const query =
-        "SELECT A.user_id, A.first_name, A.second_name, B.service_id, C.service_name FROM USERS A, WORKER_SERVICES B, AVAILABLE_SERVICES C WHERE A.user_id = B.user_id AND C.service_id = B.service_id AND A.user_id = ?;";
+        "SELECT A.user_id, A.first_name, A.second_name, B.service_id, C.service_name, B.price FROM USERS A, WORKER_SERVICES B, AVAILABLE_SERVICES C WHERE A.user_id = B.user_id AND C.service_id = B.service_id AND A.user_id = ?;";
       pool.query(query, [userId], (err, result) => {
         if (err) resolve({
-          status: 500,
+          status: 400,
           data: err
         })
         else resolve({
@@ -282,13 +187,13 @@ module.exports = app => {
   services.getWorkersByServiceId = async (serviceId) => {
     return new Promise((resolve => {
       const query =
-        "SELECT A.user_id, A.first_name, A.second_name, B.service_id, C.service_name FROM USERS A, WORKER_SERVICES B, AVAILABLE_SERVICES C WHERE A.user_id = B.user_id AND C.service_id = B.service_id AND B.service_id = ?;";
+        "SELECT A.user_id, A.first_name, A.second_name, B.service_id, C.service_name, B.price FROM USERS A, WORKER_SERVICES B, AVAILABLE_SERVICES C WHERE A.user_id = B.user_id AND C.service_id = B.service_id AND B.service_id = ?;";
 
       // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
       pool.query(query, serviceId, (err, result) => {
         if (err) {
           if (err.code === "ECONNREFUSED") resolve({
-            status: 500,
+            status: 400,
             data: "Banco de dados inacessivel"
           })
         } else {
@@ -297,7 +202,7 @@ module.exports = app => {
             data: workersResult(result)
           })
           else resolve({
-            status: 500,
+            status: 400,
             data: `Serviço de Id:[${serviceId}] nao possui Prestadores`
           })
         }
@@ -306,11 +211,7 @@ module.exports = app => {
   }
 
 
-
-
-
-
-  services.registerWork = async (userId, serviceId) => {
+  services.registerWorker = async (userId, serviceId) => {
     const checkBefore = await checkUser(userId)
     return new Promise((resolve) => {
       if (checkBefore) {
@@ -321,11 +222,11 @@ module.exports = app => {
         pool.query(query, [userId, serviceId], (err, result) => {
           if (err) {
             if (err.code === "ER_DUP_ENTRY") resolve({
-              status: 500,
+              status: 400,
               data: "Serviço já cadastrado para este Usuario"
             })
             else if (err.code === "ECONNREFUSED") resolve({
-              status: 500,
+              status: 400,
               data: "Banco de dados inacessivel"
             })
           } else {
@@ -334,50 +235,63 @@ module.exports = app => {
               data: "Serviço cadastrado para o Usuario"
             })
             else resolve({
-              status: 500,
+              status: 400,
               data: 'Cadastro de serviço falhou'
             })
           }
         })
       } else resolve({
-        status: 500,
+        status: 400,
         data: "Nenhum Usuario Cadastrado com este ID"
       })
 
     })
   }
 
-
-
-  services.deleteAvailableWork = async (userId, serviceId) => {
-    const query =
-      "DELETE FROM WORKER_SERVICES WHERE USER_ID = ? AND SERVICE_ID = ?;";
-    pool.query(query, [userId, serviceId], (err, result) => {
-      if (err) {
-        resolve({
-          status: 404,
+  services.updateWorkPrice = async (userId, serviceId, price) => {
+    return new Promise((resolve) => {
+      // CREATE THE UPDATE QUERY FOR THE WORKER_SERVICES TABLE
+      const query = `UPDATE WORKER_SERVICES SET PRICE = ? WHERE USER_ID = ? AND SERVICE_ID = ?;`;
+      // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
+      pool.query(query, [price, userId, serviceId], (err, result) => {
+        if (err) resolve({
+          status: 400,
           data: err
         })
-      } else {
-        if (result.affectedRows > 0) {
-          resolve({
-            status: 201,
-            data: "Serviço deletado com sucesso"
-          })
-        } else {
-          resolve({
-            status: 400,
-            data: "Erro ao deletar serviço"
-          })
-        }
-      }
+        else resolve({
+          status: 201,
+          data: 'Preço de serviço alterado com sucesso'
+        })
+      })
     })
   }
 
-
-
-
-
+  services.deleteAvailableWorker = async (userId, serviceId) => {
+    return new Promise((resolve) => {
+      const query =
+        "DELETE FROM WORKER_SERVICES WHERE USER_ID = ? AND SERVICE_ID = ?;";
+      pool.query(query, [userId, serviceId], (err, result) => {
+        if (err) {
+          resolve({
+            status: 400,
+            data: err
+          })
+        } else {
+          if (result.affectedRows > 0) {
+            resolve({
+              status: 201,
+              data: "Serviço de Prestador deletado com sucesso"
+            })
+          } else {
+            resolve({
+              status: 400,
+              data: "Erro ao deletar serviço de Prestador"
+            })
+          }
+        }
+      })
+    })
+  }
 
 
 
@@ -393,12 +307,12 @@ module.exports = app => {
         if (err) {
           if (err.code === "ECONNREFUSED") {
             resolve({
-              status: 500,
+              status: 400,
               data: "Banco de dados inacessivel"
             })
           } else if (err.sqlMessage.includes('QUEUE_ID')) {
             resolve({
-              status: 500,
+              status: 400,
               data: "Contrato com este ID ja esta registrado"
             })
           }
@@ -412,7 +326,7 @@ module.exports = app => {
             })
           } else {
             resolve({
-              status: 500,
+              status: 400,
               data: 'Erro ao cadastrar Contrato de serviço'
             })
           }
@@ -430,7 +344,7 @@ module.exports = app => {
       pool.query(query, [userId, userId], (err, result) => {
         if (err) {
           resolve({
-            status: 500,
+            status: 400,
             data: result
           })
         } else {
@@ -441,7 +355,7 @@ module.exports = app => {
             })
           } else {
             resolve({
-              status: 500,
+              status: 400,
               data: 'Nenhum serviço na fila'
             })
           }
@@ -504,11 +418,11 @@ module.exports = app => {
       }
       if (status === 2) {
         query =
-        "UPDATE services_queue SET status = 2 , end_date = CURRENT_DATE WHERE queue_id = ?"
+          "UPDATE services_queue SET status = 2 , end_date = CURRENT_DATE WHERE queue_id = ?"
       }
-        if (status === 3) {
+      if (status === 3) {
         query =
-        "UPDATE services_queue SET status = 3 , end_date = CURRENT_DATE WHERE queue_id = ?"
+          "UPDATE services_queue SET status = 3 , end_date = CURRENT_DATE WHERE queue_id = ?"
       }
       pool.query(query, [queueId], (err, result) => {
         if (err) {
@@ -680,11 +594,11 @@ module.exports = app => {
     const ownerQuery = await services.checkUserRatingOutputQuery(ownerRating)
     console.log(ownerRating, ownerQuery)
 
-    const callFunction = async (userQuery, userId)=>{
-        await updateInfo(userQuery, userId)
+    const callFunction = async (userQuery, userId) => {
+      await updateInfo(userQuery, userId)
     }
-      callFunction(workerQuery, workerId)
-      callFunction(ownerQuery, ownerId)
+    callFunction(workerQuery, workerId)
+    callFunction(ownerQuery, ownerId)
   }
 
 
@@ -725,6 +639,74 @@ module.exports = app => {
       }
     })
   }
+
+
+
+
+  services.addPetQ = async (params) =>{
+    return new Promise((resolve) =>{
+      const query =
+      "INSERT INTO PETS(OWNER_ID, PET_ID, PET_NAME, PET_TYPE, PET_BREED) VALUES(?, ? , ? , ?, ?);";
+    // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
+    pool.query(query, params, (err, result) => {
+      if (err) resolve({status: 400, data: err})
+      else {
+        if (result.affectedRows > 0) {
+          resolve({status: 200, data: 'Pet adicionado com sucesso'})
+
+        }
+      }
+    })
+
+    })
+  }
+
+
+  services.updatePet = async (petId, petParams) => {
+    return new Promise((resolve) => {
+      const query = `UPDATE PETS SET PET_NAME = ?, PET_TYPE = ?,
+      PET_BREED = ? WHERE PET_ID = ?;`;
+      pool.query(query, petParams, (err, result) => {
+        if (err) {
+          console.log(err);
+          resolve({
+            status: 400,
+            data: err
+          })
+        } else {
+          if (result.affectedRows > 0) {
+            resolve({
+              status: 201,
+              data: 'Pet alterado com sucesso'
+            })
+          }
+        }
+      })
+    })
+  }
+
+  services.deletePet = async (petId) => {
+    return new Promise((resolve) => {
+      const query = "DELETE FROM PETS WHERE PET_ID = ?;";
+      pool.query(query, [petId], (err, result) => {
+        if (err) {
+          resolve({
+            status: 400,
+            data: err
+          })
+        } else {
+          if (result.affectedRows === 1) {
+            resolve({
+              status: 400,
+              data: "Pet deletado com sucesso"
+            })
+          }
+        }
+      })
+    })
+  }
+
+
 
   return services;
 }

@@ -9,6 +9,7 @@ module.exports = app => {
     const dbConn = app.repositories.dbConfig
     const pool = dbConn.initPool();
     const controller = {};
+
     const {
         createContract,
         updateLoyalty,
@@ -20,12 +21,12 @@ module.exports = app => {
     } = app.services.queries;
     const {
         checkUser,
-        checkUserPerUserName
+        checkQueue
     } = app.services.checks;
     const {
-        errorHandler,
         messages
     } = app.services.output
+
 
     controller.createContract = async (req, res) => {
         let queueId = uuidV4();
@@ -36,16 +37,15 @@ module.exports = app => {
             price,
             petTypes
         } = req.body;
-
+    if(workerId && ownerId && serviceId && price && petTypes){
+        const params = [
+            queueId,
+            workerId,
+            ownerId,
+            serviceId,
+            price
+        ]
         if (await checkUser(ownerId)) {
-            const params = [
-                queueId,
-                workerId,
-                ownerId,
-                serviceId,
-                price
-            ];
-
             const result = await createContract(params, queueId, petTypes)
             res.status(result.status).json({
                 data: result.data
@@ -56,9 +56,12 @@ module.exports = app => {
                 msg: messages(1)
             })
         }
-
-
-    };
+    }else{
+        res.status(400).send({
+            data: "Faltam dados para criar o Contrato"
+        })
+    } 
+    }
 
 
     controller.getQueues = async (req, res) => {
@@ -77,7 +80,7 @@ module.exports = app => {
                 }
             }
 
-        });
+        })
     }
 
 
@@ -87,18 +90,26 @@ module.exports = app => {
         const {
             userId
         } = req.params
-        const result = await getQueuesByUserId(userId)
-        res.status(result.status).json({
-            data: result.data
-        })
+        if (await checkUser(userId)) {
+            const result = await getQueuesByUserId(userId)
+            res.status(result.status).json({
+                data: result.data
+            })
+        } else {
+            //NOT EXISTS
+            res.status(400).json({
+                data: "Nenhum Usuario Cadastrado com este ID"
+            })
+        }
     }
 
-    controller.updateContractPrice = async (req, res) => {
-        const {
-            queueId,
-            price
-        } = req.body
 
+controller.updateContractPrice = async (req, res) => {
+    const {
+        queueId,
+        price
+    } = req.body
+    if (queueId && price) {
         if (price > 0) {
             const result = await updateContractPrice(queueId, price)
             res.status(result.status).json({
@@ -109,13 +120,19 @@ module.exports = app => {
                 data: "Atribuição de preço não pode ser 0"
             })
         }
+    } else {
+        res.status(400).send({
+            data: "Faltam dados para alterar o Preço de Contrato"
+        })
     }
+}
 
-    controller.updateContractStatus = async (req, res) => {
-        const {
-            queueId,
-            status
-        } = req.body
+controller.updateContractStatus = async (req, res) => {
+    const {
+        queueId,
+        status
+    } = req.body
+    if (queueId && status) {
 
         if (status >= 1 && status <= 3) {
             const result = await updateContractStatus(queueId, status)
@@ -127,46 +144,52 @@ module.exports = app => {
                 data: "Status range: 1-3"
             })
         }
-    }
-
-
-    controller.deleteContract = async (req, res) => {
-        const {
-            queueId
-        } = req.body
-
-        const result = await deleteContractByQueueId(queueId)
-        res.status(result.status).json({
-            data: result.data
+    } else {
+        res.status(400).send({
+            data: "Faltam dados para alterar o Status de Contrato"
         })
     }
+}
+
+
+controller.deleteContract = async (req, res) => {
+    const {
+        queueId
+    } = req.body
+
+    const result = await deleteContractByQueueId(queueId)
+    res.status(result.status).json({
+        data: result.data
+    })
+}
 
 
 
-    //queue_id -- worker_id -- owner_id -- worker_feedback -- worker_rating(1-5)  
-    //owner_feedback -- owner_rating(1-5) -- (entry_date) -- (end_date) 	 	
-    //VERIFICAR SE OS PARAMETROS REQUERIDOS EXISTEM EXISTEM 
-    //VERIFICAR SE OS USUARIOS EXISTEM, WORKER E OWNER_ID
-
-    controller.createFeedBacks = async (req, res) => {
-        const {
-            queueId,
-            workerId,
-            ownerId,
-            workerFeedback,
-            workerRating,
-            ownerFeedback,
-            ownerRating,
-        } = req.body
-        const params = [
-            queueId,
-            workerId,
-            ownerId,
-            workerFeedback,
-            workerRating,
-            ownerFeedback,
-            ownerRating,
-        ]
+controller.createFeedBacks = async (req, res) => {
+    const {
+        queueId,
+        workerId,
+        ownerId,
+        workerFeedback,
+        workerRating,
+        ownerFeedback,
+        ownerRating,
+    } = req.body
+    const params = [
+        queueId,
+        workerId,
+        ownerId,
+        workerFeedback,
+        workerRating,
+        ownerFeedback,
+        ownerRating,
+    ]
+    if (queueId &&
+        workerId &&
+        workerFeedback &&
+        workerRating &&
+        ownerFeedback &&
+        ownerRating) {
 
         // CREATE A FUNCTION TO CALL THE UPDATE LOYALTY FOR THE 2 USERS INVOLVED
         const callUpdateLoyalty = async () => {
@@ -176,15 +199,12 @@ module.exports = app => {
             await updateLoyalty(ownerId, workerRating)
         }
 
-
         // WILL MAKE THE LOYALTY LEVEL CALCULUS FOR THE 2 USERS INVOLVE
         // UPDATE THE LOYALTY LVL BASED ON THE ACTUAL RATING     
         // UPDATE THE LOYALTY IN THE USER_INFO TABLE AS WELL
         const callUpdateUsersInfoLoyalty = async () => {
             await updateUserLoyaltyLevel(workerId, ownerId)
         }
-
-
 
         if (checkUser(workerId) && checkUser(ownerId)) {
             const query =
@@ -221,33 +241,41 @@ module.exports = app => {
                 data: 'Um ou ambos Usuario não existem'
             })
         }
+    } else {
+        res.status(400).send({
+            data: "Faltam dados para criar o Feedback"
+        })
     }
+}
 
-    // GET ALL THE FEEDBACKS
-    controller.getFeedBacks = async (req, res) => {
-        const query =
-            "SELECT * FROM USERS_FEEDBACK;";
-        pool.query(query, [], (err, result) => {
-            if (err) {
-                res.status(400).send(err);
+// GET ALL THE FEEDBACKS
+controller.getFeedBacks = async (req, res) => {
+    const query =
+        "SELECT * FROM USERS_FEEDBACK;";
+    pool.query(query, [], (err, result) => {
+        if (err) {
+            res.status(400).send(err);
+        } else {
+            if (result.length > 0) {
+                res.status(200).json({
+                    data: result
+                })
             } else {
-                if (result.length > 0) {
-                    res.status(200).json({data : result})
-                } else {
-                    res.status(404).json({
-                        data: 'Nenhum feedback cadastrado'
-                    })
-                }
+                res.status(404).json({
+                    data: 'Nenhum feedback cadastrado'
+                })
             }
+        }
 
-        });
-    }
+    });
+}
 
-    // GET THE FEEDBACK BASED ON THE CONTRACT/QUEUE
-    controller.getFeedBacksByQueueId = async (req, res) => {
-        const {
-            queueId
-        } = req.params
+// GET THE FEEDBACK BASED ON THE CONTRACT/QUEUE
+controller.getFeedBacksByQueueId = async (req, res) => {
+    const {
+        queueId
+    } = req.params
+    if (checkQueue(queueId)) {
         const query =
             "SELECT * FROM USERS_FEEDBACK WHERE QUEUE_ID = ?;";
         pool.query(query, [queueId], (err, result) => {
@@ -262,10 +290,43 @@ module.exports = app => {
                     })
                 }
             }
-
-        });
+        })
+    } else {
+        res.status(404).json({
+            msg: 'Nenhum contrato com este ID'
+        })
     }
+}
 
 
-    return controller;
+// DELETE THE FEEDBACK BASED ON THE CONTRACT/QUEUE
+controller.deleteFeedBackByQueueId = async (req, res) => {
+    const {
+        queueId
+    } = req.params
+    if (checkQueue(queueId)) {
+        const query =
+            "DELETE FROM USERS_FEEDBACK WHERE QUEUE_ID = ?;";
+        pool.query(query, [queueId], (err, result) => {
+            if (err) {
+                res.status(404).send(err);
+            } else {
+                if (result.length > 0) {
+                    res.status(201).json(result)
+                } else {
+                    res.status(404).json({
+                        msg: 'Nenhum feedback cadastrado para esta fila'
+                    })
+                }
+            }
+
+        })
+    } else {
+        res.status(404).json({
+            msg: 'Nenhum contrato com este ID'
+        })
+    }
+}
+
+return controller;
 };
