@@ -336,6 +336,33 @@ module.exports = app => {
     })
   }
 
+  services.getQueues = async (userId) => {
+    return new Promise((resolve) => {
+      const query =
+        "SELECT * FROM SERVICES_QUEUE;";
+      pool.query(query, [], (err, result) => {
+        if (err) {
+          resolve({
+            status: 400,
+            data: err
+          })
+        } else {
+          if (result.length > 0) {
+            resolve({
+              status: 201,
+              data: result
+            })
+          } else {
+            resolve({
+              status: 400,
+              data: 'Nenhum serviço na fila'
+            })
+          }
+        }
+      })
+    })
+  }
+
 
   services.getQueuesByUserId = async (userId) => {
     return new Promise((resolve) => {
@@ -360,8 +387,7 @@ module.exports = app => {
             })
           }
         }
-
-      });
+      })
     })
   }
 
@@ -464,8 +490,6 @@ module.exports = app => {
               data: "Banco de dados inacessivel"
             })
           }
-
-
         } else {
           if (result.affectedRows > 0) {
             resolve({
@@ -480,7 +504,6 @@ module.exports = app => {
           }
         }
       })
-
     })
   }
 
@@ -641,22 +664,26 @@ module.exports = app => {
   }
 
 
-
-
-  services.addPetQ = async (params) =>{
-    return new Promise((resolve) =>{
+  services.addPetQ = async (params) => {
+    return new Promise((resolve) => {
       const query =
-      "INSERT INTO PETS(OWNER_ID, PET_ID, PET_NAME, PET_TYPE, PET_BREED) VALUES(?, ? , ? , ?, ?);";
-    // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
-    pool.query(query, params, (err, result) => {
-      if (err) resolve({status: 400, data: err})
-      else {
-        if (result.affectedRows > 0) {
-          resolve({status: 200, data: 'Pet adicionado com sucesso'})
+        "INSERT INTO PETS(OWNER_ID, PET_ID, PET_NAME, PET_TYPE, PET_BREED) VALUES(?, ? , ? , ?, ?);";
+      // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
+      pool.query(query, params, (err, result) => {
+        if (err) resolve({
+          status: 400,
+          data: err
+        })
+        else {
+          if (result.affectedRows > 0) {
+            resolve({
+              status: 200,
+              data: 'Pet adicionado com sucesso'
+            })
 
+          }
         }
-      }
-    })
+      })
 
     })
   }

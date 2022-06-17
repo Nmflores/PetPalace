@@ -6,7 +6,7 @@ module.exports = app => {
     } = services
 
     app.route('/api/v1/contracts')
-        .get(authorization, controller.getQueues)
+        .get(authorization, controller.getContracts)
         .post(authorization, controller.createContract)
         .delete(authorization, controller.deleteContract)
 
