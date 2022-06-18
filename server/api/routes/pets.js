@@ -9,7 +9,7 @@ module.exports = (app) => {
       .post(authorization, controller.addPet);
     
     app.route('/api/v1/pets/:petId')
-      .get(authorization, controller.getPetsByPetId)
+      .get(authorization, controller.getPetByPetId)
       .put(authorization, controller.updatePetByPetId)
       .delete(authorization, controller.removePetByPetId)
   

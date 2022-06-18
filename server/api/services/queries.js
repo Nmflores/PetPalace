@@ -745,6 +745,45 @@ module.exports = app => {
   }
 
 
+  services.getPetsByUserIdQ = async (userId) =>{
+    return new Promise((resolve)=>{
+      const query = 'SELECT A.OWNER_ID, C.FIRST_NAME ,A.PET_ID, A.PET_NAME, B.PET_TYPE, A.PET_BREED FROM PETS A, PET_TYPES B, USERS C WHERE A.PET_TYPE = B.PET_TYPE_ID AND A.OWNER_ID = C.USER_ID AND A.OWNER_ID = ? LIMIT 10;';
+      // CALL THE EXECUTE PASSING THE QUERY
+      pool.query(query, [userId], (err, result) => {
+        if (err) {
+          resolve({
+            status: 400, 
+            data: err
+          });
+        } else {
+          resolve({status: 400, data: result});
+        }
+      })
+    })
+  }
+
+
+  services.getPetByPetIdQ = async (petId) =>{
+    return new Promise((resolve)=>{
+      const query = 'SELECT A.OWNER_ID, C.FIRST_NAME , A.PET_ID, A.PET_NAME, B.PET_TYPE, A.PET_BREED FROM PETS A, PET_TYPES B, USERS C WHERE A.PET_TYPE = B.PET_TYPE_ID AND A.OWNER_ID = C.USER_ID AND A.PET_ID = ? LIMIT 10;';
+      pool.query(query, [petId], (err, result) => {
+        if (err) {
+          resolve({
+            status: 400,
+            data: err
+          });
+        } else {
+          resolve({
+            status: 200, 
+            data: result
+          })
+        }
+      })
+    })
+  }
+
+
+
   services.addPetQ = async (params) => {
     return new Promise((resolve) => {
       const query =

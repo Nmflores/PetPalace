@@ -22,10 +22,8 @@ module.exports = (app) => {
   //GET ALL USERS
   controller.listUsers = async (req, res) => {
     // GET THE RESULT OF THE SERVICES.QUEUE GET USERS FUNCTION
-
     const result = await getUsers()
     // SEND RESPONSE WITH RESULT DATA
-
     res.status(result.status).json(usersResult(result.data));
   }
 
@@ -44,7 +42,7 @@ module.exports = (app) => {
         data: result.data
       })
     } else {
-      //NOT EXISTS
+      //IN CASE USER DOESNT EXISTS
       res.status(400).json({
         data: "Nenhum Usuario Cadastrado com este ID"
       })
