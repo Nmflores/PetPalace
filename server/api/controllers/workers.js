@@ -1,10 +1,9 @@
 module.exports = (app) => {
-  const dbConn = app.repositories.dbConfig
-  const pool = dbConn.initPool();
+  const controller = {};
+
   const {
     checkUser
   } = app.services.checks
-  const controller = {};
 
   const {
     getWorkers,
@@ -16,7 +15,9 @@ module.exports = (app) => {
   } = app.services.queries
 
   controller.listWorkers = async (req, res) => {
+    // GET THE RESULT OF THE SERVICES.QUEUE GET WORKERS FUNCTION
     const result = await getWorkers()
+    // SEND RESPONSE WITH RESULT DATA
     res.status(result.status).json({
       data: result.data
     })
@@ -26,7 +27,9 @@ module.exports = (app) => {
     const {
       userId
     } = req.params;
+    // GET THE RESULT OF THE SERVICES.QUEUE GET WORKERS FUNCTION
     const result = await getWorkersByUserId(userId)
+    // SEND RESPONSE WITH RESULT DATA
     res.status(result.status).json({
       data: result.data
     })
@@ -38,16 +41,24 @@ module.exports = (app) => {
     let {
       serviceId
     } = req.params;
+
+    //TRANFORM SERVICEID IN INTEGER IN CASE
     serviceId = Number.parseInt(serviceId);
     if (Number.isInteger(serviceId)) {
+        const controller = {};
+      // GET THE RESULT OF THE SERVICES.QUEUE GET WORKERS BY SERVICEID FUNCTION
       const result = await getWorkersByServiceId(serviceId)
+      // SEND RESPONSE WITH RESULT DATA
       res.status(result.status).json({
         data: result.data
       })
-    } else
-      res.status(500).send({
-        msg: "Id de serviço deve ser numerico"
+    } else{
+      // IN CASE SERVICEID IS NOT NUMERIC
+      res.status(400).send({
+        data: "Id de serviço deve ser numerico"
       })
+    }
+      
 
   }
 
@@ -62,7 +73,7 @@ module.exports = (app) => {
       //IF EXISTS
       // GET THE RESULT OF THE SERVICES.QUEUE REGISTER WORKER FUNCTION      
       const result = await registerWorker(userId, serviceId)
-      // SENDS RESULT DATA AS RESPONSE DATA FOR CLIENT
+      // SENDS RESPONSE WITH RESULT DATA
       res.status(result.status).json({
         data: result.data
       })
@@ -83,6 +94,7 @@ module.exports = (app) => {
       price
     } = req.body;
 
+    // CHECK IF USER EXISTS
     if (await checkUser(userId)) {
       //IF EXISTS
       // GET THE RESULT OF THE SERVICES.QUEUE REGISTER WORKER FUNCTION      
@@ -123,6 +135,7 @@ module.exports = (app) => {
         })
       }
     } else {
+      // MISSING PARAMS
       res.status(400).json({
         data: "Faltam informações para deletar o serviço de Prestador"
       })

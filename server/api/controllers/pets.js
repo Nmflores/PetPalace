@@ -8,8 +8,12 @@ module.exports = (app) => {
   const dbConn = app.repositories.dbConfig
   const pool = dbConn.initPool();
 
-  const { addPetQ, updatePet, deletePet } = app.services.queries
-  
+  const {
+    addPetQ,
+    updatePet,
+    deletePet
+  } = app.services.queries
+
   const {
     checkUser,
     checkPet
@@ -42,14 +46,16 @@ module.exports = (app) => {
       petType,
       petBreed
     } = req.body;
-    if(ownerId && petName && petType && petBreed){
-      
-    const petId = uuidV4();
-    const params = [ownerId, petId, petName, petType, petBreed]
+    if (ownerId && petName && petType && petBreed) {
 
-    const result = await addPetQ(params)
-    res.status(result.status).json({data: result.data})
-    }else{
+      const petId = uuidV4();
+      const params = [ownerId, petId, petName, petType, petBreed]
+
+      const result = await addPetQ(params)
+      res.status(result.status).json({
+        data: result.data
+      })
+    } else {
       res.status(400).send({
         data: "Faltam dados para cadastrar o Pet"
       })
@@ -121,7 +127,7 @@ module.exports = (app) => {
       petName, petType, petBreed, petId
     ]
 
-    if(petName && petType && petBreed){
+    if (petName && petType && petBreed) {
       if (await checkPet(petId)) {
         //IF EXISTS
         // GET THE RESULT OF THE SERVICES.QUEUE UPDATE PET FUNCTION      
@@ -131,11 +137,13 @@ module.exports = (app) => {
           data: result.data
         })
       } else {
+        // IN CASE PET DOESNT EXISTS
         res.status(400).send({
           data: messages(2)
         })
       }
-    }else{
+    } else {
+      // MISSING PARAMS
       res.status(400).send({
         data: "Faltam dados para atualizar o Pet"
       })
@@ -143,14 +151,16 @@ module.exports = (app) => {
 
   }
 
-  
+
 
   controller.removePetByPetId = async (req, res) => {
     const {
       petId
     } = req.params;
+    
+    // CHECK IF PET EXISTS
     if (await checkPet(petId)) {
-      //IF EXISTS
+      // IF EXISTS
       // GET THE RESULT OF THE SERVICES.QUEUE DELETE PET FUNCTION      
       const result = await deletePet(petId)
       // SENDS RESULT DATA AS RESPONSE DATA FOR CLIENT
@@ -158,6 +168,7 @@ module.exports = (app) => {
         data: result.data
       })
     } else {
+      // IN CASE PET DOESNT EXISTS
       res.status(400).send({
         data: messages(2)
       })

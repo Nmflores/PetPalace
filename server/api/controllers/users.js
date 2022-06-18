@@ -1,34 +1,31 @@
-const {
-  v4: uuidV4
-} = require("uuid");
-const bcrypt = require("bcryptjs");
-const encrypt = require("../services/encrypt");
-
-
-
 module.exports = (app) => {
-  const dbConn = app.repositories.dbConfig
-  const pool = dbConn.initPool();
+  const controller = {};
 
   const {
     checkUser
   } = app.services.checks
+
   const {
     getUsers,
     getUserByUserId,
     deleteUser,
     updateUserQ
   } = app.services.queries
+
   const {
     usersResult,
     messages
   } = app.services.output
-  const controller = {};
+
 
 
   //GET ALL USERS
   controller.listUsers = async (req, res) => {
+    // GET THE RESULT OF THE SERVICES.QUEUE GET USERS FUNCTION
+
     const result = await getUsers()
+    // SEND RESPONSE WITH RESULT DATA
+
     res.status(result.status).json(usersResult(result.data));
   }
 
