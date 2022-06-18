@@ -664,6 +664,87 @@ module.exports = app => {
   }
 
 
+  services.getFeedbacksQ = async () => {
+    return new Promise((resolve) => {
+
+      const query =
+        "SELECT * FROM USERS_FEEDBACK;";
+      pool.query(query, [], (err, result) => {
+        if (err) {
+          resolve({
+            status: 400,
+            data: err
+          })
+        } else {
+          if (result.length > 0) {
+            resolve({
+              status: 200,
+              data: result
+            })
+          } else {
+            resolve({
+              status: 400,
+              data: 'Nenhum feedback cadastrado'
+            })
+          }
+        }
+      })
+    })
+  }
+
+  services.getFeedbackByQueueId = async (queueId) => {
+    return new Promise((resolve) => {
+      const query =
+        "SELECT * FROM USERS_FEEDBACK WHERE QUEUE_ID = ?;";
+      pool.query(query, [queueId], (err, result) => {
+        if (err) {
+          resolve({
+            status: 400,
+            data: err
+          })
+        } else {
+          if (result.length > 0) {
+            resolve({
+              status: 200,
+              data: result
+            })
+          } else {
+            resolve({
+              status: 400,
+              data: 'Nenhum feedback cadastradopara este Contrato'
+            })
+          }
+        }
+      })
+    })
+  }
+
+  services.deleteFeedback = async (queueId) => {
+    return new Promise((resolve) => {
+      const query =
+        "DELETE FROM USERS_FEEDBACK WHERE QUEUE_ID = ?;";
+      pool.query(query, [queueId], (err, result) => {
+        if (err) {
+          resolve({status: 400, data: err})
+        } else {
+          if (result.affectedRows > 0) {
+            resolve({
+              status: 201,
+              data: 'Feedback deletado com sucesso'
+            })
+          } else {
+            resolve({
+              status: 400,
+              data: 'Feedback não foi deletado'
+            })
+          }
+        }
+
+      })
+    })
+  }
+
+
   services.addPetQ = async (params) => {
     return new Promise((resolve) => {
       const query =

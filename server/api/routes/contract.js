@@ -26,6 +26,7 @@ module.exports = app => {
         .post(authorization, controller.createFeedBacks)
 
     app.route('/api/v1/feedbacks/:queueId')
-        .get(authorization, controller.getFeedBacksByQueueId)
+        .get(authorization, controller.getFeedBackByQueue)
+        .delete(authorization, controller.deleteFeedBackByQueueId)
 
 }

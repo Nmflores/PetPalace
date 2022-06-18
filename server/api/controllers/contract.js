@@ -18,7 +18,10 @@ module.exports = app => {
         updateContractStatus,
         updateContractPrice,
         updateUserLoyaltyLevel,
-        deleteContractByQueueId
+        deleteContractByQueueId,
+        getFeedbacksQ,
+        getFeedbackByQueueId,
+        deleteFeedback
     } = app.services.queries;
     const {
         checkUser,
@@ -41,16 +44,16 @@ module.exports = app => {
         } = req.body;
         // CHECK INSERTION REQ.BODY PARAMS
         if (workerId && ownerId && serviceId && price && petTypes) {
-            // SET PARAMS FOR QUERY
-            const params = [
-                queueId,
-                workerId,
-                ownerId,
-                serviceId,
-                price
-            ]
             // CHECK IF USER EXISTS
             if (await checkUser(ownerId)) {
+                // SET PARAMS FOR QUERY
+                const params = [
+                    queueId,
+                    workerId,
+                    ownerId,
+                    serviceId,
+                    price
+                ]
                 // GET RESULT FROM SERVICES.QUEUE CREATE CONTRACT FUNCTION
                 const result = await createContract(params, queueId, petTypes)
                 // SEND RESPONSE WITH RESULT DATA
@@ -65,7 +68,7 @@ module.exports = app => {
                 })
             }
         } else {
-            // IN CASE ANY PARAM IS MISSING
+            // MISSING PARAMS
             res.status(400).send({
                 data: "Faltam dados para criar o Contrato"
             })
@@ -96,9 +99,8 @@ module.exports = app => {
             res.status(result.status).json({
                 data: result.data
             })
-        }
-        //NOT EXISTS
-        else {
+        } else {
+            // CASE USER DOESNT EXIST
             res.status(400).json({
                 data: "Nenhum Usuario Cadastrado com este ID"
             })
@@ -112,6 +114,7 @@ module.exports = app => {
             queueId,
             price
         } = req.body
+
         // CHECK REQ.BODY PARAMS
         if (queueId && price) {
             // CHECK PRICE VALUE
@@ -150,8 +153,8 @@ module.exports = app => {
             queueId,
             status
         } = req.body
-        // CHECK REQ.BODY PARAMS
 
+        // CHECK REQ.BODY PARAMS
         if (queueId && status) {
             // CHECK STATUS VALUE
             if (status >= 1 && status <= 3) {
@@ -185,12 +188,13 @@ module.exports = app => {
         }
     }
 
-
+    // DELETE CONTRACT BY QUEUID
     controller.deleteContract = async (req, res) => {
         const {
             queueId
         } = req.body
 
+        // CHECK IF CONTRACT EXISTS
         if (await checkQueue(queueId)) {
             // GET RESULT FROM SERVICES.QUEUE DELETE CONTRACT FUNCTION
             const result = await deleteContractByQueueId(queueId)
@@ -249,6 +253,7 @@ module.exports = app => {
                 await updateUserLoyaltyLevel(workerId, ownerId)
             }
 
+            // CHECK IF BOTH USERS EXISTS
             if (checkUser(workerId) && checkUser(ownerId)) {
                 const query =
                     "INSERT INTO USERS_FEEDBACK(queue_id, worker_id,owner_id, worker_feedback,worker_rating, owner_feedback, owner_rating) VALUES(?);";
@@ -267,11 +272,13 @@ module.exports = app => {
                             // CALL THE FUNCTIONS THAT WILL UPDATE THE USERS LOYALTY
                             callUpdateUsersInfoLoyalty()
 
+                            // SEND THE RESPONSE
                             res.status(201).json({
                                 data: 'Feedback criado com sucesso'
                             })
 
                         } else {
+                            // SEND RESPONSE FOR ERROR
                             res.status(400).json({
                                 data: 'Erro durante cadastro de feedback'
                             })
@@ -280,11 +287,13 @@ module.exports = app => {
 
                 })
             } else {
+                // IN CASE ONE OR BOTH OF USERS DOESNT EXISTS
                 res.status(400).json({
                     data: 'Um ou ambos Usuario não existem'
                 })
             }
         } else {
+            // MISSING PARAMS
             res.status(400).send({
                 data: "Faltam dados para criar o Feedback"
             })
@@ -293,50 +302,30 @@ module.exports = app => {
 
     // GET ALL THE FEEDBACKS
     controller.getFeedBacks = async (req, res) => {
-        const query =
-            "SELECT * FROM USERS_FEEDBACK;";
-        pool.query(query, [], (err, result) => {
-            if (err) {
-                res.status(400).send(err);
-            } else {
-                if (result.length > 0) {
-                    res.status(200).json({
-                        data: result
-                    })
-                } else {
-                    res.status(404).json({
-                        data: 'Nenhum feedback cadastrado'
-                    })
-                }
-            }
-
-        });
+        // GET RESULT FROM SERVICES.QUEUE GET FEEDBACKS FUNCTION
+        const result = await getFeedbacksQ()
+        // SEND RESPONSE WITH RESULT DATA
+        res.status(result.status).json({
+            data: result.data
+        })
     }
 
     // GET THE FEEDBACK BASED ON THE CONTRACT/QUEUE
-    controller.getFeedBacksByQueueId = async (req, res) => {
+    controller.getFeedBackByQueue = async (req, res) => {
         const {
             queueId
         } = req.params
         if (checkQueue(queueId)) {
-            const query =
-                "SELECT * FROM USERS_FEEDBACK WHERE QUEUE_ID = ?;";
-            pool.query(query, [queueId], (err, result) => {
-                if (err) {
-                    res.status(404).send(err);
-                } else {
-                    if (result.length > 0) {
-                        res.status(201).json(result)
-                    } else {
-                        res.status(404).json({
-                            msg: 'Nenhum feedback cadastrado para esta fila'
-                        })
-                    }
-                }
+            // GET RESULT FROM SERVICES.QUEUE GET FEEDBACKS QUEUEID FUNCTION
+            const result = await getFeedbackByQueueId(queueId)
+            // SEND RESPONSE WITH RESULT DATA
+            res.status(result.status).json({
+                data: result.data
             })
         } else {
+            // CASE CONTRACT DOESNT EXISTS
             res.status(404).json({
-                msg: 'Nenhum contrato com este ID'
+                data: 'Nenhum contrato com este ID'
             })
         }
     }
@@ -347,26 +336,18 @@ module.exports = app => {
         const {
             queueId
         } = req.params
-        if (checkQueue(queueId)) {
-            const query =
-                "DELETE FROM USERS_FEEDBACK WHERE QUEUE_ID = ?;";
-            pool.query(query, [queueId], (err, result) => {
-                if (err) {
-                    res.status(404).send(err);
-                } else {
-                    if (result.length > 0) {
-                        res.status(201).json(result)
-                    } else {
-                        res.status(404).json({
-                            msg: 'Nenhum feedback cadastrado para esta fila'
-                        })
-                    }
-                }
-
+        //CHECK IF CONTRACT EXISTS
+        if (await checkQueue(queueId)) {
+            // GET RESULT FROM SERVICES.QUEUE DELETE FEEDBACKS BY QUEUEID FUNCTION
+            const result = await deleteFeedback(queueId)
+            // SEND RESPONSE WITH RESULT DATA
+            res.status(result.status).json({
+                data: result.data
             })
         } else {
+            // CASE CONTRACT DOENST EXISTS
             res.status(404).json({
-                msg: 'Nenhum contrato com este ID'
+                data: 'Nenhum contrato com este ID'
             })
         }
     }
