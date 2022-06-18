@@ -29,18 +29,17 @@ module.exports = (app) => {
   const controller = {};
 
 
+  //GET ALL PETS
   controller.listPets = async (req, res) => {
-    const query = 'SELECT A.OWNER_ID, C.FIRST_NAME, C.SECOND_NAME ,A.PET_ID, A.PET_NAME, B.PET_TYPE, A.PET_BREED FROM PETS A, PET_TYPES B, USERS C WHERE A.PET_TYPE = B.PET_TYPE_ID AND A.OWNER_ID = C.USER_ID LIMIT 10;';
-    pool.query(query, (err, result) => {
-      if (err) {
-        res.status(404).send(err);
-      } else {
-        const response = petsResult(result);
-        res.status(200).send(response);
-      }
-    });
-  };
+    //GET THE RESULT OF THE SERVICES.QUEUE ADD PET FUNCTION
+    const result = await getPets()
+    //SEND RESPONSE WITH RESULT DATA
+    res.status(result.status).json({
+      data: petsResult(result.data)
+    })
+  }
 
+  //ADD A NEW PET
   controller.addPet = async (req, res) => {
     const {
       ownerId,
@@ -48,22 +47,28 @@ module.exports = (app) => {
       petType,
       petBreed
     } = req.body;
+
+    //CHECK PARAMS
     if (ownerId && petName && petType && petBreed) {
+
       const petId = uuidV4();
       const params = [ownerId, petId, petName, petType, petBreed]
 
+      //GET THE RESULT OF THE SERVICES.QUEUE ADD PET FUNCTION
       const result = await addPetQ(params)
+      //SEND RESPONSE WITH RESULT DATA
       res.status(result.status).json({
         data: result.data
       })
     } else {
+      //MISSING PARAMS
       res.status(400).send({
         data: "Faltam dados para cadastrar o Pet"
       })
     }
   }
 
-
+  //GET PETS BY USERID
   controller.getPetsByUserId = async (req, res) => {
     // GET USERID FROM REQ PARAMS
     const {
@@ -85,6 +90,8 @@ module.exports = (app) => {
       })
     }
   }
+
+  //GET PET BY PETID
   controller.getPetByPetId = async (req, res) => {
     const {
       petId
@@ -108,7 +115,7 @@ module.exports = (app) => {
   }
 
 
-
+  //UPDATE PET BY PETID
   controller.updatePetByPetId = async (req, res) => {
     const {
       petId
@@ -152,7 +159,7 @@ module.exports = (app) => {
   }
 
 
-
+  //DELETE PET BY PETID
   controller.removePetByPetId = async (req, res) => {
     const {
       petId
