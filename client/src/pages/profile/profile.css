@@ -1,0 +1,10 @@
+.profilePicture .picture-container .picture{
+  width: 12.5rem;
+  height: 12.5rem;
+  margin-bottom: 0.625rem;
+}
+
+.petList .mainContent {
+  margin-left: 10%;
+  margin-bottom: 6.25rem;
+}

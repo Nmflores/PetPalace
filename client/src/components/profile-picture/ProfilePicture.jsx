@@ -1,6 +1,6 @@
 import React from 'react';
 
-import picture from '../../assets/perfil.jpg';
+import picture from '../../assets/icon.gif';
 import './ProfilePicture.css';
 
 const ProfilePicture = () => {

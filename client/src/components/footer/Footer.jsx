@@ -1,13 +1,10 @@
 import React from 'react';
+import './footer.css';
 
 const Footer = () => {
   return (
     <div className="footer">
-      <div className="footer-copyright">
-        <div>
-        <p> © {(new Date().getFullYear())} CrpytoKet, Inc. All Rights Reserved</p>
-        </div>        
-      </div>
+      <p> © {(new Date().getFullYear())} PetPalace. All Rights Reserved</p>
     </div>
   );
 }

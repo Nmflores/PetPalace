@@ -1,10 +1,8 @@
-import React, {useState} from 'react';
+import {React, useState} from 'react';
+import { Link } from 'react-router-dom';
 import {Header, CardList,Filter } from '../../components'
 
-
 const Home = () => {
-
-  const [isExpanded, setExpanded] = React.useState(true);
 
   const [cards, setCards] = useState([
     {
@@ -13,12 +11,13 @@ const Home = () => {
       title: "Passeio",
       price: 25.00,
       fone: "(51) 998652312",
+      status: 0,
       petTypes: [
         {
-          petType: "canino",
+          petType: "C",
         },
         {
-          petType: "felino",
+          petType: "F",
         },
       ]
     },
@@ -28,9 +27,10 @@ const Home = () => {
       title: "Hospedagem",
       price: 50.00,
       fone: "(51) 998652312",
+      status: 0,
       petTypes: [
         {
-          petType: "canino",
+          petType: "C",
         },
       ]
     },
@@ -40,18 +40,20 @@ const Home = () => {
       title: "Hospedagem",
       price: 50.00,
       fone: "(51) 998652312",
+      status: 0,
       petTypes: [
         {
-          petType: "felino",
+          petType: "F",
         },
       ]
     },
   ]);
 
-  return <div>
+  return <div className='homeContainer'>
+    <Link to="profile/1">tela_perfil</Link>
    <Header />
    <Filter />
-   <CardList cards={cards} isActive={isExpanded} />
+   <CardList cards={cards}/>
   </div>;
 };
 

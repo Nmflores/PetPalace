@@ -4,6 +4,8 @@ import { Button } from 'react-bootstrap';
 
 import './Card.css';
 import {ProfilePicture, } from '../';
+import iconCat from '../../assets/cat-icon.png';
+import iconDog from '../../assets/dog-icon.png';
 
 const Card = ({card, isActive}) => {
 
@@ -30,7 +32,11 @@ const Card = ({card, isActive}) => {
           <h3>{card.title}</h3>  
           <div className='pet-container'>
             {card.petTypes.map(element => (
-              <p>{element.petType}</p>
+              <img 
+                className='petIcon'
+                src={element.petType==='C' ? iconCat : iconDog} 
+                alt="Pet icon"
+              />
             ))}
           </div>        
         </div>
@@ -43,7 +49,7 @@ const Card = ({card, isActive}) => {
       className='details'
       >
         <h3>Telefone: {card.fone}</h3>
-        <Button>Contratar</Button>
+        <Button>{card.status === 0 ? 'Contratar' : 'Dispensar'}</Button>
       </div>
     </>
    );

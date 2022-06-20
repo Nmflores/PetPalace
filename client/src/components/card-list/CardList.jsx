@@ -9,7 +9,7 @@ const CardList = ({cards}) => {
       {cards.map((card) => (
         <Card
           key={card.id}
-          card={card}         
+          card={card}
         />
       ))}
     </>

@@ -20,7 +20,7 @@
 
 .price {  
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
   width: 50%;
 }
 
@@ -32,6 +32,11 @@
   display: flex;
   flex-direction: row;
   gap: 0.625rem;
+}
+
+.pet-container img {
+  width: 2.625rem;
+  height: 2.625rem;
 }
 
 .details {

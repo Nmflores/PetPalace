@@ -8,13 +8,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   return (
-    <div>
+    <div className='main'>
       <Navbar />
       <div className='main-content'>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="profile/:id" element={<Profile />} />
-          <Route path="services" element={<></>} />
         </Routes>
       </div>      
       <Footer />
