@@ -36,12 +36,12 @@ module.exports = app => {
         console.log("1", result)
         const {accessToken, data} = result
         if (result.isLogged === true) {
-          res.cookie('accessToken', accessToken, {
+          {/*res.cookie('accessToken', accessToken, {
             maxAge: 60 * 60 * 1000, // 1 hour
             httpOnly: true,
             secure: false,
             sameSite: false,
-          })
+          })*/}
           res.status(200).json({
             data: result.data
           })

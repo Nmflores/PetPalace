@@ -16,6 +16,7 @@ module.exports = app => {
   }
 
   services.authorization = (req, res, next) => {
+    {/*
     const token = req.cookies.accessToken;
     if (!token) {
       return res.sendStatus(403);
@@ -25,9 +26,11 @@ module.exports = app => {
         req.userId = data.userId;
         return next();
       } catch {
-        return res.sendStatus(403);
+      return res.sendStatus(403)
+          }
       }
-    }
+    */}
+      console.log("protegido")
   }
 
   return services;

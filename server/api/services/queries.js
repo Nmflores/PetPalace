@@ -336,10 +336,10 @@ module.exports = app => {
     })
   }
 
-  services.getQueues = async (userId) => {
+  services.getQueues = async () => {
     return new Promise((resolve) => {
       const query =
-        "SELECT * FROM SERVICES_QUEUE;";
+        "SELECT A.QUEUE_ID, A.WORKER_ID, A.OWNER_ID, A.SERVICE_ID, B.PET_TYPE_ID FROM SERVICES_QUEUE A, QUEUE_PET_TYPES B WHERE A.QUEUE_ID = B.QUEUE_ID;";
       pool.query(query, [], (err, result) => {
         if (err) {
           resolve({

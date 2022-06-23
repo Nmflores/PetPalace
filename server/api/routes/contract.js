@@ -1,32 +1,29 @@
 module.exports = app => {
     const controller = app.controllers.contract
-    const services = app.services.accessToken
-    const {
-        authorization
-    } = services
+
 
     app.route('/api/v1/contracts')
-        .get(authorization, controller.getContracts)
-        .post(authorization, controller.createContract)
-        .delete(authorization, controller.deleteContract)
+        .get(controller.getContracts)
+        .post(controller.createContract)
+        .delete(controller.deleteContract)
 
     app.route('/api/v1/contracts/:userId')
-        .get(authorization, controller.getQueuesByUserId)
+        .get(controller.getQueuesByUserId)
 
     app.route('/api/v1/contracts/status')
-        .put(authorization, controller.updateContractStatus)
+        .put(controller.updateContractStatus)
 
 
     app.route('/api/v1/contracts/price')
-        .put(authorization, controller.updateContractPrice)
+        .put(controller.updateContractPrice)
 
 
     app.route('/api/v1/feedbacks')
-        .get(authorization, controller.getFeedBacks)
-        .post(authorization, controller.createFeedBacks)
+        .get(controller.getFeedBacks)
+        .post(controller.createFeedBacks)
 
     app.route('/api/v1/feedbacks/:queueId')
-        .get(authorization, controller.getFeedBackByQueue)
-        .delete(authorization, controller.deleteFeedBackByQueueId)
+        .get(controller.getFeedBackByQueue)
+        .delete(controller.deleteFeedBackByQueueId)
 
 }

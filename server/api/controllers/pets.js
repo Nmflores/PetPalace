@@ -10,6 +10,7 @@ module.exports = (app) => {
 
   const {
     addPetQ,
+    getPets,
     getPetsByUserIdQ,
     getPetByPetIdQ,
     updatePet,
