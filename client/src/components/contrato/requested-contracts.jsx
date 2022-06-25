@@ -34,9 +34,9 @@ function returnServiceName(serviceId) {
 
 
 
-const Contract = ({ contract }) => {
+const RequestedContract = ({ contract }) => {
   const userId = '4ac85347-72f7-48e5-a469-eac17735e0c4';
-  const { queue_id, service_id, worker_id, owner_id, price } = contract
+  const { queue_id, service_id, worker_id, owner_id, price, status } = contract
   const [workerFullName, setWorkerFullName] = useState("")
   const [workerPhone, setWorkerPhone] = useState("")
   const [ownerFullName, setOwnerFullName] = useState("")
@@ -72,13 +72,7 @@ const Contract = ({ contract }) => {
 
   return (
     <div className='contractsList'>
-      {userId === owner_id ?
-        <div>
-          <p>Serviço Contratado: {titleize(returnServiceName(service_id))}</p>
-          <p>R${price}</p>
-          <p>Nome Prestador: {workerFullName}</p>
-          <p>Contato: {workerPhone}</p>
-          </div> :  
+      {userId === worker_id &&
           <div>
             <p>Serviço requisitado: {titleize(returnServiceName(service_id))}</p>
             <p>R${price}</p>
@@ -92,5 +86,5 @@ const Contract = ({ contract }) => {
 
 }
 
-export default Contract;
+export default RequestedContract;
 
