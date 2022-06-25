@@ -386,18 +386,16 @@ module.exports = app => {
           })
         } else {
           if (result.length > 0) {
-            result.forEach(async (elem) => {
-                elem.workerName = await services.getFullName(elem.worker_id)
-                elem.ownerName  = await services.getFullName(elem.owner_id)
+            // CALLresult.forEach(async (elem) => {
+                //elem.workerName = await services.getFullName(elem.worker_id)
+                //elem.ownerName  = await services.getFullName(elem.owner_id)
                 //console.log(`worker_id: ${elem.worker_id}\n owner_id: ${elem.owner_id}`)
-                console.log(`workerName: ${elem.workerName}\n ownerName: ${elem.ownerName}`)
-              })
-            setTimeout(()=>{
+                //console.log(`workerName: ${elem.workerName}\n ownerName: ${elem.ownerName}`)
+              // SEND})
               resolve({
                 status: 201,
                 data: result
               })
-            }, 5000)
           } else {
             resolve({
               status: 400,
@@ -413,8 +411,8 @@ module.exports = app => {
   services.getQueuesByUserId = async (userId) => {
     return new Promise((resolve) => {
       const query =
-        "SELECT * FROM SERVICES_QUEUE WHERE OWNER_ID = ? OR WORKER_ID = ?;";
-      pool.query(query, [userId, userId], (err, result) => {
+        "SELECT DISTINCT A.queue_id, A.worker_id, A.owner_id, A.service_id, A.price FROM SERVICES_QUEUE A WHERE A.OWNER_ID = ? OR A.WORKER_ID = ?";
+      pool.query(query, [userId, userId, userId], (err, result) => {
         if (err) {
           resolve({
             status: 400,

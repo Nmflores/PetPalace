@@ -46,7 +46,7 @@ const AddServiceToUser = ({ userId }) => {
 
         }).catch((err) => {
             console.log("2", err.response)
-            setMessage(err.data.data)
+            setMessage(err.rdata.data)
         })
     }
 

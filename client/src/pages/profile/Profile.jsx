@@ -1,6 +1,8 @@
 import {React, useState, useEffect} from 'react';
 import {ProfilePicture } from '../../components';
 import PetList from '../../components/pet-list/PetList';
+import ContractsList from '../../components/contracts-list/contracts-list.component';
+
 import WorksList from '../../components/perfil-works/perfil-works.component';
 import './profile.css';
 import Axios from 'axios'
@@ -27,6 +29,7 @@ const Profile = () => {
   const [fullName , setFullName] = useState("")
   const [pets, setPets] = useState([])
   const [works, setWorks] = useState([])
+  const [contracts, setContracts] = useState([])
   
 
 
@@ -37,11 +40,18 @@ const Profile = () => {
         console.log("pets 1: ",pets)
           setPets(pets.data.data)
       })
+    
     Axios.get(`http://localhost:8080/api/v1/users/workers/${userId}`)
       .then((works) => {
         console.log("works 1: ",works.data)
             setWorks(works.data.data)
       })
+    
+      Axios.get(`http://localhost:8080/api/v1/contracts/${userId}`)
+      .then((contracts) => {
+        setContracts(contracts.data.data)
+      })
+    
     Axios.get(`http://localhost:8080/api/v1/users/${userId}`)
       .then((user) => {
         let firstName = titleize(user.data.data[0].firstName)
@@ -50,6 +60,7 @@ const Profile = () => {
         setFullName(fullName)
       })
     }
+  
 
     fechApi()
     {/*const intervalId = setInterval(() => {  //assign interval to a variable to clear it.
@@ -70,8 +81,11 @@ const Profile = () => {
   <div className='petList'>
         <PetList pets={pets} />
         </div>     
-  <div className='petList'>
+  <div className='worksList'>
   <WorksList works={works}/>
+  </div>
+  <div className='contractsList'>
+  <ContractsList contracts={contracts}/>
   </div>
     </div>
   );

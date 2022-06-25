@@ -5,24 +5,23 @@ import AddServiceModal from '../../modals/adicionar-servico.modal'
 
 
 const WorksList = ({ works }) => {
-    console.log(works)
       // GET FROM LOCALSTORAGE
     const userId = '4ac85347-72f7-48e5-a469-eac17735e0c4';
     let conter = 0;
     return (
         <div>
-            <h3>Lista de serviços disponiveis</h3>
+            <h2>Serviços Listados</h2>
             <AddServiceModal userId={userId} />
             <hr></hr>
-        <div className='servicesList'>
-            <ListGroup>
-                {works.map((work) => {
-                    conter++;
-                    return <WorkListItem key={conter} work={work} />
-                })}
-            </ListGroup>
-        </div>
-        </div>
+            <div className='servicesList'>
+                {works !== undefined ?
+                    <ListGroup ListGroup key={works.serviceId}>
+                        {works.map((work) => {
+                            return <WorkListItem key={work.serviceId} work={work} />
+                        })}
+                    </ListGroup> : "Nenhum serviço Disponivel"}
+            </div>
+        </div >
     )
 }
 

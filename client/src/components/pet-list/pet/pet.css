@@ -1,0 +1,14 @@
+.petIcon {
+  width: 3.5rem;
+  height: 3.5rem;
+}
+
+.petList {
+  display: flex;
+  flex-direction: column;
+  padding-right: 0.625rem;
+}
+
+.petList p {
+  margin-bottom: 0.125rem;
+}
