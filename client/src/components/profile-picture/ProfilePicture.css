@@ -1,0 +1,10 @@
+.picture-container {
+  align-items: center;
+  justify-content: center;
+}
+
+.picture {
+  width: 7.8125rem;
+  height: 7.8125rem;
+  border-radius: 100%;  
+}

@@ -211,15 +211,15 @@ module.exports = app => {
   }
 
 
-  services.registerWorker = async (userId, serviceId) => {
+  services.registerWorker = async (userId, serviceId, price) => {
     const checkBefore = await checkUser(userId)
     return new Promise((resolve) => {
       if (checkBefore) {
         // GET ALL WORKS AND USER INFO
         const query =
-          "INSERT INTO WORKER_SERVICES(USER_ID, SERVICE_ID) VALUES(?,?);";
+          "INSERT INTO WORKER_SERVICES(USER_ID, SERVICE_ID, PRICE) VALUES(?,?, ?);";
         // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
-        pool.query(query, [userId, serviceId], (err, result) => {
+        pool.query(query, [userId, serviceId, price], (err, result) => {
           if (err) {
             if (err.code === "ER_DUP_ENTRY") resolve({
               status: 400,
@@ -268,6 +268,7 @@ module.exports = app => {
 
   services.deleteAvailableWorker = async (userId, serviceId) => {
     return new Promise((resolve) => {
+
       const query =
         "DELETE FROM WORKER_SERVICES WHERE USER_ID = ? AND SERVICE_ID = ?;";
       pool.query(query, [userId, serviceId], (err, result) => {
@@ -294,7 +295,24 @@ module.exports = app => {
   }
 
 
-
+  services.registerPetTypesForContract = async (queueId, petTypes) => {
+    return new Promise((resolve) => {
+      const query = "INSERT INTO QUEUE_PET_TYPES(QUEUE_ID, PET_TYPE_ID) VALUES(?, ?);";
+      for (let x in petTypes) {
+        pool.query(query, [queueId, petTypes[x].petType], (err, result) => {
+          if (err) {
+            resolve(false)
+          } else {
+            if (result.length > 0) {
+              resolve(true)
+            } else {
+              resolve(false)
+            }
+          }
+        })
+      }
+    })
+  }
 
   services.createContract = async (params, queueId, petTypes) => {
     const callRegisterPetTypes = async () => {
@@ -336,10 +354,30 @@ module.exports = app => {
     })
   }
 
+  services.getFullName = async function (userId) {
+    return new Promise((resolve) => {
+      const query = `SELECT FIRST_NAME, SECOND_NAME FROM USERS WHERE USER_ID = ?;`
+      pool.query(query, [userId], (err, result) => {
+        if (err) {
+          resolve(err)
+        } else {
+          if (result.length > 0) {
+            let firstName = result[0].FIRST_NAME
+            let secondName = result[0].SECOND_NAME
+            let fullName = `${firstName} ${secondName}`
+            //console.log(fullName)
+            resolve(fullName)
+          }
+        }
+      })
+
+    })
+  }
+
   services.getQueues = async () => {
     return new Promise((resolve) => {
       const query =
-        "SELECT A.QUEUE_ID, A.WORKER_ID, A.OWNER_ID, A.SERVICE_ID, B.PET_TYPE_ID FROM SERVICES_QUEUE A, QUEUE_PET_TYPES B WHERE A.QUEUE_ID = B.QUEUE_ID;";
+        "SELECT * FROM SERVICES_QUEUE;"
       pool.query(query, [], (err, result) => {
         if (err) {
           resolve({
@@ -348,10 +386,18 @@ module.exports = app => {
           })
         } else {
           if (result.length > 0) {
-            resolve({
-              status: 201,
-              data: result
-            })
+            result.forEach(async (elem) => {
+                elem.workerName = await services.getFullName(elem.worker_id)
+                elem.ownerName  = await services.getFullName(elem.owner_id)
+                //console.log(`worker_id: ${elem.worker_id}\n owner_id: ${elem.owner_id}`)
+                console.log(`workerName: ${elem.workerName}\n ownerName: ${elem.ownerName}`)
+              })
+            setTimeout(()=>{
+              resolve({
+                status: 201,
+                data: result
+              })
+            }, 5000)
           } else {
             resolve({
               status: 400,
@@ -508,26 +554,7 @@ module.exports = app => {
   }
 
 
-  services.registerPetTypesForContract = async (queueId, petTypes) => {
-    return new Promise((resolve) => {
-      const query = "INSERT INTO QUEUE_PET_TYPES(QUEUE_ID, PET_TYPE_ID) VALUES(?, ?);";
 
-      for (let x in petTypes) {
-        pool.query(query, [queueId, petTypes[x].petType], (err, result) => {
-          if (err) {
-            resolve(false);
-          } else {
-            if (result.length > 0) {
-              resolve(true);
-            } else {
-              resolve(false);
-            }
-          }
-        })
-      }
-
-    })
-  }
 
 
   //NEED TO CERTIFY THAT THE LOYALTY SYSTEM IS REGISTERING AUTOMATICALY FOR ALL NEW USERS
@@ -539,13 +566,13 @@ module.exports = app => {
       pool.query(query, [userId], (err, result) => {
         if (err) {
           console.log(err)
-          resolve(false);
+          resolve(false)
         } else {
           if (result.affectedRows > 0) {
             console.log("loyalty created")
-            resolve(true);
+            resolve(true)
           } else {
-            resolve(false);
+            resolve(false)
           }
         }
       })
@@ -805,7 +832,7 @@ module.exports = app => {
           });
         } else {
           resolve({
-            status: 400,
+            status: 200,
             data: result
           });
         }

@@ -49,9 +49,17 @@ module.exports = (app) => {
       petBreed
     } = req.body;
 
+    console.log(      ownerId,
+      petName,
+      petType,
+      petBreed)
+      
+    console.log(typeof(ownerId),
+    typeof(petName),
+    typeof(petType),
+    typeof(petBreed))
     //CHECK PARAMS
-    if (ownerId && petName && petType && petBreed) {
-
+    //if (ownerId && petName && petType && petBreed) {
       const petId = uuidV4();
       const params = [ownerId, petId, petName, petType, petBreed]
 
@@ -61,12 +69,15 @@ module.exports = (app) => {
       res.status(result.status).json({
         data: result.data
       })
+    {/*
     } else {
       //MISSING PARAMS
       res.status(400).send({
         data: "Faltam dados para cadastrar o Pet"
       })
     }
+  */}
+
   }
 
   //GET PETS BY USERID

@@ -72,7 +72,7 @@ module.exports = (app) => {
     if (await checkUser(userId)) {
       //IF EXISTS
       // GET THE RESULT OF THE SERVICES.QUEUE REGISTER WORKER FUNCTION      
-      const result = await registerWorker(userId, serviceId)
+      const result = await registerWorker(userId, serviceId, price)
       // SENDS RESPONSE WITH RESULT DATA
       res.status(result.status).json({
         data: result.data
@@ -93,7 +93,9 @@ module.exports = (app) => {
       serviceId,
       price
     } = req.body;
-
+    console.log(userId,
+      serviceId,
+      price)
     // CHECK IF USER EXISTS
     if (await checkUser(userId)) {
       //IF EXISTS
@@ -118,6 +120,7 @@ module.exports = (app) => {
       userId,
       serviceId
     } = req.body;
+    console.log(req.body)
     // CHECK IF REQ HAS USERID AND SERVICEID
     if (userId && serviceId >= 0) {
       if (await checkUser(userId)) {
