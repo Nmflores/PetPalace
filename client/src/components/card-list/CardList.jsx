@@ -2,14 +2,14 @@ import React from 'react';
 
 import Card from '../card/Card';
 
-const CardList = ({cards}) => {  
+const CardList = ({services}) => {  
 
   return (
     <>
-      {cards.map((card) => (
+      {services.map((service) => (
         <Card
-          key={card.id}
-          card={card}
+          key={service.service_id}
+          service={service}
         />
       ))}
     </>

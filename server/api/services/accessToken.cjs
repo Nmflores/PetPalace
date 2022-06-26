@@ -16,21 +16,21 @@ module.exports = app => {
   }
 
   services.authorization = (req, res, next) => {
+    {/*
     const token = req.cookies.accessToken;
     if (!token) {
-      console.log(1)
       return res.sendStatus(403);
     } else {
       try {
         const data = jwt.verify(token, JWT_SECRET_KEY);
         req.userId = data.userId;
-        console.log(2)
         return next();
       } catch {
-        console.log(3)
-        return res.sendStatus(403);
+      return res.sendStatus(403)
+          }
       }
-    }
+    */}
+      console.log("protegido")
   }
 
   return services;

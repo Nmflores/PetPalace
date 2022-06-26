@@ -1,60 +1,32 @@
-import {React, useState} from 'react';
+import {React, useState, useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import {Header, CardList,Filter } from '../../components'
+import Axios from 'axios'
 
 const Home = () => {
 
-  const [cards, setCards] = useState([
-    {
-      id: "1",
-      name: "Bruno Martins",
-      title: "Passeio",
-      price: 25.00,
-      fone: "(51) 998652312",
-      status: 0,
-      petTypes: [
-        {
-          petType: "C",
-        },
-        {
-          petType: "F",
-        },
-      ]
-    },
-    {
-      id: "2",
-      name: "Bruno Aguiar",
-      title: "Hospedagem",
-      price: 50.00,
-      fone: "(51) 998652312",
-      status: 0,
-      petTypes: [
-        {
-          petType: "C",
-        },
-      ]
-    },
-    {
-      id: "3",
-      name: "Bruno Aguiar",
-      title: "Hospedagem",
-      price: 50.00,
-      fone: "(51) 998652312",
-      status: 0,
-      petTypes: [
-        {
-          petType: "F",
-        },
-      ]
-    },
-  ]);
+  const [serviceId, setServiceId] = useState(0)
+  const [services, setServices] = useState([])
+
+  useEffect(() => {
+    Axios.get(`http://localhost:8080/api/v1/workers/${serviceId}`)
+      .then((response) => {
+        console.log("pets 1: ",response)
+        setServices(response.data.data)
+      })
+  },[])
 
   return <div className='homeContainer'>
-    <Link to="profile/1">tela_perfil</Link>
+   <Link to="profile/1">tela_perfil</Link>
    <Header />
-   <Filter />
-   <CardList cards={cards}/>
+   <Filter 
+    serviceId={serviceId}
+    onChange={((event) => {
+      console.log(event.target.id)
+    })} 
+    />
+   <CardList services={services} />
   </div>;
 };
 
-export default Home;
+export default Home

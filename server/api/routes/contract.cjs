@@ -1,8 +1,9 @@
 module.exports = app => {
-    const controller = app.controllers.contract    
+    const controller = app.controllers.contract
+
 
     app.route('/api/v1/contracts')
-        .get(controller.getQueues)
+        .get(controller.getContracts)
         .post(controller.createContract)
         .delete(controller.deleteContract)
 
@@ -20,4 +21,9 @@ module.exports = app => {
     app.route('/api/v1/feedbacks')
         .get(controller.getFeedBacks)
         .post(controller.createFeedBacks)
+
+    app.route('/api/v1/feedbacks/:queueId')
+        .get(controller.getFeedBackByQueue)
+        .delete(controller.deleteFeedBackByQueueId)
+
 }

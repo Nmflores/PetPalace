@@ -5,7 +5,9 @@ import { Form } from 'react-bootstrap';
 
 import './filter.css';
 
-const Filter = ({isActive}) => {
+const Filter = ({isActive, serviceId}) => {
+
+  const [id, setId] = useState(serviceId)
 
   const [isExpanded, setExpanded] = useState(isActive);
   const { getToggleProps, getCollapseProps } = useCollapse({
@@ -18,7 +20,8 @@ const Filter = ({isActive}) => {
 
   return (
     <>
-      <div 
+      <div
+        id={id}
         className='filter-container'
         {...getToggleProps({
           onClick: () => setExpanded((x) => !x)
@@ -30,11 +33,17 @@ const Filter = ({isActive}) => {
         className='filters'
         {...getCollapseProps()}
       >
-        <Form.Select aria-label="Default select example">
-          <option>Open this select menu</option>
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
+        <Form.Select 
+          id={id}
+          aria-label="Default select example"
+          onChange={(selectedOption) => {setId(parseInt(selectedOption.target.value))}}
+        >
+          <option>Selecione tipo de serviço...</option>
+          <option value="0">Passeio</option>
+          <option value="1">Pet Sitter</option>
+          <option value="2">Hospedagem</option>
+          <option value="3">Banho</option>
+          <option value="4">Lar provisório</option>
         </Form.Select>
       </div>
     </>    
