@@ -29,7 +29,6 @@ const WorksList = ({ works }) => {
                     </ListGroup> : "Nenhum serviço Disponivel"}
             </div>
             <hr />
-            <h2>Serviços Solicitados</h2>
         </div >
     )
 }

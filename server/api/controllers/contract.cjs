@@ -28,7 +28,8 @@ module.exports = app => {
         checkQueue
     } = app.services.checks;
     const {
-        messages
+        messages,
+        contractsResult
     } = app.services.output
 
 
@@ -82,7 +83,7 @@ module.exports = app => {
         const result = await getQueues()
         // SEND RESPONSE WITH RESULT DATA
         res.status(result.status).json({
-            data: result.data
+            data: contractsResult(result.data)
         })
     }
 
@@ -97,7 +98,7 @@ module.exports = app => {
             const result = await getQueuesByUserId(userId)
             // SEND RESPONSE WITH RESULT DATA
             res.status(result.status).json({
-                data: result.data
+                data: contractsResult(result.data)
             })
         } else {
             // CASE USER DOESNT EXIST

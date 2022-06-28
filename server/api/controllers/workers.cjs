@@ -1,6 +1,7 @@
 module.exports = (app) => {
-  const controller = {};
-
+  const controller = {}
+  const dbConn = app.repositories.dbConfig
+  const pool = dbConn.initPool()
   const {
     checkUser
   } = app.services.checks
@@ -45,20 +46,20 @@ module.exports = (app) => {
     //TRANFORM SERVICEID IN INTEGER IN CASE
     serviceId = Number.parseInt(serviceId);
     if (Number.isInteger(serviceId)) {
-        const controller = {};
+      const controller = {};
       // GET THE RESULT OF THE SERVICES.QUEUE GET WORKERS BY SERVICEID FUNCTION
       const result = await getWorkersByServiceId(serviceId)
       // SEND RESPONSE WITH RESULT DATA
       res.status(result.status).json({
         data: result.data
       })
-    } else{
+    } else {
       // IN CASE SERVICEID IS NOT NUMERIC
       res.status(400).send({
         data: "Id de serviço deve ser numerico"
       })
     }
-      
+
 
   }
 
@@ -66,24 +67,71 @@ module.exports = (app) => {
     const {
       userId,
       serviceId,
-      price
+      price,
+      petTypes
     } = req.body;
 
     if (await checkUser(userId)) {
-      //IF EXISTS
-      // GET THE RESULT OF THE SERVICES.QUEUE REGISTER WORKER FUNCTION      
-      const result = await registerWorker(userId, serviceId, price)
-      // SENDS RESPONSE WITH RESULT DATA
-      res.status(result.status).json({
-        data: result.data
+      // GET ALL WORKS AND USER INFO
+      const query =
+        "INSERT INTO WORKER_SERVICES(USER_ID, SERVICE_ID, PRICE) VALUES(?,?, ?);";
+      // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
+      pool.query(query, [userId, serviceId, price], (err, result) => {
+        if (err) {
+          if (err.code === "ER_DUP_ENTRY") {
+            res.status(400).json({
+
+              data: "Serviço já cadastrado para este Usuario"
+            })
+          } else if (err.code === "ECONNREFUSED") {
+            res.status(400)({
+              data: "Banco de dados inacessivel"
+            })
+          }
+        } else {
+          if (result.affectedRows > 0) {
+            let contAddedPetTypes = 0
+            console.log(petTypes)
+            const query = "INSERT INTO SERVICE_PET_TYPES(WORKER_ID, PET_TYPE_ID) VALUES(?, ?);";
+            for (let x in petTypes) {
+              pool.query(query, [userId, petTypes[x]], (err, result) => {
+                if (err) {
+                  console.log(err)
+                  contAddedPetTypes--
+                } else {
+                  if (result.length > 0) {
+                    console.log(result)
+                    contAddedPetTypes++
+                  } else {
+                    console.log(result)
+                    contAddedPetTypes--
+                  }
+                }
+              })
+            }
+            console.log(contAddedPetTypes)
+            if (contAddedPetTypes === petTypes.length) {
+              res.status(200).json({
+                data: "Serviço cadastrado para o Usuario"
+              })
+            } else {
+              res.status(400).json({
+                data: 'Cadastro de serviço falhou'
+              })
+            }
+
+          } else {
+            res.status(400).json({
+              data: 'Cadastro de serviço falhou'
+            })
+          }
+        }
       })
     } else {
-      //NOT EXISTS
       res.status(400).json({
         data: "Nenhum Usuario Cadastrado com este ID"
       })
     }
-
   }
 
   //UPDATE SERVICE PRICE

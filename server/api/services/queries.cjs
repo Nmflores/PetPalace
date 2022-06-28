@@ -33,10 +33,10 @@ module.exports = app => {
         } else {
           if (result.length > 0) {
             //CREATES JWT WITH USER_ID 
-            const accessToken = createAccessToken(result)
+            //const accessToken = createAccessToken(result)
             resolve({
               status: 200,
-              accessToken: accessToken,
+              accessToken: result[0].USER_ID,
               data: "Logado com sucesso 😊 👌",
               isLogged: true
             })
@@ -210,8 +210,29 @@ module.exports = app => {
     }))
   }
 
+  services.registerPetTypesForService = async (userId, petTypes) => {
+    return new Promise((resolve) => {
+      const query = "INSERT INTO SERVICE_PET_TYPES(WORKER_ID, PET_TYPE_ID) VALUES(?, ?);";
+      for (let x in petTypes) {
+        pool.query(query, [userId, petTypes[x].petType], (err, result) => {
+          if (err) {
+            resolve(false)
+          } else {
+            if (result.length > 0) {
+              resolve(true)
+            } else {
+              resolve(false)
+            }
+          }
+        })
+      }
+    })
+  }
 
-  services.registerWorker = async (userId, serviceId, price) => {
+  services.registerWorker = async (userId, serviceId, price, petTypes) => {
+    const callRegisterPetTypes = async () => {
+      await services.registerPetTypesForService(userId, petTypes)
+    }
     const checkBefore = await checkUser(userId)
     return new Promise((resolve) => {
       if (checkBefore) {
@@ -230,20 +251,24 @@ module.exports = app => {
               data: "Banco de dados inacessivel"
             })
           } else {
-            if (result.affectedRows > 0) resolve({
-              status: 200,
-              data: "Serviço cadastrado para o Usuario"
-            })
-            else resolve({
-              status: 400,
-              data: 'Cadastro de serviço falhou'
-            })
+            if (result.affectedRows > 0) {
+              callRegisterPetTypes()
+              resolve({
+                status: 200,
+                data: "Serviço cadastrado para o Usuario"
+              })
+            } else {
+              resolve({
+                status: 400,
+                data: 'Cadastro de serviço falhou'
+              })
+            }
           }
         })
-      } else resolve({
+      } else {resolve({
         status: 400,
         data: "Nenhum Usuario Cadastrado com este ID"
-      })
+      })}
 
     })
   }
@@ -295,29 +320,7 @@ module.exports = app => {
   }
 
 
-  services.registerPetTypesForContract = async (queueId, petTypes) => {
-    return new Promise((resolve) => {
-      const query = "INSERT INTO QUEUE_PET_TYPES(QUEUE_ID, PET_TYPE_ID) VALUES(?, ?);";
-      for (let x in petTypes) {
-        pool.query(query, [queueId, petTypes[x].petType], (err, result) => {
-          if (err) {
-            resolve(false)
-          } else {
-            if (result.length > 0) {
-              resolve(true)
-            } else {
-              resolve(false)
-            }
-          }
-        })
-      }
-    })
-  }
-
   services.createContract = async (params, queueId, petTypes) => {
-    const callRegisterPetTypes = async () => {
-      await services.registerPetTypesForContract(queueId, petTypes)
-    }
     return new Promise((resolve) => {
       const query =
         "INSERT INTO SERVICES_QUEUE(QUEUE_ID, WORKER_ID, OWNER_ID, SERVICE_ID, PRICE) VALUES(?);";
@@ -337,7 +340,6 @@ module.exports = app => {
 
         } else {
           if (result.affectedRows > 0) {
-            callRegisterPetTypes()
             resolve({
               status: 201,
               data: 'Contrato de serviço cadastrado com sucesso'
@@ -377,7 +379,7 @@ module.exports = app => {
   services.getQueues = async () => {
     return new Promise((resolve) => {
       const query =
-        "SELECT * FROM SERVICES_QUEUE;"
+        "SELECT A.*, B.service_name as 'serviceName' FROM SERVICES_QUEUE A, AVAILABLE_SERVICES B WHERE A.service_id = B.service_id;"
       pool.query(query, [], (err, result) => {
         if (err) {
           resolve({
@@ -387,12 +389,12 @@ module.exports = app => {
         } else {
           if (result.length > 0) {
             result.forEach(async (elem) => {
-                elem.workerName = await services.getFullName(elem.worker_id)
-                elem.ownerName  = await services.getFullName(elem.owner_id)
-                //console.log(`worker_id: ${elem.worker_id}\n owner_id: ${elem.owner_id}`)
-                console.log(`workerName: ${elem.workerName}\n ownerName: ${elem.ownerName}`)
-              })
-            setTimeout(()=>{
+              elem.workerName = await services.getFullName(elem.worker_id)
+              elem.ownerName = await services.getFullName(elem.owner_id)
+              //console.log(`worker_id: ${elem.worker_id}\n owner_id: ${elem.owner_id}`)
+              console.log(`workerName: ${elem.workerName}\n ownerName: ${elem.ownerName}`)
+            })
+            setTimeout(() => {
               resolve({
                 status: 201,
                 data: result

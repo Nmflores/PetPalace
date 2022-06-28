@@ -11,7 +11,7 @@ const AddServiceModal = ({ userId }) => {
     const [message, setMessage] = useState("")
     const [price, setPrice] = useState()
     const [serviceId, setServiceId] = useState()
-    const [petTypes, setPetTypes] = useState([])
+    const [petTypes, setPetTypes] = useState(["0"])
 
     const serviceOptions = [
         { value: 0, label: 'Passeio' },
@@ -21,18 +21,18 @@ const AddServiceModal = ({ userId }) => {
         { value: 4, label: 'Lar Provisorio' }
     ]
 
-    function removerPorId2(array, id) {
+    function removerPorId(array, id) {
         return array.filter(function(el) {       
           return el !== id;       
         });      
       }
 
     const handlePetTypes = async (event) => {
-        let petTypetNow = petTypes
+        let petTypesNow = petTypes
         if(event.target.checked === true){
             setPetTypes([...petTypes, event.target.id])            
         }else{            
-            setPetTypes(removerPorId2(petTypetNow, event.target.id))
+            setPetTypes(removerPorId(petTypesNow, event.target.id))
         }
     }
     console.log(petTypes)
@@ -48,7 +48,8 @@ const AddServiceModal = ({ userId }) => {
         await Axios.post(`http://localhost:8080/api/v1/workers`, {
             userId,
             serviceId,
-            price
+            price,
+            petTypes
         }
         ).then((response) => {
             console.log(response.data.data)
@@ -84,6 +85,7 @@ const AddServiceModal = ({ userId }) => {
                         onChange={selectedOption => setServiceId(selectedOption.value)}
                     />
                     <div className='my-3'>
+                        <h4>Tipos de animais aceitos</h4>
                         <Form.Check 
                             type="checkbox"
                             id="0"

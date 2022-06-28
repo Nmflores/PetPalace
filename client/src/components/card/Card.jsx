@@ -4,7 +4,7 @@ import { Button } from 'react-bootstrap';
 import Axios from 'axios'
 
 import './Card.css';
-import {ProfilePicture, } from '../';
+import {ProfilePicture } from '../';
 import iconCat from '../../assets/cat-icon.png';
 import iconDog from '../../assets/dog-icon.png';
 
@@ -23,23 +23,26 @@ function titleize(text) {
 }
 
 const Card = ({service, isActive}) => {
-
+  const userId = localStorage.getItem("userId");;
   const [message, setMessage] = useState("")
-  const [petTypes, setPetTypes] = useState([])
+  const [phoneNumber, setPhoneNumber] = useState("")
 
   const [isExpanded, setExpanded] = useState(isActive);
   const { getToggleProps, getCollapseProps } = useCollapse({
     isExpanded
   });
 
-  const userId = '4ac85347-72f7-48e5-a469-eac17735e0c4';
-
-  const {workerId,firstName,secondName,serviceId,serviceName,price,contactNbr} = service
+  const {workerId,firstName,secondName,serviceId,serviceName,price} = service
+  console.log(service)
 
   let fullName = `${titleize(firstName)} ${titleize(secondName)}`
 
   useEffect(() => {
-    setExpanded(isActive);
+    setExpanded(isActive)
+    Axios.get(`http://localhost:8080/api/v1/users/${workerId}`)
+    .then((response) =>{
+      setPhoneNumber(response.data.data[0].contactNbr)
+    })
   }, [isActive, setExpanded]);
 
   const registerContract = async (petTypes) => {
@@ -69,7 +72,7 @@ const Card = ({service, isActive}) => {
         <ProfilePicture />
         <div className='card-description'>
           <h2>{fullName}</h2>
-          <h3>{serviceName}</h3>  
+          <h3>{titleize(serviceName)}</h3>  
           {/* <div className='pet-container'>
             {service.petTypes.map(element => (
               <img 
@@ -88,7 +91,7 @@ const Card = ({service, isActive}) => {
       {...getCollapseProps()}
       className='details'
       >
-        <h3>Telefone: {contactNbr}</h3>        
+        <h3>Telefone: {phoneNumber}</h3>        
         <Button onClick={(event) => {registerContract()}}>Contratar</Button>
       </div>      
     </>

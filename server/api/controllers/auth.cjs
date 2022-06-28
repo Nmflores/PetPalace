@@ -34,7 +34,7 @@ module.exports = app => {
       if (await checkUserPerEmail(email)) {
         const result = await logIn(email, password)
         console.log("1", result)
-        const {accessToken, data} = result
+        const {accessToken, data, isLogged} = result
         if (result.isLogged === true) {
           {/*res.cookie('accessToken', accessToken, {
             maxAge: 60 * 60 * 1000, // 1 hour
@@ -43,11 +43,11 @@ module.exports = app => {
             sameSite: false,
           })*/}
           res.status(200).json({
-            data: result.data
+            data: data, accessToken: accessToken, isLogged: isLogged
           })
         } else {
           res.status(result.status).json({
-            data: result.data
+            data: data
           })
         }
 

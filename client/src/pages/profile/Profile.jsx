@@ -2,6 +2,8 @@ import {React, useState, useEffect} from 'react';
 import {ProfilePicture } from '../../components';
 import PetList from '../../components/pet-list/PetList';
 import WorksList from '../../components/perfil-works/perfil-works.component';
+import ContractsList from '../../components/profile-contracts-list/profile-contracts.component';
+
 import './profile.css';
 import Axios from 'axios'
 
@@ -23,11 +25,11 @@ function titleize(text) {
 
 const Profile = () => {
   // GET FROM LOCALSTORAGE
-  const userId = '4ac85347-72f7-48e5-a469-eac17735e0c4';
+  const userId = localStorage.getItem("userId");;
   const [fullName , setFullName] = useState("")
   const [pets, setPets] = useState([])
   const [works, setWorks] = useState([])
-  
+  const [contracts, setContracts] = useState([])
 
 
   useEffect(() => { 
@@ -48,6 +50,10 @@ const Profile = () => {
         let secondName = titleize(user.data.data[0].secondName)
         let fullName = `${firstName} ${secondName}`
         setFullName(fullName)
+      })
+      Axios.get(`http://localhost:8080/api/v1/contracts/${userId}`)
+      .then((response) => {
+        setContracts(response.data.data)
       })
     }
 
@@ -72,6 +78,9 @@ const Profile = () => {
       </div>     
       <div className='worksList'>
         <WorksList works={works}/>
+      </div>
+      <div>
+        <ContractsList contracts={contracts} />
       </div>
     </div>
   );

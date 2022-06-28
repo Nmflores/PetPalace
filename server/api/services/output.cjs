@@ -44,6 +44,29 @@ module.exports = app => {
       } 
       }
 
+      services.contractsResult = function async (result) {
+        if (result.length > 0) {
+          // CREATE A JSON RESPONSE TO SEND
+          const response = 
+          result.map((contract) => {
+              return {
+                queueId: contract.queue_id,
+                workerId: contract.worker_id,
+                ownerId: contract.owner_id,
+                serviceId: contract.service_id,
+                price: contract.price, 
+                workerName : contract.workerName,
+                ownerName : contract.ownerName,
+                serviceName: contract.serviceName,
+                status: contract.status,
+                entryDate: contract.entry_date,
+                endDate: contract.end_date
+              }
+            })
+          return response
+        } 
+        }
+
     services.petsResult = function async (result) {
         if (result.length > 0) {
           // CREATE A JSON RESPONSE TO SEND
