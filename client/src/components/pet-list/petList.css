@@ -1,5 +1,9 @@
 .mainContent {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;  
+  justify-content: flex-start; 
+}
+
+.petListHeader {
+  margin-bottom: 0.9375rem;
 }

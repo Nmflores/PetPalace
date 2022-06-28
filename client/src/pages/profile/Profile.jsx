@@ -67,12 +67,12 @@ const Profile = () => {
       <div className='profilePicture'>
         <ProfilePicture />
       </div>
-  <div className='petList'>
+      <div className='petList'>
         <PetList pets={pets} />
-        </div>     
-  <div className='petList'>
-  <WorksList works={works}/>
-  </div>
+      </div>     
+      <div className='worksList'>
+        <WorksList works={works}/>
+      </div>
     </div>
   );
 }

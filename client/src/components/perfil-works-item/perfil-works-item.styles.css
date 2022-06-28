@@ -1,0 +1,29 @@
+.detailsContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.625rem;
+}
+
+.service {
+  font-size: 1.5rem;  
+  font-weight: 500;
+}
+
+.price {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.itemContainer {  
+  background-color: black;
+  margin-bottom: 0.625rem;
+  border-radius: 0.3125rem;
+}
+
+.buttonsContainer {
+  display: flex;
+}
+
+.deleteButton {
+  margin-right: 0.625rem;
+}

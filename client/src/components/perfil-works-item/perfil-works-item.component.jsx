@@ -8,6 +8,7 @@ import EditPriceModal from '../modals/editar-servico.modal'
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
 
 import './editPriceModal.styles.css';
+import './perfil-works-item.styles.css';
 
 
 const WorkListItem = ({ work }) => {
@@ -16,12 +17,26 @@ const WorkListItem = ({ work }) => {
     const { serviceName, serviceId, price } = work
 
     return (
-       <div>
+       <div className="itemContainer">
          <ListGroup.Item key={serviceId}>
-            <p>{serviceName}</p>
-            <p>R${price}</p>
-            <DeleteServiceModal userId={userId} serviceId={serviceId} serviceName={serviceName}/>
-            <EditPriceModal userId={userId} serviceId={serviceId} price={price}/>
+            <div className="detailsContainer"l>
+                <p className="service">{serviceName}</p>
+                <p className="price">R$ {price}</p>
+            </div>            
+            <div className="buttonsContainer">
+                <div className="deleteButton">
+                    <DeleteServiceModal                 
+                        userId={userId} 
+                        serviceId={serviceId} 
+                        serviceName={serviceName}
+                    />
+                </div>            
+                <EditPriceModal 
+                    userId={userId} 
+                    serviceId={serviceId} 
+                    price={price}
+                />
+            </div>            
         </ListGroup.Item>
        </div>
     )

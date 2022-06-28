@@ -9,9 +9,11 @@ const PetList = ({ pets }) => {
   const userId = '4ac85347-72f7-48e5-a469-eac17735e0c4';
   return (
     <div>
-      <h3>Lista de Pets</h3>
-      <AddPetModal userId={userId} />
-      <hr></hr>
+      <hr/>
+      <div className='petListHeader'>
+        <h3>Lista de Pets</h3>
+        <AddPetModal userId={userId} />              
+      </div>      
       <div className='mainContent'>
         {pets.map((pet) => (
           <Pet

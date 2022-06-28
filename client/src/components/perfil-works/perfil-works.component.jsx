@@ -5,6 +5,7 @@ import Axios from 'axios'
 import Select from 'react-select'
 import AlertDismissible from "../alerts/alert-dismissable.component"
 import AddServiceModal from "../modals/adicionar-servico.modal"
+import './perfil-works.styles.css'
 
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
 
@@ -14,9 +15,11 @@ const WorksList = ({ works }) => {
 
     return (
         <div>
-            <h2>Serviços Listados</h2>
-            <AddServiceModal userId={userId} />
-            <hr></hr>
+            <hr />
+            <div className="createdServicesHeader">
+                <h2>Serviços Criados</h2>
+                <AddServiceModal userId={userId} />
+            </div>            
             <div className='servicesList'>
                 {works !== undefined ?
                     <ListGroup ListGroup key={works.serviceId}>
@@ -25,6 +28,8 @@ const WorksList = ({ works }) => {
                         })}
                     </ListGroup> : "Nenhum serviço Disponivel"}
             </div>
+            <hr />
+            <h2>Serviços Solicitados</h2>
         </div >
     )
 }
