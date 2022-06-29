@@ -341,7 +341,7 @@ module.exports = app => {
   }
 
 
-  services.createContract = async (params, queueId, petTypes) => {
+  services.createContract = async (params) => {
     return new Promise((resolve) => {
       const query =
         "INSERT INTO SERVICES_QUEUE(QUEUE_ID, WORKER_ID, OWNER_ID, SERVICE_ID, PRICE) VALUES(?);";

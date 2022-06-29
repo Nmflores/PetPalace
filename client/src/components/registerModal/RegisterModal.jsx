@@ -18,16 +18,19 @@ const RegisterModal = () => {
   const [contactNbr, setContactNbr] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
+  const [cpf, setCpf] = useState("")
+
   console.log(email, firstName, secondName, contactNbr, password, confirmPassword)
 
-  const registerUser = async ()=> {
-    Axios.post(`http://localhost:8080/api/v1/register`, {email, firstName, secondName, contactNbr, password})
-      .then((response) => {
-        console.log(response)
-        setMessage(response.data.data)
-      })
-  }
 
+  const registerUser = async () => {
+    Axios.post(`http://localhost:8080/api/v1/register`, {email, firstName, secondName, contactNbr, password, cpf})
+    .then((response) => {
+      console.log(response)
+      setMessage(response.data.data)
+    })
+  }
+  
   return (
     <>
       <Button variant="primary" onClick={handleShow}>
@@ -64,6 +67,12 @@ const RegisterModal = () => {
               <Form.Control type="text" placeholder="Telefone" onChange={event=> setContactNbr(event.target.value)}/>
             </FloatingLabel>
 
+            
+            <FloatingLabel controlId="floatingCpf" label="Cpf">
+              <Form.Control type="text" placeholder="Cpf" onChange={event=>setCpf(event.target.value)}/>
+            </FloatingLabel>
+
+
             <FloatingLabel
               controlId="floatingInput"
               label="Email"
@@ -80,10 +89,11 @@ const RegisterModal = () => {
               <Form.Control type="password" placeholder="Confirme sua senha" onChange={event=>setConfirmPassword(event.target.value)}/>
             </FloatingLabel>
 
+
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="primary" type="submit" onClick={registerUser}>
+          <Button variant="primary" onClick={registerUser()}>
             Cadastrar
           </Button>
         </Modal.Footer>

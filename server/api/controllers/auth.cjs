@@ -78,7 +78,6 @@ module.exports = app => {
       userGender,
       contactNbr,
       cpf,
-      state
     } = req.body;
 
     if (
@@ -87,9 +86,8 @@ module.exports = app => {
       firstName &&
       secondName &&
       userGender &&
-      contactNbr &&
-      cpf &&
-      state
+      contactNbr 
+      
     ) {
       const userParams = [
         userId,
@@ -97,9 +95,8 @@ module.exports = app => {
         secondName,
         userGender,
         contactNbr,
-        cpf,
-        state
-      ];
+        cpf
+      ]
 
       const loginParams = [userId, email, password];
 

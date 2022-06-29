@@ -40,11 +40,10 @@ module.exports = app => {
             workerId,
             ownerId,
             serviceId,
-            price,
-            petTypes
+            price
         } = req.body;
         // CHECK INSERTION REQ.BODY PARAMS
-        if (workerId && ownerId && serviceId && price && petTypes) {
+        if (workerId && ownerId && serviceId && price) {
             // CHECK IF USER EXISTS
             if (await checkUser(ownerId)) {
                 // SET PARAMS FOR QUERY
@@ -56,7 +55,7 @@ module.exports = app => {
                     price
                 ]
                 // GET RESULT FROM SERVICES.QUEUE CREATE CONTRACT FUNCTION
-                const result = await createContract(params, queueId, petTypes)
+                const result = await createContract(params)
                 // SEND RESPONSE WITH RESULT DATA
                 res.status(result.status).json({
                     data: result.data

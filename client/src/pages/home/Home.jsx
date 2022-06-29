@@ -27,12 +27,10 @@ const Home = () => {
 
   function RenderBasedOnWorkerResult({ services }) {
     if (services.length > 0) {
-      console.log("aqui vai ")
       return (
         <CardList services={services} />
       )
     } else {
-      console.log("aqui porquenao vai ")
       return (<div>Nenhum serviço listado no momento</div>)
     }
   }
