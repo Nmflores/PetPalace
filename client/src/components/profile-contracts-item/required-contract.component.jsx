@@ -1,5 +1,6 @@
 import Axios from 'axios'
 import {useState, useEffect} from 'react'
+import React from 'react'
 import AlertDismissible from "../alerts/alert-dismissable.component"
 import DeleteServiceModal from '../modals/excluir-servico.modal'
 import EditPriceModal from '../modals/editar-servico.modal'
@@ -22,10 +23,6 @@ function titleize(text) {
     return words.join(" ");
   }
 
-  const statusShow = (status) => {
-    let statusOptions = ["Na fila", "Aceito", "Concluido", "Negado"]
-    return statusOptions[status]
-  }
 
   function ReturnOnStatus({contract}){
     const {status, endDate} = contract

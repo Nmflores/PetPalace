@@ -1,6 +1,8 @@
 import "./perfil-works-item.styles.css"
 import Axios from 'axios'
 import {useState} from 'react'
+import React from 'react';
+
 import AlertDismissible from "../alerts/alert-dismissable.component"
 import DeleteServiceModal from '../modals/excluir-servico.modal'
 import EditPriceModal from '../modals/editar-servico.modal'
@@ -26,7 +28,7 @@ function titleize(text) {
 
 const WorkListItem = ({ work }) => {
     // GET FROM LOCALSTORAGE
-    const userId = '4ac85347-72f7-48e5-a469-eac17735e0c4';
+    const userId = localStorage.getItem("userId")
     const { serviceName, serviceId, price } = work
 
     return (

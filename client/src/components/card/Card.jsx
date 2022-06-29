@@ -1,4 +1,6 @@
-import { React, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import React from 'react';
+
 import useCollapse from "react-collapsed";
 import { Button } from 'react-bootstrap';
 import Axios from 'axios'
@@ -22,6 +24,20 @@ function titleize(text) {
   return words.join(" ");
 }
 
+function RenderBasedOnUserId({userId, registerContract}){
+  if(userId !== ""){
+    return (        
+      <div>
+        <Button onClick={(event) => {registerContract()}}>Contratar</Button>
+      </div>
+    )
+  }else{
+    return(
+      "Entre para poder Contratar" 
+    )
+  }
+}
+
 const Card = ({service, isActive}) => {
   const userId = localStorage.getItem("userId");;
   const [message, setMessage] = useState("")
@@ -33,7 +49,6 @@ const Card = ({service, isActive}) => {
   });
 
   const {workerId,firstName,secondName,serviceId,serviceName,price} = service
-  console.log(service)
 
   let fullName = `${titleize(firstName)} ${titleize(secondName)}`
 
@@ -92,7 +107,7 @@ const Card = ({service, isActive}) => {
       className='details'
       >
         <h3>Telefone: {phoneNumber}</h3>        
-        <Button onClick={(event) => {registerContract()}}>Contratar</Button>
+        <RenderBasedOnUserId userId={userId} registerContract={registerContract}/>
       </div>      
     </>
    );

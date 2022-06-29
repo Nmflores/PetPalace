@@ -1,81 +1,93 @@
-import { React, useState } from 'react';
+import { useState } from 'react';
+import React from 'react';
+
 import { Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
+import Axios from 'axios'
+
 
 const RegisterModal = () => {
-
   const [show, setShow] = useState(false);
-
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const [validated, setValidated] = useState(false);
+  const [message, setMessage] = useState("")
 
-  const handleSubmit = (event) => {
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
+  const [email, setEmail] = useState("")
+  const [firstName, setFirstName] = useState("")
+  const [secondName, setSecondName] = useState("")
+  const [contactNbr, setContactNbr] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  console.log(email, firstName, secondName, contactNbr, password, confirmPassword)
 
-    setValidated(true);
-  };
+  const registerUser = async ()=> {
+    Axios.post(`http://localhost:8080/api/v1/register`, {email, firstName, secondName, contactNbr, password})
+      .then((response) => {
+        console.log(response)
+        setMessage(response.data.data)
+      })
+  }
 
   return (
     <>
       <Button variant="primary" onClick={handleShow}>
-        Cadastre-se
+        Cadastro
       </Button>
-      <Form noValidate validated={validated} onSubmit={handleSubmit}>
-        <Modal show={show} onHide={handleClose}>
-          <Modal.Header closeButton>
-            <Modal.Title>Cadastro</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form.Floating className="mb-3">
-              <Form.Control
-                id="floatingInputCustom"
-                type="email"
-                placeholder="Email"
-              />
-              <label htmlFor="floatingInputCustom">Email</label>
-            </Form.Floating>
-            <Form.Floating  className="mb-3">
-              <Form.Control
-                id="floatingInputCustom"
-                type="text"
-                placeholder="Nome"
-                required
-              />
-              <label htmlFor="floatingInputCustom">Nome</label>
-              <Form.Control.Feedback type="invalid">Nome obrigatório!</Form.Control.Feedback>
-            </Form.Floating>
-            <Form.Floating  className="mb-3">
-              <Form.Control
-                id="floatingInputCustom"
-                type="text"
-                placeholder="Telefone"
-              />
-              <label htmlFor="floatingInputCustom">Telefone</label>
-            </Form.Floating>
-            <Form.Floating>
-              <Form.Control
-                id="floatingPasswordCustom"
-                type="password"
-                placeholder="Password"
-              />
-              <label htmlFor="floatingPasswordCustom">Senha</label>
-            </Form.Floating>
-          </Modal.Body>
-          <Modal.Footer>          
-            <Button variant="primary" type="submit" >
-              Enviar
-            </Button>
-            <Button variant='secondary' onClick={handleClose}>
-              Voltar
-            </Button>
-          </Modal.Footer>
-        </Modal>
-      </Form>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Cadastro de Usuario</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        {message.length > 0 ? message : ""}
+          <Form>
+            <FloatingLabel
+              controlId="floatingInput"
+              label="Primeiro nome"
+              className="mb-3"
+            >
+              <Form.Control type="text" placeholder="Primeiro nome" onChange={event=>setFirstName(event.target.value)}/>
+            </FloatingLabel>
+            <FloatingLabel
+              controlId="floatingInput"
+              label="Segundo nome"
+              className="mb-3"
+            >
+              <Form.Control type="text" placeholder="Segundo nome" onChange={event=>setSecondName(event.target.value)}/>
+            </FloatingLabel>
+
+            <FloatingLabel
+              controlId="floatingInput"
+              label="Telefone"
+              className="mb-3"
+            >
+              <Form.Control type="text" placeholder="Telefone" onChange={event=> setContactNbr(event.target.value)}/>
+            </FloatingLabel>
+
+            <FloatingLabel
+              controlId="floatingInput"
+              label="Email"
+              className="mb-3"
+            >
+              <Form.Control type="email" placeholder="name@example.com" onChange={event=>setEmail(event.target.value)}/>
+            </FloatingLabel>
+
+            <FloatingLabel controlId="floatingPassword" label="Senha">
+              <Form.Control type="password" placeholder="Sua senha" onChange={event=>setPassword(event.target.value)}/>
+            </FloatingLabel>
+
+            <FloatingLabel controlId="floatingPassword" label="Confirme sua Senha">
+              <Form.Control type="password" placeholder="Confirme sua senha" onChange={event=>setConfirmPassword(event.target.value)}/>
+            </FloatingLabel>
+
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" type="submit" onClick={registerUser}>
+            Cadastrar
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }

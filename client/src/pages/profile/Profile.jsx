@@ -1,8 +1,10 @@
-import {React, useState, useEffect} from 'react';
-import {ProfilePicture } from '../../components';
-import PetList from '../../components/pet-list/PetList';
-import WorksList from '../../components/perfil-works/perfil-works.component';
-import ContractsList from '../../components/profile-contracts-list/profile-contracts.component';
+import { useState, useEffect} from 'react'
+import React from 'react'
+import { ProfilePicture } from '../../components'
+import LoadingSpinner from '../../components/loading/Loading'
+import PetList from '../../components/pet-list/PetList'
+import WorksList from '../../components/perfil-works/perfil-works.component'
+import ContractsList from '../../components/profile-contracts-list/profile-contracts.component'
 
 import './profile.css';
 import Axios from 'axios'
@@ -15,13 +17,36 @@ function titleize(text) {
       var w = words[a];
 
       var firstLetter = w[0];
-      w = firstLetter.toUpperCase() + w.slice(1);
+      w = firstLetter.toUpperCase() + w.slice(1)
 
       words[a] = w;
   }
   return words.join(" ");
 }
 
+function ReturnBasedOnUserId({userId, fullName, pets, works, contracts}){
+  if(userId !== ""){
+  return(
+    <div>
+    <h1>{fullName}</h1>
+    <div className='profilePicture'>
+      <ProfilePicture />
+    </div>
+    <div className='petList'>
+      <PetList pets={pets} />
+    </div>     
+    <div className='worksList'>
+      <WorksList works={works}/>
+    </div>
+    <div>
+      <ContractsList contracts={contracts} />
+    </div>
+  </div>
+  )
+  }else{
+    return("Acesso Negado")
+  }
+}
 
 const Profile = () => {
   // GET FROM LOCALSTORAGE
@@ -36,13 +61,19 @@ const Profile = () => {
     const fechApi = async () => {
       Axios.get(`http://localhost:8080/api/v1/users/pets/${userId}`)
       .then((pets) => {
-        console.log("pets 1: ",pets)
+        if(pets.data.data.length > 0){
           setPets(pets.data.data)
+        }else{
+          setPets([])
+        }
       })
     Axios.get(`http://localhost:8080/api/v1/users/workers/${userId}`)
       .then((works) => {
-        console.log("works 1: ",works.data)
-            setWorks(works.data.data)
+            if(works.data.data.length > 0){
+              setWorks(works.data.data)
+            }else{
+              setWorks([])
+            }
       })
     Axios.get(`http://localhost:8080/api/v1/users/${userId}`)
       .then((user) => {
@@ -69,21 +100,10 @@ const Profile = () => {
 
   return (
     <div>
-      <h1>{fullName}</h1>
-      <div className='profilePicture'>
-        <ProfilePicture />
-      </div>
-      <div className='petList'>
-        <PetList pets={pets} />
-      </div>     
-      <div className='worksList'>
-        <WorksList works={works}/>
-      </div>
-      <div>
-        <ContractsList contracts={contracts} />
-      </div>
+      { works.length === 0 && pets.length === 0 && contracts.length === 0 ? <LoadingSpinner/> : 
+      <ReturnBasedOnUserId userId={userId} fullName={fullName} works={works} pets={pets} contracts={contracts}/>}
     </div>
-  );
+  )
 }
  
 export default Profile;

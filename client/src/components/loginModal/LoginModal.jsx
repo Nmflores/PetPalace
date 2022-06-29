@@ -1,4 +1,6 @@
-import { React, useState } from 'react';
+import { useState } from 'react';
+import React from 'react';
+
 import { Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
 import Axios from 'axios'
 import './loginModal.css';

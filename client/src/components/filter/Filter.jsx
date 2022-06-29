@@ -1,18 +1,21 @@
-import { React, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import React from 'react'
+
 import {BiFilter} from 'react-icons/bi';
 import useCollapse from "react-collapsed";
 import { Form } from 'react-bootstrap';
 
 import './filter.css';
 
-const Filter = ({isActive, serviceId}) => {
+const Filter = ({isActive, serviceId, callBackHome}) => {
 
   const [id, setId] = useState(serviceId)
+  console.log("id on filter:", id)
 
   const [isExpanded, setExpanded] = useState(isActive);
   const { getToggleProps, getCollapseProps } = useCollapse({
     isExpanded
-  });
+  })
 
   useEffect(() => {
     setExpanded(isActive);
@@ -36,7 +39,10 @@ const Filter = ({isActive, serviceId}) => {
         <Form.Select 
           id={id}
           aria-label="Default select example"
-          onChange={(selectedOption) => {setId(parseInt(selectedOption.target.value))}}
+          onChange={(selectedOption) => {
+            callBackHome(selectedOption.target.value)
+            setId(parseInt(selectedOption.target.value))
+          }}
         >
           <option>Selecione tipo de serviço...</option>
           <option value="0">Passeio</option>

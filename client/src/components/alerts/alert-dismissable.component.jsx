@@ -1,5 +1,5 @@
 import { Alert, Button } from 'react-bootstrap';
-import {useState} from 'react'
+import {React, useState} from 'react'
 
 
 const AlertDismissibleExample = async ({text}) => {
