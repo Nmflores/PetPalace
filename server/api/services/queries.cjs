@@ -154,15 +154,25 @@ module.exports = app => {
         "SELECT A.user_id, A.first_name, A.second_name, B.service_id, C.service_name, B.price, A.contact_nbr FROM USERS A, WORKER_SERVICES B, AVAILABLE_SERVICES C WHERE A.user_id = B.user_id AND C.service_id = B.service_id;";
       // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
       pool.query(query, (err, result) => {
-        if (err) resolve({
-          status: 400,
-          data: err
-        })
-        else resolve({
-          status: 200,
-          data: workersResult(result)
-        })
-      });
+        if (err) {
+          resolve({
+            status: 400,
+            data: err
+          })
+        } else {
+          if(result.length > 0){
+            resolve({
+              status: 200,
+              data: workersResult(result)
+            })
+          }else{
+            resolve({
+              status: 200,
+              data: []
+            })
+          }
+        }
+      })
     })
   }
 
@@ -171,14 +181,23 @@ module.exports = app => {
       const query =
         "SELECT A.user_id, A.first_name, A.second_name, B.service_id, C.service_name, B.price FROM USERS A, WORKER_SERVICES B, AVAILABLE_SERVICES C WHERE A.user_id = B.user_id AND C.service_id = B.service_id AND A.user_id = ?;";
       pool.query(query, [userId], (err, result) => {
-        if (err) resolve({
+        if (err){ resolve({
           status: 400,
           data: err
-        })
-        else resolve({
-          status: 200,
-          data: workersResult(result)
-        })
+        })}
+        else {
+          if(result.length > 0){
+            resolve({
+              status: 200,
+              data: workersResult(result)
+            })
+          }else{
+            resolve({
+              status: 200,
+              data: []
+            })
+          }
+        }
       })
     }))
   }
@@ -202,8 +221,8 @@ module.exports = app => {
             data: workersResult(result)
           })
           else resolve({
-            status: 400,
-            data: `Serviço de Id:[${serviceId}] nao possui Prestadores`
+            status: 200,
+            data: []
           })
         }
       })
@@ -265,10 +284,12 @@ module.exports = app => {
             }
           }
         })
-      } else {resolve({
-        status: 400,
-        data: "Nenhum Usuario Cadastrado com este ID"
-      })}
+      } else {
+        resolve({
+          status: 400,
+          data: "Nenhum Usuario Cadastrado com este ID"
+        })
+      }
 
     })
   }
