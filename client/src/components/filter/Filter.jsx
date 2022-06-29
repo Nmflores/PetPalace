@@ -37,7 +37,6 @@ const Filter = ({isActive, serviceId, callBackHome}) => {
         {...getCollapseProps()}
       >
         <Form.Select 
-          id={id}
           aria-label="Default select example"
           onChange={(selectedOption) => {
             callBackHome(selectedOption.target.value)

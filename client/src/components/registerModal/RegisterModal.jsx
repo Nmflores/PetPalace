@@ -30,7 +30,7 @@ const RegisterModal = () => {
       setMessage(response.data.data)
     })
   }
-  
+
   return (
     <>
       <Button variant="primary" onClick={handleShow}>
@@ -93,7 +93,7 @@ const RegisterModal = () => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="primary" onClick={registerUser()}>
+          <Button variant="primary" onClick={registerUser}>
             Cadastrar
           </Button>
         </Modal.Footer>
