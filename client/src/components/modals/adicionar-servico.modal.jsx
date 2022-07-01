@@ -9,10 +9,10 @@ import Select from 'react-select'
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
 
 
-const AddServiceModal = ({ userId }) => {
+const AddServiceModal = () => {
     const [message, setMessage] = useState("")
     const [price, setPrice] = useState()
-    const [serviceId, setServiceId] = useState()
+    const [serviceId, setServiceId] = useState(0)
     const [petTypes, setPetTypes] = useState(["0"])
 
     const serviceOptions = [
@@ -44,9 +44,9 @@ const AddServiceModal = ({ userId }) => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    const addService = async (e, userId, serviceId, price) => {
+    const addService = async (e) => {
         e.preventDefault()
-        serviceId = parseInt(serviceId)
+        const userId = localStorage.getItem("userId")
         await Axios.post(`http://localhost:8080/api/v1/workers`, {
             userId,
             serviceId,
@@ -107,7 +107,7 @@ const AddServiceModal = ({ userId }) => {
                     <Button variant="primary"
                         type="submit"
                         onClick={(e) => {
-                            addService(e, userId, serviceId, price)
+                            addService(e)
                         }}>
                         Adicionar Serviço
                     </Button>

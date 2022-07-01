@@ -17,11 +17,11 @@ const EditPriceModal = ({userId, serviceId, price}) => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
   
-    const updatePrice = async (event, userId, serviceId, price) => {
-        event.preventDefault();
+    const updatePrice = async (e) => {
+        e.preventDefault()
+        const userId = localStorage.getItem("userId")
         serviceId = parseInt(serviceId)
-        price = parseFloat(price)
-        console.log(event, userId, serviceId, price)
+        actualPrice = parseFloat(price)
         Axios.put(`http://localhost:8080/api/v1/workers`,{
             userId,
             serviceId, 
@@ -59,7 +59,7 @@ const EditPriceModal = ({userId, serviceId, price}) => {
             <Button variant="primary" 
             type="submit" 
             onClick={(e)=>{
-                updatePrice(e, userId, serviceId, actualPrice)
+                updatePrice(e)
             }}
             id={serviceId}>
               Editar Preço

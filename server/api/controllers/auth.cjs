@@ -69,7 +69,7 @@ module.exports = app => {
 
   controller.register = async (req, res) => {
     let userId = uuidV4();
-
+    console.log(req.body)
     const {
       email,
       password,
@@ -100,6 +100,10 @@ module.exports = app => {
 
       const loginParams = [userId, email, password];
 
+      
+      const callCreateLoyalty = async () => {
+        await createLoyalty(userId)
+      }
 
       const callRegisterAuth = async (loginParams) => {
         const query = `INSERT INTO USERS_AUTH(USER_ID, EMAIL, PASSWORD) VALUES(?)`;
@@ -111,8 +115,9 @@ module.exports = app => {
               })
             }
           } else {
+            console.log("query auth: ", result)
             if (result.affectedRows > 0) {
-              callCreateLoyalty()
+              //callCreateLoyalty()
               res.status(201).json({
                 data: 'Usuario cadastrado com sucesso'
               })
@@ -125,14 +130,14 @@ module.exports = app => {
         })
       }
 
-      const callCreateLoyalty = async () => {
-        await createLoyalty(userId)
-      }
 
 
-      const query = `INSERT INTO USERS(USER_ID, FIRST_NAME, SECOND_NAME, USER_GENDER, CONTACT_NBR, CPF, STATE) VALUES(?);`;
+      const query = `INSERT INTO USERS(USER_ID, FIRST_NAME, SECOND_NAME, USER_GENDER, CONTACT_NBR, CPF) VALUES(?);`;
       pool.query(query, [userParams], (err, result) => {
+        console.log("query users:", result)
+
         if (err) {
+          console.log(err)
           if (err.sqlMessage.includes('cpf')) {
             res.status(400).json({
               data: 'Usuario com este CPF ja esta cadastrado'
@@ -143,10 +148,14 @@ module.exports = app => {
             })
           }
         } else {
+          console.log(result)
           if (result.affectedRows > 0) {
+            console.log(111)
+
             console.log(userParams, loginParams)
             callRegisterAuth(loginParams)
           } else {
+            console.log(222)
             res.status(400).json({
               data: "Cadastro de Usuario falhou"
             })

@@ -21,6 +21,8 @@ const LoginModal = () => {
       console.log("response login: ",response.data)
       localStorage.setItem("userId",response.data.accessToken)
       setMessage(response.data.data)
+    }).catch(err => {
+      setMessage(err.response.data.data)
     })
   }
 

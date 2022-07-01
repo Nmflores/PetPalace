@@ -63,7 +63,7 @@ module.exports = app => {
 
             } else {
                 // IN CASE USER DOESNT EXISTS
-                return res.status(404).send({
+                return res.status(400).send({
                     msg: messages(1)
                 })
             }

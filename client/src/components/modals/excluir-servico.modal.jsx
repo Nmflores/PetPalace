@@ -6,7 +6,7 @@ import AlertDismissible from "../alerts/alert-dismissable.component"
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
 
 
-const DeleteServiceModal = ({userId, serviceName, serviceId}) => {
+const DeleteServiceModal = ({serviceName, serviceId}) => {
     const [message, setMessage] = useState("")
 
     const [show, setShow] = useState(false);
@@ -15,8 +15,9 @@ const DeleteServiceModal = ({userId, serviceName, serviceId}) => {
     const handleShow = () => setShow(true);
 
 
-    const deleteService = async (e, userId) => {
-        e.stopPropagation()
+    const deleteService = async (e) => {
+        e.preventDefault()
+        const userId = localStorage.getItem("userId")
         const serviceId = parseInt(e.target.id)
         Axios.delete(`http://localhost:8080/api/v1/workers`,{
         data:{
@@ -51,7 +52,7 @@ const DeleteServiceModal = ({userId, serviceName, serviceId}) => {
             <Button variant="primary" 
             type="submit" 
             onClick={(e)=>{
-                deleteService(e, userId, serviceId)
+                deleteService(e)
             }}
             id={serviceId}>
               Excluir Serviço

@@ -10,15 +10,14 @@ import './perfil-works.styles.css'
 
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
 
-function RenderBasedOnWorks({ works, userId }) {
-    console.log(works)
+function RenderBasedOnWorks({ works }) {
     if (works.length === 0) {
         return (
             <div>
-                <hr />
                 <div className="createdServicesHeader">
                     <h2>Serviços Criados</h2>
-                    <AddServiceModal userId={userId} />
+                    <AddServiceModal  />
+                    <hr />
                 </div>
                 <div className='servicesList'>
                     Nenhum serviço Disponivel
@@ -28,12 +27,12 @@ function RenderBasedOnWorks({ works, userId }) {
     } else {
         return (
             <div>
-                <hr />
                 <div className="createdServicesHeader">
                     <h2>Serviços Criados</h2>
-                    <AddServiceModal userId={userId} />
+                    <AddServiceModal />
                 </div>
-                <div className='servicesList'>
+                <hr />
+                <div className='mt-4'>
                     <ListGroup ListGroup key={works.serviceId}>
                         {works.map((work) => {
                             return <WorkListItem key={work.serviceId} work={work} />
@@ -47,11 +46,9 @@ function RenderBasedOnWorks({ works, userId }) {
 }
 
 const WorksList = ({ works }) => {
-    const userId = '4ac85347-72f7-48e5-a469-eac17735e0c4';
-
     return (
         <div>
-            <RenderBasedOnWorks works={works} userId={userId} />
+            <RenderBasedOnWorks works={works} />
         </div >
     )
 }

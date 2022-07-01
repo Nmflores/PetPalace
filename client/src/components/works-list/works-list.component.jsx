@@ -5,14 +5,13 @@ import AddServiceModal from '../../modals/adicionar-servico.modal'
 
 
 const WorksList = ({ works }) => {
-    // GET FROM LOCALSTORAGE
     const userId = localStorage.getItem("userId");;
     let conter = 0;
     return (
         <div>
             <h3>Lista de serviços disponiveis</h3>
             <AddServiceModal userId={userId} />
-            <hr></hr>
+            <hr />
             <div className='servicesList'>
                 <ListGroup>
                     {works.map((work) => {

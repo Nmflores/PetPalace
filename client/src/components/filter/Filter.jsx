@@ -43,7 +43,7 @@ const Filter = ({isActive, serviceId, callBackHome}) => {
             setId(parseInt(selectedOption.target.value))
           }}
         >
-          <option>Selecione tipo de serviço...</option>
+          <option value="0">Selecione tipo de serviço...</option>
           <option value="0">Passeio</option>
           <option value="1">Pet Sitter</option>
           <option value="2">Hospedagem</option>

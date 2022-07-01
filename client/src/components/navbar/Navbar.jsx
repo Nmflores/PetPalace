@@ -22,7 +22,7 @@ function ReturnBasedOnUserId({userId}) {
   }else{
     return(
       <div className='navbarButtons'>
-        <LoginModal />
+        <LoginModal className='loginBtn'/>
         <RegisterModal className='registerBtn' />
       </div>
     )

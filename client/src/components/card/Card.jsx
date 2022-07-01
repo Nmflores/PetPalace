@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import React from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import useCollapse from "react-collapsed";
 import { Button } from 'react-bootstrap';
@@ -24,18 +25,24 @@ function titleize(text) {
   return words.join(" ");
 }
 
-function RenderBasedOnUserId({ userId, contactNbr, registerContract }) {
+function RenderBasedOnUserId({ userId, contactNbr, registerContract, workerId }) {
   if (userId !== "") {
+    console.log(userId, workerId)
+    if (userId == workerId) {
+      return (<div>
+        <h3>Você esta prestando este serviço</h3>
+      </div>)
+    } else {
+      return (
+        <div>
+          <h3>Telefone: {contactNbr}</h3>
+          <Button onClick={() => registerContract()}>Contratar</Button>
+        </div>
+      )
+    }
+  } else {
     return (
-      <div>
-        <h3>Telefone: {contactNbr}</h3>
-        <Button onClick={() => registerContract()}>Contratar</Button>
-      </div>
-    )
-  }
-  else {
-    return (
-      "Entre para poder Contratar"
+      <div>Entre para poder Contratar</div>
     )
   }
 }
@@ -82,9 +89,9 @@ const Card = ({ service, isActive }) => {
   return (
     <>
       {message.length > 0 || message !== undefined ? message : ""}
-      {userId !== workerId ?      <div>
+
         <div
-          className='card-container'
+          className='card-container mt-4 p-6'
           {...getToggleProps({
             onClick: () => setExpanded((x) => !x)
           })}
@@ -113,7 +120,6 @@ const Card = ({ service, isActive }) => {
         >
           <RenderBasedOnUserId workerId={workerId} userId={userId} contactNbr={contactNbr} registerContract={registerContract} />
         </div>
-      </div> : ""}
     </>
   )
 }

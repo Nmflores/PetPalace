@@ -77,10 +77,10 @@ module.exports = (app) => {
         "INSERT INTO WORKER_SERVICES(USER_ID, SERVICE_ID, PRICE) VALUES(?,?, ?);";
       // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
       pool.query(query, [userId, serviceId, price], (err, result) => {
+        console.log(err)
         if (err) {
           if (err.code === "ER_DUP_ENTRY") {
             res.status(400).json({
-
               data: "Serviço já cadastrado para este Usuario"
             })
           } else if (err.code === "ECONNREFUSED") {
@@ -90,36 +90,30 @@ module.exports = (app) => {
           }
         } else {
           if (result.affectedRows > 0) {
-            let contAddedPetTypes = 0
-            console.log(petTypes)
-            const query = "INSERT INTO SERVICE_PET_TYPES(WORKER_ID, PET_TYPE_ID) VALUES(?, ?);";
+            const query = "INSERT INTO SERVICE_PET_TYPES(WORKER_ID, PET_TYPE_ID, SERVICE_ID) VALUES(?, ?, ?);";
             for (let x in petTypes) {
-              pool.query(query, [userId, petTypes[x]], (err, result) => {
+              pool.query(query, [userId, petTypes[x], serviceId], (err, result) => {
                 if (err) {
                   console.log(err)
-                  contAddedPetTypes--
                 } else {
-                  if (result.length > 0) {
+                  console.log(result)
+                  if (result.affectedRows > 0) {
                     console.log(result)
-                    contAddedPetTypes++
                   } else {
                     console.log(result)
-                    contAddedPetTypes--
                   }
                 }
               })
-            }
-            console.log(contAddedPetTypes)
-            if (contAddedPetTypes === petTypes.length) {
-              res.status(200).json({
-                data: "Serviço cadastrado para o Usuario"
-              })
-            } else {
-              res.status(400).json({
-                data: 'Cadastro de serviço falhou'
-              })
-            }
-
+            } 
+          }else {
+            res.status(400).json({
+              data: 'Cadastro de serviço falhou'
+            })
+          }
+          if (result.affectedRows > 0) {
+            res.status(200).json({
+              data: "Serviço cadastrado para o Usuario"
+            })
           } else {
             res.status(400).json({
               data: 'Cadastro de serviço falhou'

@@ -160,12 +160,12 @@ module.exports = app => {
             data: err
           })
         } else {
-          if(result.length > 0){
+          if (result.length > 0) {
             resolve({
               status: 200,
               data: workersResult(result)
             })
-          }else{
+          } else {
             resolve({
               status: 200,
               data: []
@@ -176,22 +176,46 @@ module.exports = app => {
     })
   }
 
+  services.getPetTypesForWorkerId = async function (userId, serviceId) {
+    return new Promise((resolve) => {
+      const query = `SELECT PET_TYPE_ID, SERVICE_ID FROM SERVICE_PET_TYPES WHERE WORKER_ID = ? AND SERVICE_ID = ?`
+      pool.query(query, [userId, serviceId], (err, result) => {
+        if (err) {
+          resolve(err)
+        } else {
+          if (result.length > 0) {
+            let output = []
+            result.forEach(elem =>{
+              if(!output.includes(elem)){
+                output.push(elem)
+              }
+            })
+            resolve(output)
+          }
+        }
+      })
+
+    })
+  }
+
   services.getWorkersByUserId = async (userId) => {
+    //console.log(await services.getPetTypesForWorkerId(userId, 3))
     return new Promise((resolve => {
       const query =
         "SELECT A.user_id, A.first_name, A.second_name, B.service_id, C.service_name, B.price FROM USERS A, WORKER_SERVICES B, AVAILABLE_SERVICES C WHERE A.user_id = B.user_id AND C.service_id = B.service_id AND A.user_id = ?;";
       pool.query(query, [userId], (err, result) => {
-        if (err){ resolve({
-          status: 400,
-          data: err
-        })}
-        else {
-          if(result.length > 0){
+        if (err) {
+          resolve({
+            status: 400,
+            data: err
+          })
+        } else {
+          if (result.length > 0) {
             resolve({
               status: 200,
               data: workersResult(result)
             })
-          }else{
+          } else {
             resolve({
               status: 200,
               data: []
@@ -260,22 +284,22 @@ module.exports = app => {
           "INSERT INTO WORKER_SERVICES(USER_ID, SERVICE_ID, PRICE) VALUES(?,?, ?);";
         // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
         pool.query(query, [userId, serviceId, price], (err, result) => {
+          console.log(err, result)
           if (err) {
-            if (err.code === "ER_DUP_ENTRY") resolve({
-              status: 400,
-              data: "Serviço já cadastrado para este Usuario"
-            })
-            else if (err.code === "ECONNREFUSED") resolve({
-              status: 400,
-              data: "Banco de dados inacessivel"
-            })
+            if (err.code === "ER_DUP_ENTRY") {
+              resolve({
+                status: 400,
+                data: "Serviço já cadastrado para este Usuario"
+              })
+            } else if (err.code === "ECONNREFUSED") {
+              resolve({
+                status: 400,
+                data: "Banco de dados inacessivel"
+              })
+            }
           } else {
             if (result.affectedRows > 0) {
               callRegisterPetTypes()
-              resolve({
-                status: 200,
-                data: "Serviço cadastrado para o Usuario"
-              })
             } else {
               resolve({
                 status: 400,
@@ -451,8 +475,8 @@ module.exports = app => {
             })
           } else {
             resolve({
-              status: 400,
-              data: 'Nenhum serviço na fila'
+              status: 200,
+              data: []
             })
           }
         }

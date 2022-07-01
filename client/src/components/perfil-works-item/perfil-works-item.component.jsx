@@ -27,8 +27,6 @@ function titleize(text) {
 
 
 const WorkListItem = ({ work }) => {
-    // GET FROM LOCALSTORAGE
-    const userId = localStorage.getItem("userId")
     const { serviceName, serviceId, price } = work
 
     return (
@@ -40,14 +38,12 @@ const WorkListItem = ({ work }) => {
             </div>            
             <div className="buttonsContainer">
                 <div className="deleteButton">
-                    <DeleteServiceModal                 
-                        userId={userId} 
+                    <DeleteServiceModal               
                         serviceId={serviceId} 
                         serviceName={titleize(serviceName)}
                     />
                 </div>            
                 <EditPriceModal 
-                    userId={userId} 
                     serviceId={serviceId} 
                     price={price}
                 />

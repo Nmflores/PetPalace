@@ -45,6 +45,7 @@ module.exports = app => {
       }
 
       services.contractsResult = function async (result) {
+        console.log(result, result.length)
         if (result.length > 0) {
           // CREATE A JSON RESPONSE TO SEND
           const response = 
