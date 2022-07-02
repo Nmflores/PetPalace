@@ -21,18 +21,16 @@ function titleize(text) {
 }
 
 const Pet = ({pet}) => {
-  let petIcon = pet.petType===1  ? iconCat : iconDog
-
   return (
     <div className='petList'>
       <p>{titleize(pet.petName)}</p>
       <img 
         className='petIcon'
-        src={petIcon} 
+        src={pet.petType == 'canino'  ? iconDog : iconCat}
         alt="Pet icon" 
       />
       <p>{titleize(pet.petType)}</p>
-      <p>{titleize(pet.petBreed)}</p>
+      <p>{pet.petBreed}</p>
       <DeletePetModal pet={pet} />
     </div>      
   );

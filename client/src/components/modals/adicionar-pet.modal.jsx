@@ -19,12 +19,17 @@ const AddPetModal = ({ userId }) => {
         { value: 1, label: 'Felino' },
     ]
 
-    const petBreedsOptions = [
+    const petBreedsOptionsDog = [
         { value: "Pastor Alemão", label: 'Pastor Alemão' },
-        { value: "Pitbull", label: 'PitBull' },
-        { value: "Siames", label: 'Siames' },
-        { value: "Vira Lata", label: 'Vira Lata' },
+        { value: "Pitbull", label: 'PitBull' },        
+        { value: "SRD", label: 'SRD' },
     ]
+
+    const petBreedsOptionsCat = [
+        { value: "Siames", label: 'Siames' },
+        { value: "Americano", label: 'Americano' },
+        { value: "SRD", label: 'SRD' },
+    ]    
 
     const [show, setShow] = useState(false);
 
@@ -51,6 +56,8 @@ const AddPetModal = ({ userId }) => {
             setMessage(err.response.data.data)
         })
     }
+
+   
 
     return (
         <>
@@ -79,10 +86,11 @@ const AddPetModal = ({ userId }) => {
                     />
                     <Select
                         name="serviceSelection"
-                        options={petBreedsOptions}
+                        options={petType == 0 ? petBreedsOptionsDog : petBreedsOptionsCat}
                         placeholder="Selecione uma raça de Pet"
                         onChange={selectedOption => setPetBreed(selectedOption.value)}
                     />
+                    
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="primary"

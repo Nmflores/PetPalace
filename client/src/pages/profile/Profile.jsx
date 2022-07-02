@@ -9,7 +9,6 @@ import ContractsList from '../../components/profile-contracts-list/profile-contr
 import './profile.css';
 import Axios from 'axios'
 
-
 function titleize(text) {
   var loweredText = text.toLowerCase();
   var words = loweredText.split(" ");
@@ -99,14 +98,14 @@ const Profile = () => {
 
     return () => clearInterval(intervalId); //This is important*/}
 
-  }, [])
+  }, [pets,works,contracts])
 
 
   return (
     <>
       <div>
           <ReturnBasedOnUserId userId={userId} fullName={fullName} works={works} pets={pets} contracts={contracts} />
-      </div>
+      </div>      
     </>
   )
 }
