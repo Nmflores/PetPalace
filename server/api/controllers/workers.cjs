@@ -77,7 +77,6 @@ module.exports = (app) => {
         "INSERT INTO WORKER_SERVICES(USER_ID, SERVICE_ID, PRICE) VALUES(?,?, ?);";
       // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
       pool.query(query, [userId, serviceId, price], (err, result) => {
-        console.log(err)
         if (err) {
           if (err.code === "ER_DUP_ENTRY") {
             res.status(400).json({
@@ -94,18 +93,23 @@ module.exports = (app) => {
             for (let x in petTypes) {
               pool.query(query, [userId, petTypes[x], serviceId], (err, result) => {
                 if (err) {
-                  console.log(err)
+                  res.status(400).json({
+                    data: 'Cadastro de serviço falhou'
+                  })
                 } else {
-                  console.log(result)
                   if (result.affectedRows > 0) {
-                    console.log(result)
+                    res.status(200).json({
+                      data: "Serviço cadastrado para o Usuario"
+                    })
                   } else {
-                    console.log(result)
+                    res.status(400).json({
+                      data: 'Cadastro de serviço falhou'
+                    })
                   }
                 }
               })
-            } 
-          }else {
+            }
+          } else {
             res.status(400).json({
               data: 'Cadastro de serviço falhou'
             })
@@ -135,9 +139,7 @@ module.exports = (app) => {
       serviceId,
       price
     } = req.body;
-    console.log(userId,
-      serviceId,
-      price)
+
     // CHECK IF USER EXISTS
     if (await checkUser(userId)) {
       //IF EXISTS
@@ -162,7 +164,6 @@ module.exports = (app) => {
       userId,
       serviceId
     } = req.body;
-    console.log(req.body)
     // CHECK IF REQ HAS USERID AND SERVICEID
     if (userId && serviceId >= 0) {
       if (await checkUser(userId)) {

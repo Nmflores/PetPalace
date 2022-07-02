@@ -185,8 +185,8 @@ module.exports = app => {
         } else {
           if (result.length > 0) {
             let output = []
-            result.forEach(elem =>{
-              if(!output.includes(elem)){
+            result.forEach(elem => {
+              if (!output.includes(elem)) {
                 output.push(elem)
               }
             })
@@ -211,6 +211,9 @@ module.exports = app => {
           })
         } else {
           if (result.length > 0) {
+            //result.forEach(async (elem) => {
+            //  elem.petTypes = await services.getPetTypes(userId, elem.service_id)
+            //  console.log(`petTypes: ${elem.petTypes}`)})
             resolve({
               status: 200,
               data: workersResult(result)
@@ -273,9 +276,8 @@ module.exports = app => {
   }
 
   services.registerWorker = async (userId, serviceId, price, petTypes) => {
-    const callRegisterPetTypes = async () => {
-      await services.registerPetTypesForService(userId, petTypes)
-    }
+    const callRegisterPetTypes = await services.registerPetTypesForService(userId, petTypes)
+
     const checkBefore = await checkUser(userId)
     return new Promise((resolve) => {
       if (checkBefore) {
@@ -284,7 +286,6 @@ module.exports = app => {
           "INSERT INTO WORKER_SERVICES(USER_ID, SERVICE_ID, PRICE) VALUES(?,?, ?);";
         // CALL THE EXECUTE PASSING THE QUERY AND THE PARAMS
         pool.query(query, [userId, serviceId, price], (err, result) => {
-          console.log(err, result)
           if (err) {
             if (err.code === "ER_DUP_ENTRY") {
               resolve({
@@ -402,6 +403,19 @@ module.exports = app => {
   }
 
   services.getFullName = async function (userId) {
+    function titleize(text) {
+      var loweredText = text.toLowerCase();
+      var words = loweredText.split(" ");
+      for (var a = 0; a < words.length; a++) {
+        var w = words[a];
+
+        var firstLetter = w[0];
+        w = firstLetter.toUpperCase() + w.slice(1)
+
+        words[a] = w;
+      }
+      return words.join(" ");
+    }
     return new Promise((resolve) => {
       const query = `SELECT FIRST_NAME, SECOND_NAME FROM USERS WHERE USER_ID = ?;`
       pool.query(query, [userId], (err, result) => {
@@ -409,8 +423,8 @@ module.exports = app => {
           resolve(err)
         } else {
           if (result.length > 0) {
-            let firstName = result[0].FIRST_NAME
-            let secondName = result[0].SECOND_NAME
+            let firstName = titleize(result[0].FIRST_NAME)
+            let secondName = titleize(result[0].SECOND_NAME)
             let fullName = `${firstName} ${secondName}`
             //console.log(fullName)
             resolve(fullName)
@@ -429,7 +443,7 @@ module.exports = app => {
         if (err) {
           resolve({
             status: 400,
-            data: err
+            data: []
           })
         } else {
           if (result.length > 0) {
@@ -444,11 +458,11 @@ module.exports = app => {
                 status: 201,
                 data: result
               })
-            }, 5000)
+            }, 3000)
           } else {
             resolve({
               status: 400,
-              data: 'Nenhum serviço na fila'
+              data: []
             })
           }
         }
@@ -460,19 +474,31 @@ module.exports = app => {
   services.getQueuesByUserId = async (userId) => {
     return new Promise((resolve) => {
       const query =
-        "SELECT * FROM SERVICES_QUEUE WHERE OWNER_ID = ? OR WORKER_ID = ?;";
+        "SELECT A.*, B.service_name as 'serviceName' FROM SERVICES_QUEUE A, AVAILABLE_SERVICES B WHERE A.OWNER_ID = ? OR A.WORKER_ID = ? AND A.service_id = B.service_id;";
       pool.query(query, [userId, userId], (err, result) => {
+        console.log(err)
+
         if (err) {
           resolve({
             status: 400,
-            data: result
+            data: []
           })
         } else {
+
           if (result.length > 0) {
-            resolve({
-              status: 200,
-              data: result
+            result.forEach(async (elem) => {
+              console.log("elem=>",elem)
+              elem.workerName = await services.getFullName(elem.worker_id)
+              elem.ownerName = await services.getFullName(elem.owner_id)
+              //console.log(`worker_id: ${elem.worker_id}\n owner_id: ${elem.owner_id}`)
+              console.log(`workerName: ${elem.workerName}\n ownerName: ${elem.ownerName}`)
             })
+            setTimeout(() => {
+              resolve({
+                status: 200,
+                data: result
+              })
+            }, 3000)
           } else {
             resolve({
               status: 200,
@@ -490,7 +516,6 @@ module.exports = app => {
         "DELETE FROM SERVICES_QUEUE WHERE QUEUE_ID = ?;";
       pool.query(query, [queueId], (err, result) => {
         if (err) {
-          console.log(1)
           if (err.code === "ECONNREFUSED") {
             resolve({
               status: 500,
@@ -502,16 +527,13 @@ module.exports = app => {
               data: "Contrato com este ID ja esta registrado"
             })
           }
-
         } else {
           if (result.affectedRows > 0) {
-            console.log(2)
             resolve({
               status: 201,
               data: 'Contrato de serviço deletado com sucesso'
             })
           } else {
-            console.log(3)
             resolve({
               status: 500,
               data: 'Erro ao deletar Contrato de serviço'
@@ -545,7 +567,6 @@ module.exports = app => {
       }
       pool.query(query, [queueId], (err, result) => {
         if (err) {
-          console.log(err)
           if (err.code === "ECONNREFUSED") {
             resolve({
               status: 500,
@@ -555,7 +576,6 @@ module.exports = app => {
 
         } else {
           if (result.affectedRows > 0) {
-            console.log(result)
             resolve({
               status: 201,
               data: 'Status de serviço alterado com sucesso'
@@ -612,11 +632,9 @@ module.exports = app => {
       const query = "INSERT INTO LOYALTY(USER_ID) VALUES(?);";
       pool.query(query, [userId], (err, result) => {
         if (err) {
-          console.log(err)
           resolve(false)
         } else {
           if (result.affectedRows > 0) {
-            console.log("loyalty created")
             resolve(true)
           } else {
             resolve(false)
@@ -673,7 +691,6 @@ module.exports = app => {
     const updateInfo = async (query, userId) => {
       pool.query(query, [userId], (err, result) => {
         if (err) {
-          console.log(err)
           return false
         } else {
           if (result.affectedRows > 0) {
@@ -685,11 +702,9 @@ module.exports = app => {
 
     const workerRating = await services.getActualRating(workerId)
     const workerQuery = await services.checkUserRatingOutputQuery(workerRating)
-    console.log(workerRating, workerQuery)
 
     const ownerRating = await services.getActualRating(ownerId)
     const ownerQuery = await services.checkUserRatingOutputQuery(ownerRating)
-    console.log(ownerRating, ownerQuery)
 
     const callFunction = async (userQuery, userId) => {
       await updateInfo(userQuery, userId)
@@ -857,10 +872,17 @@ module.exports = app => {
             data: err
           })
         } else {
-          resolve({
-            status: 200,
-            data: result
-          })
+          if(result.length > 0){
+            resolve({
+              status: 200,
+              data: result
+            })
+          }else{
+            resolve({
+              status: 200,
+              data: []
+            })
+          }
         }
       })
     })
@@ -878,10 +900,17 @@ module.exports = app => {
             data: err
           });
         } else {
+          if(result.length > 0){
           resolve({
             status: 200,
             data: result
-          });
+          })
+          }else{
+            resolve({
+              status: 200,
+              data: []
+            })
+          }
         }
       })
     })
@@ -916,7 +945,6 @@ module.exports = app => {
       PET_BREED = ? WHERE PET_ID = ?;`;
       pool.query(query, petParams, (err, result) => {
         if (err) {
-          console.log(err);
           resolve({
             status: 400,
             data: err
