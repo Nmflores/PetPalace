@@ -76,8 +76,7 @@ const Card = ({ service, isActive }) => {
         workerId,
         ownerId: userId,
         serviceId,
-        price,
-        petTypes,
+        price
       })
       .then((response) => {
         setMessage(response.data.data)

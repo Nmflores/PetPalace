@@ -16,7 +16,7 @@ const ContractsList = ({ contracts }) => {
                 <div className='servicesList'>
                     {contracts.map((contract) => {
                         if(contract.workerId === userId){
-                            return <RequestedContractItem key={contract.serviceId} contract={contract} />
+                            return <RequestedContractItem  contract={contract} />
                         }
                     })}
                 </div>
@@ -27,7 +27,7 @@ const ContractsList = ({ contracts }) => {
                 <div className='servicesList'>
                     {contracts.map((contract) => {
                         if(contract.ownerId === userId){
-                            return <RequiredContractItem key={contract.serviceId} contract={contract} />
+                            return <RequiredContractItem  contract={contract} />
                         }
                     })}
                 </div>

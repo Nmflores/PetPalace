@@ -15,7 +15,7 @@ function ReturnBasedOnUserId({userId}) {
   if(userId !== ""){
     return (        
       <div className='navbarLoggedButtons'>
-        <Button variant="success"><Link to="profile/1">Perfil</Link></Button>
+        <Link to="profile/1"><Button variant="success">Perfil</Button></Link>
         <Button onClick={loggout}>Sair</Button>
       </div>
     )
@@ -38,7 +38,7 @@ const Navbar = () => {
         <div className='navbar-links_logo'>
           <img src={logo} alt='logo' width='32px' height='32px' />
           
-            <h1><Link to="/">PetPalace </Link></h1>
+          <Link to="/"> <h1>PetPalace</h1> </Link>
          
         </div>
       </div>

@@ -43,7 +43,8 @@ module.exports = app => {
             price
         } = req.body;
         // CHECK INSERTION REQ.BODY PARAMS
-        if (workerId && ownerId && serviceId && price) {
+        console.log(req.body)
+        if (workerId && ownerId && serviceId >=0 && price) {
             // CHECK IF USER EXISTS
             if (await checkUser(ownerId)) {
                 // SET PARAMS FOR QUERY

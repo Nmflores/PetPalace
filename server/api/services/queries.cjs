@@ -458,7 +458,7 @@ module.exports = app => {
                 status: 201,
                 data: result
               })
-            }, 3000)
+            },500)
           } else {
             resolve({
               status: 400,
@@ -473,32 +473,50 @@ module.exports = app => {
 
   services.getQueuesByUserId = async (userId) => {
     return new Promise((resolve) => {
+      let output = []
       const query =
-        "SELECT A.*, B.service_name as 'serviceName' FROM SERVICES_QUEUE A, AVAILABLE_SERVICES B WHERE A.OWNER_ID = ? OR A.WORKER_ID = ? AND A.service_id = B.service_id;";
-      pool.query(query, [userId, userId], (err, result) => {
-        console.log(err)
-
+        "SELECT A.*, B.service_name as 'serviceName' FROM SERVICES_QUEUE A, AVAILABLE_SERVICES B WHERE A.service_id = B.service_id AND A.WORKER_ID = ?;"
+      pool.query(query, [userId], (err, result1) => {
         if (err) {
           resolve({
             status: 400,
             data: []
           })
         } else {
-
-          if (result.length > 0) {
-            result.forEach(async (elem) => {
-              console.log("elem=>",elem)
+          if (result1.length > 0) {
+            result1.forEach(async (elem) => {
               elem.workerName = await services.getFullName(elem.worker_id)
               elem.ownerName = await services.getFullName(elem.owner_id)
-              //console.log(`worker_id: ${elem.worker_id}\n owner_id: ${elem.owner_id}`)
-              console.log(`workerName: ${elem.workerName}\n ownerName: ${elem.ownerName}`)
             })
+            const query =
+        "SELECT A.*, B.service_name as 'serviceName' FROM SERVICES_QUEUE A, AVAILABLE_SERVICES B WHERE A.service_id = B.service_id AND A.OWNER_ID = ?;"
+      pool.query(query, [userId], (err, result) => {
+        if (err) {
+          resolve({
+            status: 400,
+            data: []
+          })
+        } else {
+          if (result.length > 0) {
+            result.forEach(async (elem) => {
+              elem.workerName = await services.getFullName(elem.worker_id)
+              elem.ownerName = await services.getFullName(elem.owner_id)
+            })
+            output = [...result1, ...result]
             setTimeout(() => {
               resolve({
                 status: 200,
-                data: result
+                data: output
               })
             }, 3000)
+          } else {
+            resolve({
+              status: 200,
+              data: []
+            })
+          }
+        }
+      })
           } else {
             resolve({
               status: 200,
@@ -872,12 +890,12 @@ module.exports = app => {
             data: err
           })
         } else {
-          if(result.length > 0){
+          if (result.length > 0) {
             resolve({
               status: 200,
               data: result
             })
-          }else{
+          } else {
             resolve({
               status: 200,
               data: []
@@ -900,12 +918,12 @@ module.exports = app => {
             data: err
           });
         } else {
-          if(result.length > 0){
-          resolve({
-            status: 200,
-            data: result
-          })
-          }else{
+          if (result.length > 0) {
+            resolve({
+              status: 200,
+              data: result
+            })
+          } else {
             resolve({
               status: 200,
               data: []

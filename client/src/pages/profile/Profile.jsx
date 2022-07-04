@@ -8,7 +8,6 @@ import ContractsList from '../../components/profile-contracts-list/profile-contr
 import './profile.css';
 import Axios from 'axios'
 
-
 function titleize(text) {
   var loweredText = text.toLowerCase();
   var words = loweredText.split(" ");
@@ -60,7 +59,7 @@ const Profile = () => {
     const fechApi = async () => {
       Axios.get(`http://localhost:8080/api/v1/users/pets/${userId}`)
         .then((pets) => {
-          if (pets.data.length > 0) {
+          if (pets.data.data.length > 0) {
             setPets(pets.data.data)
           } else {
             setPets([])
@@ -104,8 +103,8 @@ const Profile = () => {
   return (
     <>
       <div>
-        <ReturnBasedOnUserId userId={userId} fullName={fullName} works={works} pets={pets} contracts={contracts} />
-      </div>
+          <ReturnBasedOnUserId userId={userId} fullName={fullName} works={works} pets={pets} contracts={contracts} />
+      </div>      
     </>
   )
 }

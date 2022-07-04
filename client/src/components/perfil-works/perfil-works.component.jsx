@@ -28,7 +28,7 @@ function RenderBasedOnWorks({ works }) {
                 </div>
                 <hr />
                 <div className='mt-4'>
-                    <ListGroup ListGroup key={works.serviceId}>
+                    <ListGroup>
                         {works.map((work) => {
                             return <WorkListItem key={work.serviceId} work={work} />
                         })}
