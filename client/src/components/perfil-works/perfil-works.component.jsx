@@ -1,12 +1,7 @@
 import WorkListItem from "../perfil-works-item/perfil-works-item.component"
 import './perfil-works.styles.css'
-import { useState } from 'react'
 import React from 'react'
-import Axios from 'axios'
-import Select from 'react-select'
-import AlertDismissible from "../alerts/alert-dismissable.component"
 import AddServiceModal from "../modals/adicionar-servico.modal"
-import './perfil-works.styles.css'
 
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
 

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import React from 'react'
 import { ProfilePicture } from '../../components'
-import LoadingSpinner from '../../components/loading/Loading'
 import PetList from '../../components/pet-list/PetList'
 import WorksList from '../../components/perfil-works/perfil-works.component'
 import ContractsList from '../../components/profile-contracts-list/profile-contracts.component'
@@ -61,7 +60,7 @@ const Profile = () => {
     const fechApi = async () => {
       Axios.get(`http://localhost:8080/api/v1/users/pets/${userId}`)
         .then((pets) => {
-          if (pets.data.data.length > 0) {
+          if (pets.data.length > 0) {
             setPets(pets.data.data)
           } else {
             setPets([])
@@ -84,7 +83,7 @@ const Profile = () => {
         })
       Axios.get(`http://localhost:8080/api/v1/contracts/${userId}`)
         .then((contracts) => {
-          if (contracts.data.length > 0) {
+          if (contracts.data.data.length > 0) {
             setContracts(contracts.data.data)
           } else {
             setContracts([])
@@ -105,7 +104,7 @@ const Profile = () => {
   return (
     <>
       <div>
-          <ReturnBasedOnUserId userId={userId} fullName={fullName} works={works} pets={pets} contracts={contracts} />
+        <ReturnBasedOnUserId userId={userId} fullName={fullName} works={works} pets={pets} contracts={contracts} />
       </div>
     </>
   )

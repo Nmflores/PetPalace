@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { Header, CardList, Filter } from '../../components'
 import Axios from 'axios'
-import LoadingSpinner from '../../components/loading/Loading'
 
 
 const Home = () => {

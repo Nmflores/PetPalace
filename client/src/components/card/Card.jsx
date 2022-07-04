@@ -8,8 +8,7 @@ import Axios from 'axios'
 
 import './Card.css';
 import { ProfilePicture } from '../';
-import iconCat from '../../assets/cat-icon.png';
-import iconDog from '../../assets/dog-icon.png';
+
 
 function titleize(text) {
   var loweredText = text.toLowerCase();
@@ -28,7 +27,7 @@ function titleize(text) {
 function RenderBasedOnUserId({ userId, contactNbr, registerContract, workerId }) {
   if (userId !== "") {
     console.log(userId, workerId)
-    if (userId == workerId) {
+    if (userId === workerId) {
       return (<div>
         <h3>Você esta prestando este serviço</h3>
       </div>)

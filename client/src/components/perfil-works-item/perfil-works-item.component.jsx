@@ -1,15 +1,10 @@
 import "./perfil-works-item.styles.css"
-import Axios from 'axios'
-import {useState} from 'react'
 import React from 'react';
-
-import AlertDismissible from "../alerts/alert-dismissable.component"
 import DeleteServiceModal from '../modals/excluir-servico.modal'
 import EditPriceModal from '../modals/editar-servico.modal'
 
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
 
-import './perfil-works-item.styles.css';
 
 function titleize(text) {
     var loweredText = text.toLowerCase();
