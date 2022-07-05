@@ -29,7 +29,7 @@ const Home = () => {
         <CardList services={services} />
       )
     } else {
-      return (<div>Nenhum serviço listado no momento</div>)
+      return (<div className='card-container mt-4 p-6'>Nenhum serviço listado no momento</div>)
     }
   }
 

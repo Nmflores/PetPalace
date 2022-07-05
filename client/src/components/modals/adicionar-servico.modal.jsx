@@ -2,7 +2,7 @@ import Axios from 'axios'
 import { useState } from 'react'
 import React from 'react'
 import Select from 'react-select'
-
+import AutoAlert from '../alerts/auto-alert'
 
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
 
@@ -22,16 +22,16 @@ const AddServiceModal = () => {
     ]
 
     function removerPorId(array, id) {
-        return array.filter(function(el) {       
-          return el !== id;       
-        });      
-      }
+        return array.filter(function (el) {
+            return el !== id;
+        });
+    }
 
     const handlePetTypes = async (event) => {
         let petTypesNow = petTypes
-        if(event.target.checked === true){
-            setPetTypes([...petTypes, event.target.id])            
-        }else{            
+        if (event.target.checked === true) {
+            setPetTypes([...petTypes, event.target.id])
+        } else {
             setPetTypes(removerPorId(petTypesNow, event.target.id))
         }
     }
@@ -39,13 +39,25 @@ const AddServiceModal = () => {
 
     const [show, setShow] = useState(false);
 
-    const handleClose = () => setShow(false);
+    const handleClose = () => {
+        setShow(false)
+        setMessage("")
+    }
     const handleShow = () => setShow(true);
+
+
+    function DisplayAlert({ text }) {
+        if (text.includes('já')) {
+            return <AutoAlert text={text} type="danger" />
+        } else {
+            return <AutoAlert text={text} type="success" />
+        }
+    }
 
     const addService = async (e) => {
         e.preventDefault()
         const userId = localStorage.getItem("userId")
-        await Axios.post(`http://localhost:8080/api/v1/workers`, {
+        Axios.post(`http://localhost:8080/api/v1/workers`, {
             userId,
             serviceId,
             price,
@@ -53,9 +65,12 @@ const AddServiceModal = () => {
         }
         ).then((response) => {
             console.log(response.data.data)
+            setMessage("")
+
             setMessage(response.data.data)
-        }).catch((err)=>{
-            console.log(`SHOWME2${err.response.data.data}`)
+        }).catch((err) => {
+            setMessage("")
+
             setMessage(err.response.data.data)
         })
     }
@@ -71,7 +86,7 @@ const AddServiceModal = () => {
                     <Modal.Title>Adicionar Serviço</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {message.length > 0 ? message : ""}
+                    <DisplayAlert text={message} />
                     <FloatingLabel
                         controlId="floatingInput"
                         label="Preço"
@@ -86,20 +101,20 @@ const AddServiceModal = () => {
                     />
                     <div className='my-3'>
                         <h4>Tipos de animais aceitos</h4>
-                        <Form.Check 
+                        <Form.Check
                             type="checkbox"
                             id="0"
                             label="Canino"
                             defaultChecked
                             onChange={(event) => handlePetTypes(event)}
                         />
-                        <Form.Check 
+                        <Form.Check
                             type="checkbox"
                             id="1"
                             label="Felino"
                             onChange={(event) => handlePetTypes(event)}
                         />
-                    </div>                                            
+                    </div>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="primary"

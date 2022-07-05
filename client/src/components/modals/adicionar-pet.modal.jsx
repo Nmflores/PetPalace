@@ -2,7 +2,7 @@ import Axios from 'axios'
 import { useState } from 'react'
 import React from 'react'
 import Select from 'react-select'
-
+import AutoAlert from '../alerts/auto-alert'
 
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
 
@@ -69,7 +69,7 @@ const AddPetModal = ({ userId }) => {
                     <Modal.Title>Adicionar Pet</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {message.length > 0 ? message : ""}
+                    {message.length > 0 ? <AutoAlert text={message} type="success"/> : ""}
                     <FloatingLabel
                         controlId="floatingInput"
                         label="Nome do Pet"

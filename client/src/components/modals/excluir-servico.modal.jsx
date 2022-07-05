@@ -3,6 +3,7 @@ import {useState} from 'react'
 import React from 'react'
 
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
+import AutoAlert from '../alerts/auto-alert'
 
 
 const DeleteServiceModal = ({serviceName, serviceId}) => {
@@ -44,7 +45,7 @@ const DeleteServiceModal = ({serviceName, serviceId}) => {
             <Modal.Title>Excluir Serviço</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-          {message.length > 0 ? message : ""}            
+          {message.length > 0 ? <AutoAlert text={message} type="success"/> : ""}            
           <p>Você tem certeza que deseja excluir o serviço {serviceName}?</p>
           </Modal.Body>
           <Modal.Footer>

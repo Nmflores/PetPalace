@@ -63,7 +63,7 @@ module.exports = (app) => {
 
   }
 
-  controller.addWorker = async (req, res) => {
+  controller.addWorker = async (req, res, next) => {
     const {
       userId,
       serviceId,
@@ -88,6 +88,7 @@ module.exports = (app) => {
             })
           }
         } else {
+
           if (result.affectedRows > 0) {
             const query = "INSERT INTO SERVICE_PET_TYPES(WORKER_ID, PET_TYPE_ID, SERVICE_ID) VALUES(?, ?, ?);";
             for (let x in petTypes) {
@@ -97,11 +98,7 @@ module.exports = (app) => {
                     data: 'Cadastro de serviço falhou'
                   })
                 } else {
-                  if (result.affectedRows > 0) {
-                    res.status(200).json({
-                      data: "Serviço cadastrado para o Usuario"
-                    })
-                  } else {
+                  if (result.affectedRows == 0) {
                     res.status(400).json({
                       data: 'Cadastro de serviço falhou'
                     })
@@ -109,15 +106,15 @@ module.exports = (app) => {
                 }
               })
             }
-          } else {
-            res.status(400).json({
-              data: 'Cadastro de serviço falhou'
-            })
-          }
-          if (result.affectedRows > 0) {
-            res.status(200).json({
-              data: "Serviço cadastrado para o Usuario"
-            })
+            if (result.affectedRows > 0) {
+              res.status(200).json({
+                data: "Serviço cadastrado para o Usuario"
+              })
+            } else {
+              res.status(400).json({
+                data: 'Cadastro de serviço falhou'
+              })
+            }
           } else {
             res.status(400).json({
               data: 'Cadastro de serviço falhou'

@@ -8,6 +8,7 @@ import Axios from 'axios'
 
 import './Card.css';
 import { ProfilePicture } from '../';
+import PrimaryDismissable from '../alerts/dismissable-primary-alert'
 
 
 function titleize(text) {
@@ -49,7 +50,7 @@ function RenderBasedOnUserId({ userId, contactNbr, registerContract, workerId })
 
 
 const Card = ({ service, isActive }) => {
-  const userId = localStorage.getItem("userId");;
+  const userId = localStorage.getItem("userId");
   const [message, setMessage] = useState("")
   const [contactNbr, setContactNbr] = useState("")
 
@@ -70,7 +71,7 @@ const Card = ({ service, isActive }) => {
       })
   }, [isActive, setExpanded]);
 
-  const registerContract = async (petTypes) => {
+  const registerContract = async () => {
     Axios.post(`http://localhost:8080/api/v1/contracts`,
       {
         workerId,
@@ -86,7 +87,7 @@ const Card = ({ service, isActive }) => {
 
   return (
     <>
-      {message.length > 0 || message !== undefined ? message : ""}
+      {message.length > 0 || message !== undefined ? <PrimaryDismissable text={message}/> : ""}
 
         <div
           className='card-container mt-4 p-6'

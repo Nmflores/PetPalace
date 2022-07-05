@@ -1,6 +1,7 @@
 import Axios from 'axios'
 import {useState} from 'react'
 import React from 'react'
+import AutoAlert from '../alerts/auto-alert' 
 
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
  
@@ -43,7 +44,7 @@ const EditPriceModal = ({userId, serviceId, price}) => {
             <Modal.Title>Editar Preço</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-          {message.length > 0 ? message : ""}
+          {message.length > 0 ? <AutoAlert text={message} type="success"/> : ""}
             <Form>
               <FloatingLabel
                 controlId="floatingInput"

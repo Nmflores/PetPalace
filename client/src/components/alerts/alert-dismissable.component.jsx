@@ -7,7 +7,7 @@ const AlertDismissibleExample = async ({text}) => {
   
     if (show) {
       return (
-        <Alert variant="warning" onClose={() => setShow(false)} dismissible>
+        <Alert variant="primay" onClose={() => setShow(false)} dismissible>
           <Alert.Heading>Algo não deu certo!!!</Alert.Heading>
           <p>
             {text}

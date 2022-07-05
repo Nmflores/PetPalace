@@ -3,6 +3,7 @@ import {useState} from 'react'
 import React from 'react'
 
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
+import AutoAlert from '../alerts/auto-alert'
 
 
 const DeletePetModal = ({ pet }) => {
@@ -39,7 +40,7 @@ const DeletePetModal = ({ pet }) => {
             <Modal.Title>Excluir Pet</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-          {message.length > 0 ? message : ""}            
+          {message.length > 0 ? <AutoAlert text={message} type="success"/> : ""}            
           <p>Você tem certeza que deseja excluir o Pet {pet.petName}?</p>
           </Modal.Body>
           <Modal.Footer>
