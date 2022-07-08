@@ -4,7 +4,7 @@ import React from 'react'
 
 
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
-
+import './requested-contract.css'
 
 
 function titleize(text) {
@@ -22,16 +22,17 @@ function titleize(text) {
 }
 
 const statusShow = (status) => {
-  let statusOptions = ["Na fila", "Aceito", "Concluido", "Negado"]
+  let statusOptions = ["Na fila", "Em andamento", "Concluído", "Negado"]
   return statusOptions[status]
 }
 
 function ReturnOnStatus({ contract }) {
   const { status, endDate } = contract
   if (status === 0) {
-    return <div><Button>Aceitar Serviço</Button><Button>Negar Serviço</Button></div>
+    return <div><Button className='acceptButton'>Aceitar Serviço</Button>
+                <Button className='rejectButton'>Negar Serviço</Button></div>
   } else if (status === 1) {
-    return <div><Button>Concluir Serviço</Button></div>
+    return <div><Button className='concludeButton'>Concluir Serviço</Button></div>
   } else if (status === 2) {
     const d = new Date(endDate);
     let onlyEndDate = d.getDay() + "/" + d.getMonth() + "/" + d.getFullYear()
@@ -46,18 +47,18 @@ function ReturnBasedOnOwnerId({ contract }) {
   const userId = localStorage.getItem("userId")
   if (workerId === userId) {
     return (
-      <ListGroup.Item key={serviceId}>
-        <div className="detailsContainer" id={queueId}>
-          <p className="service">{serviceName}</p>
-          <p className="clientName">Nome do Cliente: {ownerName}</p>
-          <p className="price">R$ {price}</p>
-          <p>Status: {statusShow(status)}</p>
-
-          <ReturnOnStatus contract={contract} />
-        </div>
-        <div className="buttonsContainer">
-
-        </div>
+      <ListGroup.Item key={serviceId} className='itemContainerRequested'>
+        <div className="detailsContainerRequested" id={queueId}>
+          <div>
+            <p className="serviceRequested">{titleize(serviceName)}</p>
+            <p className="clientNameRequested">Nome do Cliente: {ownerName}</p>
+          </div>          
+          <div>
+            <p className="priceRequested">R$ {price}</p>
+            <p className="statusRequested">Status: {statusShow(status)}</p>                    
+          </div>          
+        </div>        
+        <ReturnOnStatus contract={contract} />
       </ListGroup.Item>
       )
   }
@@ -65,7 +66,7 @@ function ReturnBasedOnOwnerId({ contract }) {
 
 const RequestedContractItem = ({ contract }) => {
   return (
-    <div className="itemContainer">
+    <div>
       <ReturnBasedOnOwnerId contract={contract} />
     </div>
   )

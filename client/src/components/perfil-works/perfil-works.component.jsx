@@ -1,9 +1,9 @@
 import WorkListItem from "../perfil-works-item/perfil-works-item.component"
-import './perfil-works.styles.css'
 import React from 'react'
 import AddServiceModal from "../modals/adicionar-servico.modal"
 
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
+import './perfil-works.styles.css'
 
 function RenderBasedOnWorks({ works }) {
     if (works.length === 0) {
@@ -27,8 +27,8 @@ function RenderBasedOnWorks({ works }) {
                     <AddServiceModal />
                 </div>
                 <hr />
-                <div className='mt-4'>
-                    <ListGroup>
+                <div>
+                    <ListGroup className='worksListContainer'>
                         {works.map((work) => {
                             return <WorkListItem key={work.serviceId} work={work} />
                         })}

@@ -15,7 +15,7 @@ function ReturnBasedOnUserId({userId}) {
   if(userId !== ""){
     return (        
       <div className='navbarLoggedButtons'>
-        <Link to="profile/1"><Button variant="success">Perfil</Button></Link>
+        <Link to="profile/1"><Button className='profileButton' variant="primary">Perfil</Button></Link>
         <Button onClick={loggout}>Sair</Button>
       </div>
     )

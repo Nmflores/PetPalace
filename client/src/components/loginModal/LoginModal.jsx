@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import React from 'react';
+import AutoAlert from '../alerts/auto-alert'
 
 import { Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
 import Axios from 'axios'
@@ -21,6 +22,9 @@ const LoginModal = () => {
       console.log("response login: ",response.data)
       localStorage.setItem("userId",response.data.accessToken)
       setMessage(response.data.data)
+      setTimeout(() => {
+        window.location.reload()
+      }, 2500)
     }).catch(err => {
       setMessage(err.response.data.data)
     })
@@ -37,7 +41,7 @@ const LoginModal = () => {
           <Modal.Title>Login</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-        {message.length > 0 ? message : ""}
+        <AutoAlert text={message} type="success" />
           <Form>
             <FloatingLabel
               controlId="floatingInput"

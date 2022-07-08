@@ -1,10 +1,9 @@
-import "./perfil-works-item.styles.css"
 import React from 'react';
 import DeleteServiceModal from '../modals/excluir-servico.modal'
 import EditPriceModal from '../modals/editar-servico.modal'
 
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
-
+import "./perfil-works-item.styles.css"
 
 function titleize(text) {
     var loweredText = text.toLowerCase();
@@ -25,26 +24,26 @@ const WorkListItem = ({ work }) => {
     const { serviceName, serviceId, price } = work
 
     return (
-       <div className="itemContainer">
-         <ListGroup.Item key={serviceId}>
-            <div className="detailsContainer"l>
-                <p className="service">{titleize(serviceName)}</p>
-                <p className="price">R$ {price}</p>
-            </div>            
-            <div className="buttonsContainer">
-                <div className="deleteButton">
-                    <DeleteServiceModal               
+        <div>
+            <ListGroup.Item key={serviceId} className='itemWorkContainer'>
+                <div className="detailsContainerWork">
+                    <p className="serviceWork">{titleize(serviceName)}</p>
+                    <p className="priceWork">R$ {price}</p>
+                </div>            
+                <div className="buttonsContainer">
+                    <div className="deleteButton">
+                        <DeleteServiceModal               
+                            serviceId={serviceId} 
+                            serviceName={titleize(serviceName)}
+                        />
+                    </div>            
+                    <EditPriceModal 
                         serviceId={serviceId} 
-                        serviceName={titleize(serviceName)}
+                        price={price}
                     />
                 </div>            
-                <EditPriceModal 
-                    serviceId={serviceId} 
-                    price={price}
-                />
-            </div>            
-        </ListGroup.Item>
-       </div>
+            </ListGroup.Item>
+        </div>
     )
 }
 

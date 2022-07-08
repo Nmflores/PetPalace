@@ -3,6 +3,7 @@ import "./works-list-item.styles.css"
 import { ListGroup, Button } from 'react-bootstrap'
 import DeleteServiceModal from '../../modals/excluir-servico.modal'
 import EditServiceModal from '../../modals/editar-servico.modal'
+import './works-list-item.styles.css'
 
 function titleize(text) {
     var loweredText = text.toLowerCase();
@@ -23,8 +24,12 @@ const WorkListItem = ({work}) => {
         const { workerId, serviceId, serviceName, price } = work;  
         return(
             <ListGroup.Item key={serviceId}>
-                <p>{titleize(serviceName)}</p>
-                <p>R${price}</p>
+                <div className="serviceNameWork">
+                    {titleize(serviceName)}
+                </div>                
+                <div className="servicePriceWork">
+                    R${price}
+                </div>
                 <EditServiceModal userId={workerId} serviceId={serviceId} price={price}/>
                 <DeleteServiceModal userId={workerId} serviceId={serviceId} serviceName={serviceName}/>
             </ListGroup.Item>

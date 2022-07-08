@@ -9,7 +9,7 @@ const WorksList = ({ works }) => {
     let conter = 0;
     return (
         <div>
-            <h3>Lista de serviços disponiveis</h3>
+            <h3>Lista de serviços disponíveis</h3>
             <AddServiceModal userId={userId} />
             <hr />
             <div className='servicesList'>

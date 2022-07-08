@@ -8,3 +8,11 @@
   margin-left: 2%;
   margin-bottom: 1.5625rem;
 }
+
+.list-group-item:last-child {
+  border-radius: 10px;
+}
+
+.worksListContainer {
+  margin-bottom: 10px;
+}

@@ -4,7 +4,7 @@ import React from 'react'
 
 
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
-
+import './required-contract.css'
 
 
 function titleize(text) {
@@ -43,13 +43,16 @@ function RenderBasedOnWorkerId({contract}) {
 
   if (ownerId === userId) {
     console.log("required, contract", contract)
-    return (<ListGroup.Item key={serviceId}>
-      <div className="detailsContainer" id={queueId}>
-        <p className="service">{titleize(serviceName)}</p>
-        <p className="clientName">Nome do Prestador: {workerName}</p>
-        <p className="price">R$ {price}</p>
-        <ReturnOnStatus contract={contract} />
-
+    return (<ListGroup.Item key={serviceId} className='itemContainerRequired'>
+      <div className="detailsContainerRequired" id={queueId}>
+        <div>
+          <p className="serviceRequired">{titleize(serviceName)}</p>
+          <p className="clientNameRequired">Nome do Prestador: {workerName}</p>
+        </div>               
+        <div className="priceStatusRequired">
+          <p className="priceRequired">R$ {price}</p>
+          <ReturnOnStatus className="statusRequired" contract={contract} />
+        </div>               
       </div>
       <div className="buttonsContainer">
 

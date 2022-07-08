@@ -1,23 +1,22 @@
-.detailsContainer {
+.detailsContainerWork {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 0.625rem;
+  margin-bottom: 10px;
 }
 
-.service {
+.serviceWork {
   font-size: 1.5rem;  
   font-weight: 500;
 }
 
-.price {
+.priceWork {
   font-size: 1.25rem;
   font-weight: 500;
 }
 
-.itemContainer {  
-  background-color: black;
-  margin-bottom: 0.625rem;
-  border-radius: 0.3125rem;
+.itemWorkContainer {  
+  background-color: #F6FBF4;
+  margin-bottom: 10px;    
 }
 
 .buttonsContainer {

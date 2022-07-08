@@ -4,6 +4,7 @@
   align-items: center;
   padding: 2rem 6rem;
   border-bottom: 2px solid rgba(165, 165, 165, 0.1);
+  background-color: #F5DF99;
 }
 
 .navbar-links{
@@ -23,7 +24,7 @@
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   font-weight: bold;
   font-size: 30px;
-  color: olivedrab;
+  color: #4B8673;
   margin-top: 10px;
 }
 
@@ -37,10 +38,15 @@
 
 .navbarButtons {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;  
+  width: 21.875rem;
 }
 
 .loginBtn {
+  margin-right: 2rem;
+}
+
+.profileButton {
   margin-right: 2rem;
 }

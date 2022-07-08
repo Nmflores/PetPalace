@@ -1,6 +1,6 @@
 import React from 'react'
 import RequestedContractItem from "../profile-contracts-item/requested-contract.component"
-import RequiredContractItem from "../profile-contracts-item/required-contract.component"
+import RequiredContractItem from "../required-contracts/required-contract.component"
 
 
 

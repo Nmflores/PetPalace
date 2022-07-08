@@ -4,9 +4,9 @@ import { ProfilePicture } from '../../components'
 import PetList from '../../components/pet-list/PetList'
 import WorksList from '../../components/perfil-works/perfil-works.component'
 import ContractsList from '../../components/profile-contracts-list/profile-contracts.component'
-
-import './profile.css';
 import Axios from 'axios'
+import './profile.css';
+
 
 function titleize(text) {
   var loweredText = text.toLowerCase();
@@ -33,7 +33,7 @@ function ReturnBasedOnUserId({ userId, fullName, pets, works, contracts }) {
         <div className='petList'>
           <PetList pets={pets} />
         </div>
-        <div className='worksList'>
+        <div className='worksListContainer'>
           <WorksList works={works} />
         </div>
         <div>
@@ -53,7 +53,7 @@ const Profile = () => {
   const [pets, setPets] = useState([])
   const [works, setWorks] = useState([])
   const [contracts, setContracts] = useState([])
-
+  
 
   useEffect(() => {
     const fechApi = async () => {
