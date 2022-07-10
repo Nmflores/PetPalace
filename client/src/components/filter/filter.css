@@ -1,0 +1,31 @@
+.filter-container {
+  background-color: #5FD068;
+  margin-top: 0.125rem;
+  padding: 0.3125rem 0.3125rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  color: black;
+  align-items: center;
+  font-size: 1.5rem;
+  border-top-left-radius: 0.3125rem;
+  border-top-right-radius: 0.3125rem;
+}
+
+.filter-container p {
+  margin: 0;
+}
+
+
+.filters {
+  background-color: #5FD068;
+  border-bottom-left-radius: 0.3125rem;
+  border-bottom-right-radius: 0.3125rem;
+  padding: 0.3125rem 0.3125rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.625rem;
+  font-size: 1.5rem;
+}

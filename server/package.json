@@ -2,7 +2,8 @@
   "name": "petpalace",
   "version": "1.0.0",
   "description": "![image](https://img.shields.io/badge/JavaScript-323330?style=for-the-badge&logo=javascript&logoColor=F7DF1E)\r ![image](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)\r ![image](https://img.shields.io/badge/React.js-404D59?style=for-the-badge&logo=react&logoColor=%2361DAFB)\r ![image](https://img.shields.io/badge/MySQL-00000F?style=for-the-badge&logo=mysql&logoColor=white)",
-  "main": "server.js",
+  "main": "server.cjs",
+  "type": "module",
   "scripts": {
     "start": "nodemon server",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -23,10 +24,18 @@
     "bcryptjs": "^2.4.3",
     "config": "^3.3.7",
     "consign": "^0.1.6",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "express": "^4.17.3",
+    "g": "^2.0.1",
     "jsonwebtoken": "^8.5.1",
+    "mysql": "^2.18.1",
     "nodemon": "^2.0.15",
+    "redux": "^4.2.0",
+    "swagger-ui-express": "^4.4.0",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@types/swagger-ui-express": "^4.1.3"
   }
 }

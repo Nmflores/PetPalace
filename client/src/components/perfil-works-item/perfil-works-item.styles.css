@@ -1,0 +1,28 @@
+.detailsContainerWork {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.serviceWork {
+  font-size: 1.5rem;  
+  font-weight: 500;
+}
+
+.priceWork {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.itemWorkContainer {  
+  background-color: #F6FBF4;
+  margin-bottom: 10px;    
+}
+
+.buttonsContainer {
+  display: flex;
+}
+
+.deleteButton {
+  margin-right: 0.625rem;
+}

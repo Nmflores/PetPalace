@@ -1,0 +1,30 @@
+.itemContainerRequired {
+  margin-bottom: 10px;
+}
+
+.detailsContainerRequired {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.serviceRequired {
+  font-size: 1.5rem;  
+  font-weight: 500;
+}
+
+.clientNameRequired {
+  font-size: 20px;  
+  font-weight: 400;
+}
+
+.priceRequired {
+  font-size: 1.25rem;
+  font-weight: 500;  
+}
+
+.statusRequired {
+  font-size: 16px;  
+  font-weight: 400;
+}

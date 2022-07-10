@@ -2,6 +2,7 @@ import './perfil-render.styles.css'
 import { useState, useEffect } from "react";
 import PetsList from '../pets-list/pets-list.component';
 import WorksList from '../works-list/works-list.component';
+import Axios from 'axios'
 
 const PerfilRender = ({ user }) => {
   const { userId, firstName, secondName } = user;
@@ -11,25 +12,23 @@ const PerfilRender = ({ user }) => {
 
 
   useEffect(() => {
-    fetch(`http://localhost:8080/api/v1/users/pets/${urlUserId}`)
-      .then((response) => response.json())
+    Axios.get(`http://localhost:8080/api/v1/users/pets/${urlUserId}`)
       .then((pets) => {
-        if (pets.length > 0) {
-          setPets(pets)
+        if (pets.data.length > 0) {
+          console.log("pets:", pets.data);
+          setPets(pets.data)
         }
       })
-  }, []);
-
-
-  useEffect(() => {
-    fetch(`http://localhost:8080/api/v1/users/works/${urlUserId}`)
-      .then((response) => response.json())
+      Axios.get(`http://localhost:8080/api/v1/users/works/${urlUserId}`)
       .then((works) => {
-        if (works.length > 0) {
-          setWorks(works)
+        if (works.data.length > 0) {
+          console.log("works:", works.data);
+          setWorks(works.data)
         }
       })
-  }, []);
+  }, [])
+
+
 
 
   return (

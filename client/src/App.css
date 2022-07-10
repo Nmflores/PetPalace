@@ -1,12 +1,11 @@
-.App {
-  font-size: calc(10px + 2vmin);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.main {
+  background-color: #4B8673;
 }
 
+.main-content {
+  padding: 3.125rem;  
+}
 
-
-.show{
-  display: block !important;
+button{
+  width: 10rem;
 }

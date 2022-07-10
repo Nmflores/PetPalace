@@ -1,0 +1,52 @@
+.navbar{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 6rem;
+  border-bottom: 2px solid rgba(165, 165, 165, 0.1);
+  background-color: #F5DF99;
+}
+
+.navbar-links{
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.navbar-links_logo{
+  margin-right: 2rem;
+  display: flex;
+  align-items: center;  
+}
+
+.navbar-links_logo h1{
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-weight: bold;
+  font-size: 30px;
+  color: #4B8673;
+  margin-top: 10px;
+}
+
+.navbar-links_logo a:link{
+  text-decoration: none;
+}
+
+.navbar-links_logo img{
+  margin-right: 5px;
+}
+
+.navbarButtons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;  
+  width: 21.875rem;
+}
+
+.loginBtn {
+  margin-right: 2rem;
+}
+
+.profileButton {
+  margin-right: 2rem;
+}
