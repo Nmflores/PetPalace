@@ -4,28 +4,35 @@ import React from 'react'
 import AutoAlert from '../alerts/auto-alert' 
 
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
+import { useRef } from 'react';
  
 
 
-const EditPriceModal = ({userId, serviceId, price}) => {
+const EditPriceModal = ({userId, serviceId, price, callbackPrice}) => {
     const [actualPrice, setPrice] = useState(price)
 
     const [message, setMessage] = useState("")
 
     const [show, setShow] = useState(false);
+
+    const isConfirmed = useRef(false);
   
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
   
     const updatePrice = async (e) => {
         e.preventDefault()
+        isConfirmed.current = true
+        console.log(actualPrice)
         const userId = localStorage.getItem("userId")
         serviceId = parseInt(serviceId)
-        actualPrice = parseFloat(price)
+        setPrice(parseFloat(actualPrice))
+        console.log(isConfirmed)
+        callbackPrice(isConfirmed.current)
         Axios.put(`http://localhost:8080/api/v1/workers`,{
             userId,
             serviceId, 
-            price 
+            price:actualPrice
         }
         ).then((response) => {
             console.log(response.data)

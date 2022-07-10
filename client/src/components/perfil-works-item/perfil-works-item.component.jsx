@@ -1,7 +1,7 @@
-import React from 'react';
+import { React, useState } from 'react';
 import DeleteServiceModal from '../modals/excluir-servico.modal'
 import EditPriceModal from '../modals/editar-servico.modal'
-
+import Axios from 'axios'
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
 import "./perfil-works-item.styles.css"
 
@@ -17,10 +17,9 @@ function titleize(text) {
         words[a] = w;
     }
     return words.join(" ");
-  }
+}
 
-
-const WorkListItem = ({ work }) => {
+const WorkListItem = ({ work, callbackPrice, callbackWorkDelete }) => {
     const { serviceName, serviceId, price } = work
 
     return (
@@ -35,11 +34,13 @@ const WorkListItem = ({ work }) => {
                         <DeleteServiceModal               
                             serviceId={serviceId} 
                             serviceName={titleize(serviceName)}
+                            callbackWorkDelete={callbackWorkDelete}
                         />
                     </div>            
                     <EditPriceModal 
                         serviceId={serviceId} 
                         price={price}
+                        callbackPrice={callbackPrice}                        
                     />
                 </div>            
             </ListGroup.Item>

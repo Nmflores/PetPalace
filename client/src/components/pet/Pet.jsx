@@ -20,7 +20,7 @@ function titleize(text) {
   return words.join(" ");
 }
 
-const Pet = ({pet}) => {
+const Pet = ({pet, callbackPetDeleted}) => {
   return (
     <div className='petList'>
       <p>{titleize(pet.petName)}</p>
@@ -31,7 +31,7 @@ const Pet = ({pet}) => {
       />
       <p>{titleize(pet.petType)}</p>
       <p>{pet.petBreed}</p>
-      <DeletePetModal pet={pet} />
+      <DeletePetModal pet={pet} callbackPetDeleted={callbackPetDeleted} />
     </div>      
   );
 }

@@ -5,13 +5,15 @@ import Select from 'react-select'
 import AutoAlert from '../alerts/auto-alert'
 
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
+import { useRef } from 'react'
 
 
-const AddServiceModal = () => {
+const AddServiceModal = ({callbackWorkAdded}) => {
     const [message, setMessage] = useState("")
     const [price, setPrice] = useState()
     const [serviceId, setServiceId] = useState(0)
     const [petTypes, setPetTypes] = useState(["0"])
+    const isAdded = useRef(false)
 
     const serviceOptions = [
         { value: 0, label: 'Passeio' },
@@ -56,7 +58,7 @@ const AddServiceModal = () => {
 
     const addService = async (e) => {
         e.preventDefault()
-        const userId = localStorage.getItem("userId")
+        const userId = localStorage.getItem("userId")        
         Axios.post(`http://localhost:8080/api/v1/workers`, {
             userId,
             serviceId,
@@ -65,14 +67,14 @@ const AddServiceModal = () => {
         }
         ).then((response) => {
             console.log(response.data.data)
-            setMessage("")
-
-            setMessage(response.data.data)
+            setMessage("")            
+            setMessage(response.data.data)                        
         }).catch((err) => {
             setMessage("")
-
             setMessage(err.response.data.data)
-        })
+        })                
+        isAdded.current = true
+        callbackWorkAdded(isAdded.current)
     }
 
     return (

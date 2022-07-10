@@ -42,7 +42,7 @@ function RenderBasedOnWorkerId({contract}) {
   const userId = localStorage.getItem("userId")
 
   if (ownerId === userId) {
-    console.log("required, contract", contract)
+    //console.log("required, contract", contract)
     return (<ListGroup.Item key={serviceId} className='itemContainerRequired'>
       <div className="detailsContainerRequired" id={queueId}>
         <div>

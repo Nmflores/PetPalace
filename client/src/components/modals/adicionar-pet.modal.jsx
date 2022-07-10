@@ -5,13 +5,16 @@ import Select from 'react-select'
 import AutoAlert from '../alerts/auto-alert'
 
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
+import { useRef } from 'react'
 
 
-const AddPetModal = ({ userId }) => {
+const AddPetModal = ({ userId, callbackPetAdded }) => {
     const [message, setMessage] = useState("")
     const [petName, setPetName] = useState("")
     const [petType, setPetType] = useState()
     const [petBreed, setPetBreed] = useState("")
+
+    const isAdded = useRef(false)
 
     const petTypesOptions = [
         { value: 0, label: 'Canino' },
@@ -40,6 +43,7 @@ const AddPetModal = ({ userId }) => {
         e.preventDefault();
         petType = parseInt(petType)
         console.log(typeof (petName), typeof (petBreed))
+        isAdded.current = true
         Axios.post(`http://localhost:8080/api/v1/pets`, {
             ownerId,
             petName,
@@ -54,6 +58,7 @@ const AddPetModal = ({ userId }) => {
             console.log(err.response.data.data)
             setMessage(err.response.data.data)
         })
+        callbackPetAdded(isAdded.current)
     }
 
    

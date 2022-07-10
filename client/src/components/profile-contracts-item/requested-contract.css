@@ -29,6 +29,10 @@
   font-weight: 400;
 }
 
+.buttonsStatusZero {
+  display: flex;
+}
+
 .acceptButton {
-  margin-right: 10px;
+  margin-right: 10px;  
 }

@@ -7,26 +7,24 @@ import AutoAlert from '../alerts/auto-alert'
 import { useRef } from 'react';
 
 
-const DeleteServiceModal = ({serviceName, serviceId, callbackWorkDelete}) => {
+const AceitarContratoModal = ({serviceName, queueId, callbackContractAccepted}) => {
     const [message, setMessage] = useState("")
 
     const [show, setShow] = useState(false);
 
-    const isDeleted = useRef(false)
+    const isAccepted = useRef(false)
   
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
 
-    const deleteService = async (e) => {
+    const acceptService = async (e) => {
         e.preventDefault()
-        isDeleted.current = true             
-        const userId = localStorage.getItem("userId")
-        const serviceId = parseInt(e.target.id)
-        Axios.delete(`http://localhost:8080/api/v1/workers`,{
+        isAccepted.current = true             
+        Axios.put(`http://localhost:8080/api/v1/contracts/status`,{
         data:{
-            userId,
-            serviceId
+            queueId,
+            status:1
         }}
         ).then((response) => {
             console.log(response.data)
@@ -35,31 +33,31 @@ const DeleteServiceModal = ({serviceName, serviceId, callbackWorkDelete}) => {
           console.log(err.response.data)
           setMessage(err.response.data.data)
         })
-        setTimeout(() => {callbackWorkDelete(isDeleted.current)}, 2000)   
+        callbackContractAccepted(isAccepted.current)
     }
 
     return (
       <>
         <Button variant="primary" onClick={handleShow}>
-          Excluir Serviço
+          Aceitar Serviço
         </Button>
   
         <Modal show={show} onHide={handleClose}>
           <Modal.Header closeButton>
-            <Modal.Title>Excluir Serviço</Modal.Title>
+            <Modal.Title>Aceitar Serviço</Modal.Title>
           </Modal.Header>
           <Modal.Body>
           {message.length > 0 ? <AutoAlert text={message} type="success"/> : ""}            
-          <p>Você tem certeza que deseja excluir o serviço {serviceName}?</p>
+          <p>Você tem certeza que deseja aceitar o serviço de {serviceName}?</p>
           </Modal.Body>
           <Modal.Footer>
             <Button variant="primary" 
-            type="submit" 
-            onClick={(e)=>{
-                deleteService(e)
-            }}
-            id={serviceId}>
-              Excluir Serviço
+              type="submit" 
+              onClick={(e)=>{
+                acceptService(e)
+              }}
+            >
+              Aceitar
             </Button>
           </Modal.Footer>
         </Modal>
@@ -67,4 +65,4 @@ const DeleteServiceModal = ({serviceName, serviceId, callbackWorkDelete}) => {
     )
   }
 
-export default DeleteServiceModal
+export default AceitarContratoModal

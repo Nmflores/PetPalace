@@ -22,7 +22,21 @@ function titleize(text) {
   return words.join(" ");
 }
 
-function ReturnBasedOnUserId({ userId, fullName, pets, works, contracts }) {
+function ReturnBasedOnUserId({ 
+                              userId, 
+                              fullName, 
+                              pets, 
+                              works, 
+                              contracts, 
+                              callbackPrice, 
+                              callbackWorkDelete, 
+                              callbackWorkAdded, 
+                              callbackPetAdded,
+                              callbackPetDeleted,
+                              callbackContractAccepted
+                            }) 
+{
+
   if (userId !== "") {
     return (
       <div>
@@ -31,13 +45,22 @@ function ReturnBasedOnUserId({ userId, fullName, pets, works, contracts }) {
           <ProfilePicture />
         </div>
         <div className='petList'>
-          <PetList pets={pets} />
+          <PetList 
+            pets={pets} 
+            callbackPetAdded={callbackPetAdded} 
+            callbackPetDeleted={callbackPetDeleted}
+          />
         </div>
         <div className='worksListContainer'>
-          <WorksList works={works} />
+          <WorksList 
+            works={works} 
+            callbackPrice={callbackPrice}
+            callbackWorkDelete={callbackWorkDelete} 
+            callbackWorkAdded={callbackWorkAdded}
+          />
         </div>
         <div>
-          <ContractsList contracts={contracts} />
+          <ContractsList contracts={contracts} callbackContractAccepted={callbackContractAccepted} />
         </div>
       </div>
     )
@@ -53,6 +76,12 @@ const Profile = () => {
   const [pets, setPets] = useState([])
   const [works, setWorks] = useState([])
   const [contracts, setContracts] = useState([])
+  const [isConfirmedPrice, setIsConfirmedPrice] = useState(false);
+  const [isConfirmedWorkDelete, setIsConfirmedWorkDelete] = useState(false);
+  const [isConfirmedWorkAdded, setIsConfirmedWorkAdded] = useState(false);
+  const [isConfirmedPetAdded, setIsConfirmedPetAdded] = useState(false);
+  const [isConfirmedPetDeleted, setIsConfirmedPetDeleted] = useState(false);
+  const [isConfirmedAcceptedContract, setIsConfirmedAcceptedContract] = useState(false);
   
 
   useEffect(() => {
@@ -99,11 +128,91 @@ const Profile = () => {
 
   }, [])
 
+  useEffect(() => {
+    Axios.get(`http://localhost:8080/api/v1/users/workers/${userId}`)
+        .then((works) => {
+          if (works.data.data.length > 0) {
+            setWorks(works.data.data)
+            setIsConfirmedWorkDelete(false)
+            setIsConfirmedPrice(false)
+            setIsConfirmedWorkAdded(false)
+          } else {
+            setWorks([])
+          }
+        })
+  },[isConfirmedPrice, isConfirmedWorkDelete, isConfirmedWorkAdded])
+
+  useEffect(() => {
+    Axios.get(`http://localhost:8080/api/v1/users/pets/${userId}`)
+        .then((pets) => {
+          if (pets.data.data.length > 0) {
+            setPets(pets.data.data)
+            setIsConfirmedPetAdded(false)
+            setIsConfirmedPetDeleted(false)
+          } else {
+            setPets([])
+          }
+        })
+  },[isConfirmedPetAdded, isConfirmedPetDeleted])
+
+  useEffect(() => {
+    Axios.get(`http://localhost:8080/api/v1/contracts/${userId}`)
+        .then((contracts) => {
+          if (contracts.data.data.length > 0) {
+            setContracts(contracts.data.data)
+            setIsConfirmedAcceptedContract(false)
+          } else {
+            setContracts([])
+          }
+        })
+  },[isConfirmedAcceptedContract])
+
+  const setIsConfirmedPriceOnProfile = (flag) => {
+    console.log(flag)
+    setIsConfirmedPrice(flag)    
+  }
+
+  const setIsConfirmedWorkDeleteOnProfile = (flag) => {
+    console.log(flag)
+    setIsConfirmedWorkDelete(flag)
+  }
+
+  const setIsConfirmedWorkAddedOnProfile = (flag) => {
+    console.log(flag)
+    setIsConfirmedWorkAdded(flag)
+  }
+
+  const setIsConfirmedPetAddedOnProfile = (flag) => {
+    console.log(flag)
+    setIsConfirmedPetAdded(flag)
+  }
+
+  const setIsConfirmedPetDeletedOnProfile = (flag) => {
+    console.log(flag)
+    setIsConfirmedPetDeleted(flag)
+  }
+
+  const setIsConfirmedAcceptedContractOnProfile = (flag) => {
+    console.log(flag)
+    setIsConfirmedAcceptedContract(flag)
+  }
 
   return (
     <>
       <div>
-          <ReturnBasedOnUserId userId={userId} fullName={fullName} works={works} pets={pets} contracts={contracts} />
+          <ReturnBasedOnUserId 
+            userId={userId} 
+            fullName={fullName} 
+            works={works} 
+            pets={pets} 
+            contracts={contracts} 
+            callbackPrice={setIsConfirmedPriceOnProfile}
+            callbackWorkDelete={setIsConfirmedWorkDeleteOnProfile}
+            callbackWorkAdded={setIsConfirmedWorkAddedOnProfile}
+            callbackPetAdded={setIsConfirmedPetAddedOnProfile}
+            callbackPetDeleted={setIsConfirmedPetDeletedOnProfile}
+            callbackContractAccepted={setIsConfirmedAcceptedContractOnProfile}
+          />
       </div>      
     </>
   )

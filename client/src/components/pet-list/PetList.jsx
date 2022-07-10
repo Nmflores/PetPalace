@@ -3,14 +3,14 @@ import Pet from '../pet/Pet';
 import './petList.css';
 import AddPetModal from '../modals/adicionar-pet.modal'
 
-function RendeBaseOnPets({ userId, pets }) {
+function RendeBaseOnPets({ userId, pets, callbackPetAdded, callbackPetDeleted }) {
   console.log(pets)
   if (pets.length > 0) {
     return (
       <div>
         <div className='petListHeader'>
           <h3>Lista de Pets</h3>
-          <AddPetModal userId={userId} />
+          <AddPetModal userId={userId} callbackPetAdded={callbackPetAdded} />
         </div>
         <hr />
         <div className='mainContent'>
@@ -18,6 +18,7 @@ function RendeBaseOnPets({ userId, pets }) {
             <Pet
               key={pet.id}
               pet={pet}
+              callbackPetDeleted={callbackPetDeleted}
             />
           ))}
         </div>
@@ -28,7 +29,7 @@ function RendeBaseOnPets({ userId, pets }) {
       <div>
         <div className='petListHeader'>
           <h3>Lista de Pets</h3>
-          <AddPetModal userId={userId} />
+          <AddPetModal userId={userId} callbackPetAdded={callbackPetAdded} />
         </div>
         <hr />
         <div>Nenhum Pet cadastrado</div>
@@ -37,11 +38,16 @@ function RendeBaseOnPets({ userId, pets }) {
   }
 }
 
-const PetList = ({ pets }) => {
+const PetList = ({ pets, callbackPetAdded, callbackPetDeleted }) => {
   const userId = localStorage.getItem("userId");
   return (
     <div>
-      <RendeBaseOnPets userId={userId} pets={pets} />
+      <RendeBaseOnPets 
+        userId={userId} 
+        pets={pets} 
+        callbackPetAdded={callbackPetAdded} 
+        callbackPetDeleted={callbackPetDeleted}
+      />
     </div>
   );
 }

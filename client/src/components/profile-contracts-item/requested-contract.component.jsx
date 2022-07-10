@@ -5,7 +5,7 @@ import React from 'react'
 
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
 import './requested-contract.css'
-
+import AceitarContratoModal from '../modals/aceitar-contrato-modal'
 
 function titleize(text) {
   var loweredText = text.toLowerCase();
@@ -26,13 +26,28 @@ const statusShow = (status) => {
   return statusOptions[status]
 }
 
-function ReturnOnStatus({ contract }) {
-  const { status, endDate } = contract
+function ReturnOnStatus({ contract, callbackContractAccepted }) {
+  const { status, endDate, serviceName, queueId } = contract
   if (status === 0) {
-    return <div><Button className='acceptButton'>Aceitar Serviço</Button>
-                <Button className='rejectButton'>Negar Serviço</Button></div>
+    return <div className='buttonsStatusZero'>
+            <div className='acceptButton'>
+              <AceitarContratoModal                   
+                serviceName={serviceName} 
+                queueId={queueId}                 
+                callbackContractAccepted={callbackContractAccepted}
+              />
+            </div>                
+            <Button 
+              className='rejectButton'
+              serviceName={serviceName}
+            >Negar Serviço
+            </Button>
+          </div>
   } else if (status === 1) {
-    return <div><Button className='concludeButton'>Concluir Serviço</Button></div>
+    return <div><Button 
+                  className='concludeButton'
+                  serviceName={serviceName}
+                >Concluir Serviço</Button></div>
   } else if (status === 2) {
     const d = new Date(endDate);
     let onlyEndDate = d.getDay() + "/" + d.getMonth() + "/" + d.getFullYear()
@@ -42,7 +57,7 @@ function ReturnOnStatus({ contract }) {
   }
 }
 
-function ReturnBasedOnOwnerId({ contract }) {
+function ReturnBasedOnOwnerId({ contract, callbackContractAccepted }) {
   const { queueId, workerId, ownerId, serviceId, price, status, entryDate, endDate, serviceName, workerName, ownerName } = contract
   const userId = localStorage.getItem("userId")
   if (workerId === userId) {
@@ -58,16 +73,19 @@ function ReturnBasedOnOwnerId({ contract }) {
             <p className="statusRequested">Status: {statusShow(status)}</p>                    
           </div>          
         </div>        
-        <ReturnOnStatus contract={contract} />
+        <ReturnOnStatus contract={contract} callbackContractAccepted={callbackContractAccepted} />
       </ListGroup.Item>
       )
   }
 }
 
-const RequestedContractItem = ({ contract }) => {
+const RequestedContractItem = ({ contract, callbackContractAccepted }) => {
   return (
     <div>
-      <ReturnBasedOnOwnerId contract={contract} />
+      <ReturnBasedOnOwnerId 
+        contract={contract} 
+        callbackContractAccepted={callbackContractAccepted} 
+      />
     </div>
   )
 }
