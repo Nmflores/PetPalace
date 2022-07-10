@@ -1,9 +1,8 @@
 import Axios from 'axios'
 import { useState, useEffect } from 'react'
 import React from 'react'
-
-
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
+import DeleteRequiredContract from '../modals/excluir-servico-prestado';
 import './required-contract.css'
 
 
@@ -37,8 +36,8 @@ function ReturnOnStatus({ contract }) {
   }
 }
 
-function RenderBasedOnWorkerId({contract}) {
-  const { queueId, workerId, ownerId, serviceId, price, status, entryDate, endDate, serviceName, workerName } = contract
+function RenderBasedOnWorkerId({contract, callbackRequiredContractDelete}) {
+  const { queueId, workerId, ownerId, serviceId, price, status, entryDate, endDate, serviceName, workerName, workerContactNumber } = contract
   const userId = localStorage.getItem("userId")
 
   if (ownerId === userId) {
@@ -47,26 +46,31 @@ function RenderBasedOnWorkerId({contract}) {
       <div className="detailsContainerRequired" id={queueId}>
         <div>
           <p className="serviceRequired">{titleize(serviceName)}</p>
-          <p className="clientNameRequired">Nome do Prestador: {workerName}</p>
+          <p className="clientNameRequired">Nome do prestador: {workerName}</p>
+          <p className="clientNumberRequired">Contato: {workerContactNumber}</p>
         </div>               
         <div className="priceStatusRequired">
           <p className="priceRequired">R$ {price}</p>
-          <ReturnOnStatus className="statusRequired" contract={contract} />
-        </div>               
+          {/* <ReturnOnStatus className="statusRequired" contract={contract} /> */}
+        </div>         
       </div>
-      <div className="buttonsContainer">
-
+      <div className='deleteContractButton'>
+        <DeleteRequiredContract 
+          serviceName={serviceName} 
+          queueId={queueId} 
+          callbackRequiredContractDelete={callbackRequiredContractDelete}
+        />
       </div>
     </ListGroup.Item>)
   }
 }
 
-const RequiredContractItem = ({ contract }) => {
+const RequiredContractItem = ({ contract, callbackRequiredContractDelete }) => {
 
   return (
 
     <div className="itemContainer">
-      <RenderBasedOnWorkerId contract={contract}/> 
+      <RenderBasedOnWorkerId contract={contract} callbackRequiredContractDelete={callbackRequiredContractDelete} /> 
     </div>
   )
 }

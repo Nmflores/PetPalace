@@ -33,7 +33,8 @@ function ReturnBasedOnUserId({
                               callbackWorkAdded, 
                               callbackPetAdded,
                               callbackPetDeleted,
-                              callbackContractAccepted
+                              callbackContractAccepted,
+                              callbackRequiredContractDelete
                             }) 
 {
 
@@ -60,7 +61,11 @@ function ReturnBasedOnUserId({
           />
         </div>
         <div>
-          <ContractsList contracts={contracts} callbackContractAccepted={callbackContractAccepted} />
+          <ContractsList 
+            contracts={contracts} 
+            callbackContractAccepted={callbackContractAccepted} 
+            callbackRequiredContractDelete={callbackRequiredContractDelete}
+          />
         </div>
       </div>
     )
@@ -82,6 +87,7 @@ const Profile = () => {
   const [isConfirmedPetAdded, setIsConfirmedPetAdded] = useState(false);
   const [isConfirmedPetDeleted, setIsConfirmedPetDeleted] = useState(false);
   const [isConfirmedAcceptedContract, setIsConfirmedAcceptedContract] = useState(false);
+  const [isRequiredContractDelete, setIsRequiredContractDelete] = useState(false);
   
 
   useEffect(() => {
@@ -165,7 +171,7 @@ const Profile = () => {
             setContracts([])
           }
         })
-  },[isConfirmedAcceptedContract])
+  },[isConfirmedAcceptedContract, isRequiredContractDelete])
 
   const setIsConfirmedPriceOnProfile = (flag) => {
     console.log(flag)
@@ -197,6 +203,11 @@ const Profile = () => {
     setIsConfirmedAcceptedContract(flag)
   }
 
+  const setIsRequiredContractDeleteOnProfile = (flag) => {
+    console.log(flag)
+    setIsRequiredContractDelete(flag)
+  }
+
   return (
     <>
       <div>
@@ -212,6 +223,7 @@ const Profile = () => {
             callbackPetAdded={setIsConfirmedPetAddedOnProfile}
             callbackPetDeleted={setIsConfirmedPetDeletedOnProfile}
             callbackContractAccepted={setIsConfirmedAcceptedContractOnProfile}
+            callbackRequiredContractDelete={setIsRequiredContractDeleteOnProfile}
           />
       </div>      
     </>

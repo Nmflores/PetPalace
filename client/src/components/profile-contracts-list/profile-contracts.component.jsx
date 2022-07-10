@@ -5,7 +5,7 @@ import RequiredContractItem from "../required-contracts/required-contract.compon
 
 
 
-const ContractsList = ({ contracts, callbackContractAccepted }) => {
+const ContractsList = ({ contracts, callbackContractAccepted, callbackRequiredContractDelete }) => {
     const userId = localStorage.getItem("userId")
 
     return (
@@ -19,6 +19,7 @@ const ContractsList = ({ contracts, callbackContractAccepted }) => {
                             return <RequestedContractItem 
                                         contract={contract} 
                                         callbackContractAccepted={callbackContractAccepted}
+                                        callbackRequiredContractDelete={callbackRequiredContractDelete}
                                     />
                         }
                     })}
@@ -30,7 +31,10 @@ const ContractsList = ({ contracts, callbackContractAccepted }) => {
                 <div className='servicesList'>
                     {contracts.map((contract) => {
                         if(contract.ownerId === userId){
-                            return <RequiredContractItem  contract={contract} />
+                            return <RequiredContractItem  
+                                    contract={contract} 
+                                    callbackRequiredContractDelete={callbackRequiredContractDelete}
+                                    />
                         }
                     })}
                 </div>

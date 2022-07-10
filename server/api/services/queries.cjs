@@ -470,6 +470,21 @@ module.exports = app => {
     })
   }
 
+  services.getNumber = async function (userId) {
+    return new Promise((resolve) => {
+      const query = `SELECT CONTACT_NBR FROM USERS WHERE USER_ID = ?;`
+      pool.query(query, [userId], (err, result) => {
+        if (err) {
+          resolve(err)
+        } else {
+          if (result.length > 0) {            
+            resolve(result[0].CONTACT_NBR)
+          }
+        }
+      })
+    })
+}
+
 
   services.getQueuesByUserId = async (userId) => {
     return new Promise((resolve) => {
@@ -487,6 +502,8 @@ module.exports = app => {
             result1.forEach(async (elem) => {
               elem.workerName = await services.getFullName(elem.worker_id)
               elem.ownerName = await services.getFullName(elem.owner_id)
+              elem.workerContactNumber = await services.getNumber(elem.worker_id)
+              elem.ownerContactNumber = await services.getNumber(elem.owner_id)
             })
             const query =
         "SELECT A.*, B.service_name as 'serviceName' FROM SERVICES_QUEUE A, AVAILABLE_SERVICES B WHERE A.service_id = B.service_id AND A.OWNER_ID = ?;"
@@ -501,6 +518,8 @@ module.exports = app => {
             result.forEach(async (elem) => {
               elem.workerName = await services.getFullName(elem.worker_id)
               elem.ownerName = await services.getFullName(elem.owner_id)
+              elem.workerContactNumber = await services.getNumber(elem.worker_id)
+              elem.ownerContactNumber = await services.getNumber(elem.owner_id)
             })
             output = [...result1, ...result]
             setTimeout(() => {

@@ -57,6 +57,8 @@ module.exports = app => {
                 price: contract.price, 
                 workerName : contract.workerName,
                 ownerName : contract.ownerName,
+                workerContactNumber : contract.workerContactNumber,
+                ownerContactNumber : contract.ownerContactNumber,
                 serviceName: contract.serviceName,
                 status: contract.status,
                 entryDate: contract.entry_date,

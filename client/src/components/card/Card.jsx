@@ -81,6 +81,8 @@ const Card = ({ service, isActive }) => {
       })
       .then((response) => {
         setMessage(response.data.data)
+      }).catch((err) => {
+        console.log(err)
       })
   }
 
@@ -117,7 +119,12 @@ const Card = ({ service, isActive }) => {
           {...getCollapseProps()}
           className='details'
         >
-          <RenderBasedOnUserId workerId={workerId} userId={userId} contactNbr={contactNbr} registerContract={registerContract} />
+          <RenderBasedOnUserId 
+            workerId={workerId} 
+            userId={userId} 
+            contactNbr={contactNbr} 
+            registerContract={registerContract} 
+          />
         </div>
     </>
   )

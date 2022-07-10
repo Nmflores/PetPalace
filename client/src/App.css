@@ -9,3 +9,7 @@
 button{
   width: 10rem;
 }
+
+* {
+  font-family: 'Roboto', sans-serif;
+}

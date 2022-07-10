@@ -6,6 +6,7 @@ import React from 'react'
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
 import './requested-contract.css'
 import AceitarContratoModal from '../modals/aceitar-contrato-modal'
+import DeleteRequiredContract from '../modals/excluir-servico-prestado';
 
 function titleize(text) {
   var loweredText = text.toLowerCase();
@@ -57,8 +58,8 @@ function ReturnOnStatus({ contract, callbackContractAccepted }) {
   }
 }
 
-function ReturnBasedOnOwnerId({ contract, callbackContractAccepted }) {
-  const { queueId, workerId, ownerId, serviceId, price, status, entryDate, endDate, serviceName, workerName, ownerName } = contract
+function ReturnBasedOnOwnerId({ contract, callbackContractAccepted, callbackRequiredContractDelete }) {
+  const { queueId, workerId, ownerId, serviceId, price, status, entryDate, endDate, serviceName, workerName, ownerName, ownerContactNumber } = contract
   const userId = localStorage.getItem("userId")
   if (workerId === userId) {
     return (
@@ -66,25 +67,34 @@ function ReturnBasedOnOwnerId({ contract, callbackContractAccepted }) {
         <div className="detailsContainerRequested" id={queueId}>
           <div>
             <p className="serviceRequested">{titleize(serviceName)}</p>
-            <p className="clientNameRequested">Nome do Cliente: {ownerName}</p>
+            <p className="clientNameRequested">Nome do cliente: {ownerName}</p>
+            <p className="clientNumberRequested">Contato: {ownerContactNumber}</p>
           </div>          
           <div>
             <p className="priceRequested">R$ {price}</p>
-            <p className="statusRequested">Status: {statusShow(status)}</p>                    
+            {/* <p className="statusRequested">Status: {statusShow(status)}</p>                     */}
           </div>          
-        </div>        
-        <ReturnOnStatus contract={contract} callbackContractAccepted={callbackContractAccepted} />
+        </div>    
+        <div className='deleteContractButton'>
+          <DeleteRequiredContract 
+            serviceName={serviceName} 
+            queueId={queueId} 
+            callbackRequiredContractDelete={callbackRequiredContractDelete}
+          />
+        </div>      
+        {/* <ReturnOnStatus contract={contract} callbackContractAccepted={callbackContractAccepted} /> */}
       </ListGroup.Item>
       )
   }
 }
 
-const RequestedContractItem = ({ contract, callbackContractAccepted }) => {
+const RequestedContractItem = ({ contract, callbackContractAccepted, callbackRequiredContractDelete }) => {
   return (
     <div>
       <ReturnBasedOnOwnerId 
         contract={contract} 
         callbackContractAccepted={callbackContractAccepted} 
+        callbackRequiredContractDelete={callbackRequiredContractDelete}
       />
     </div>
   )
