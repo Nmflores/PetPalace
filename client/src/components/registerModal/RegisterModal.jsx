@@ -30,7 +30,7 @@ const RegisterModal = () => {
 
 
   const registerUser = async () => {
-    Axios.post("http://localhost:8080/api/v1/register", { email, firstName, secondName, userGender:gender, contactNbr, password, cpf })
+    Axios.post("http://localhost:8080/api/v1/register", { email, firstName, secondName, userGender: gender, contactNbr, password, cpf })
       .then((response) => {
         console.log(response)
         setMessage(response.data.data)
@@ -69,7 +69,7 @@ const RegisterModal = () => {
             </FloatingLabel>
 
 
-            <label htmlFor="genderSelect">Genero</label>
+            <label htmlFor="genderSelect">Sexo</label>
             <Select
               name="genderSelect"
               options={genderOptions}
