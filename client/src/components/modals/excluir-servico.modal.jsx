@@ -40,7 +40,7 @@ const DeleteServiceModal = ({serviceName, serviceId, callbackWorkDelete}) => {
 
     return (
       <>
-        <Button variant="primary" onClick={handleShow}>
+        <Button variant="btn btn-primary" onClick={handleShow}>
           Excluir Serviço
         </Button>
   
@@ -53,7 +53,7 @@ const DeleteServiceModal = ({serviceName, serviceId, callbackWorkDelete}) => {
           <p>Você tem certeza que deseja excluir o serviço {serviceName}?</p>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="primary" 
+            <Button variant="btn btn-danger" 
             type="submit" 
             onClick={(e)=>{
                 deleteService(e)

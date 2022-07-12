@@ -3,9 +3,11 @@ import React from 'react';
 import Select from 'react-select'
 import { Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
 import Axios from 'axios'
+import AutoAlert from '../alerts/auto-alert'
 
 
-const RegisterModal = () => {
+
+function RegisterModal(){
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -15,22 +17,15 @@ const RegisterModal = () => {
   const [email, setEmail] = useState("")
   const [firstName, setFirstName] = useState("")
   const [secondName, setSecondName] = useState("")
-  const [gender, setGender] = useState("")
   const [contactNbr, setContactNbr] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
-  const [cpf, setCpf] = useState("")
 
-  console.log(email, firstName, secondName, contactNbr, password, confirmPassword)
-
-  const genderOptions = [
-    { value: 'm', label: 'Masculino' },
-    { value: 'f', label: 'Feminino' },
-  ]
-
+ 
+  console.log(email, firstName, secondName, contactNbr, password)
 
   const registerUser = async () => {
-    Axios.post("http://localhost:8080/api/v1/register", { email, firstName, secondName, userGender: gender, contactNbr, password, cpf })
+    Axios.post("http://localhost:8080/api/v1/register", { email, firstName, secondName, contactNbr, password })
       .then((response) => {
         console.log(response)
         setMessage(response.data.data)
@@ -51,7 +46,7 @@ const RegisterModal = () => {
           <Modal.Title>Cadastro de Usuario</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {message.length > 0 ? message : ""}
+        <AutoAlert text={message} type="success" />
           <Form>
             <FloatingLabel
               controlId="floatingInput"
@@ -69,20 +64,6 @@ const RegisterModal = () => {
             </FloatingLabel>
 
 
-            <label htmlFor="genderSelect">Sexo</label>
-            <Select
-              name="genderSelect"
-              options={genderOptions}
-              onChange={selectedOption => setGender(selectedOption.value)}
-            />
-
-            <br />
-
-
-            <FloatingLabel controlId="floatingCpf" label="Cpf">
-              <Form.Control type="text" placeholder="Cpf" onChange={event => setCpf(event.target.value)} />
-            </FloatingLabel>
-
             <FloatingLabel
               controlId="floatingInput"
               label="Telefone"
@@ -91,7 +72,7 @@ const RegisterModal = () => {
               <Form.Control type="text" placeholder="Telefone" onChange={event => setContactNbr(event.target.value)} />
             </FloatingLabel>
 
-
+    
 
             <FloatingLabel
               controlId="floatingInput"
@@ -101,11 +82,13 @@ const RegisterModal = () => {
               <Form.Control type="email" placeholder="name@example.com" onChange={event => setEmail(event.target.value)} />
             </FloatingLabel>
 
-            <FloatingLabel controlId="floatingPassword" label="Senha">
+            <FloatingLabel controlId="floatingInput" label="Senha">
               <Form.Control type="password" placeholder="Sua senha" onChange={event => setPassword(event.target.value)} />
             </FloatingLabel>
+            
+            <br/>
 
-            <FloatingLabel controlId="floatingPassword" label="Confirme sua Senha">
+            <FloatingLabel controlId="floatingInput" label="Confirme sua Senha">
               <Form.Control type="password" placeholder="Confirme sua senha" onChange={event => setConfirmPassword(event.target.value)} />
             </FloatingLabel>
 

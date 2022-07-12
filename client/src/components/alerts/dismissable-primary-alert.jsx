@@ -1,6 +1,7 @@
 import { Alert, Button } from 'react-bootstrap';
 import { useState} from 'react'
 import React from 'react'
+import './dismissable-primary.css';
 
 
 const PrimaryDismissable = ({text}) => {
@@ -9,7 +10,7 @@ const PrimaryDismissable = ({text}) => {
     if (show) {
       if(text.length > 0){
         return (
-            <Alert variant="primary" onClose={() => setShow(false)} dismissible className='primary'> 
+            <Alert variant="success" onClose={() => setShow(false)} dismissible className='success'> 
               <p>
                 {text}
               </p>
@@ -17,7 +18,7 @@ const PrimaryDismissable = ({text}) => {
           )
       }else{
         return (
-            <Alert variant="primary" onClose={() => setShow(false)} dismissible className='primary d-none'>
+            <Alert variant="success" onClose={() => setShow(false)} dismissible className='success d-none'>
               <p>
                 {text}
               </p>

@@ -45,14 +45,14 @@ function ReturnBasedOnUserId({
         <div className='profilePicture'>
           <ProfilePicture />
         </div>
-        <div className='petList'>
+        <div className='petList mt-4'>
           <PetList 
             pets={pets} 
             callbackPetAdded={callbackPetAdded} 
             callbackPetDeleted={callbackPetDeleted}
           />
         </div>
-        <div className='worksListContainer'>
+        <div className='worksList mt-4'>
           <WorksList 
             works={works} 
             callbackPrice={callbackPrice}
@@ -60,7 +60,7 @@ function ReturnBasedOnUserId({
             callbackWorkAdded={callbackWorkAdded}
           />
         </div>
-        <div>
+        <div className='ContractsListContainer'>
           <ContractsList 
             contracts={contracts} 
             callbackContractAccepted={callbackContractAccepted} 
@@ -94,7 +94,7 @@ const Profile = () => {
     const fechApi = async () => {
       Axios.get(`http://localhost:8080/api/v1/users/pets/${userId}`)
         .then((pets) => {
-          if (pets.data.data.length > 0) {
+          if (typeof(pets) !== 'undefined') {
             setPets(pets.data.data)
           } else {
             setPets([])
@@ -102,7 +102,7 @@ const Profile = () => {
         })
       Axios.get(`http://localhost:8080/api/v1/users/workers/${userId}`)
         .then((works) => {
-          if (works.data.data.length > 0) {
+          if (typeof(works) !== 'undefined') {
             setWorks(works.data.data)
           } else {
             setWorks([])
@@ -117,7 +117,8 @@ const Profile = () => {
         })
       Axios.get(`http://localhost:8080/api/v1/contracts/${userId}`)
         .then((contracts) => {
-          if (contracts.data.data.length > 0) {
+          if (typeof(contracts) !== 'undefined') {
+            console.log(contracts)
             setContracts(contracts.data.data)
           } else {
             setContracts([])
@@ -137,7 +138,7 @@ const Profile = () => {
   useEffect(() => {
     Axios.get(`http://localhost:8080/api/v1/users/workers/${userId}`)
         .then((works) => {
-          if (works.data.data.length > 0) {
+          if (typeof(works) !== 'undefined') {
             setWorks(works.data.data)
             setIsConfirmedWorkDelete(false)
             setIsConfirmedPrice(false)
@@ -151,7 +152,7 @@ const Profile = () => {
   useEffect(() => {
     Axios.get(`http://localhost:8080/api/v1/users/pets/${userId}`)
         .then((pets) => {
-          if (pets.data.data.length > 0) {
+          if (typeof(pets) !== 'undefined') {
             setPets(pets.data.data)
             setIsConfirmedPetAdded(false)
             setIsConfirmedPetDeleted(false)
@@ -164,7 +165,7 @@ const Profile = () => {
   useEffect(() => {
     Axios.get(`http://localhost:8080/api/v1/contracts/${userId}`)
         .then((contracts) => {
-          if (contracts.data.data.length > 0) {
+          if (typeof(contracts) !== 'undefined') {
             setContracts(contracts.data.data)
             setIsConfirmedAcceptedContract(false)
           } else {

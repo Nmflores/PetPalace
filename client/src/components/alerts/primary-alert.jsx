@@ -6,13 +6,13 @@ import React from 'react'
 const PrimaryAlert = ({ text }) => {
     if(text.length > 0) {
     return (
-        <Alert key='primary' variant='primary' className='primary'>
+        <Alert key='primary' variant='success' className='primary'>
             {text}
         </Alert>
     )
     }else{
         return (
-            <Alert key='primary' variant='primary' className='primary d-none'>
+            <Alert key='primary' variant='success' className='primary d-none'>
                 {text}
             </Alert>
         )

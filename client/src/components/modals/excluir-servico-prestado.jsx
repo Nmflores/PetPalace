@@ -36,7 +36,7 @@ const DeleteRequiredContract = ({serviceName, queueId, callbackRequiredContractD
 
     return (
       <>
-        <Button variant="btn btn-info" onClick={handleShow}>
+        <Button variant="btn btn-primary" onClick={handleShow}>
           Excluir contrato
         </Button>
   
@@ -49,13 +49,13 @@ const DeleteRequiredContract = ({serviceName, queueId, callbackRequiredContractD
           <p>Você tem certeza que deseja excluir o contrato {serviceName}?</p>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="primary" 
+            <Button variant="btn btn-danger" 
             type="submit" 
             onClick={(e)=>{
                 deleteService(e)
             }}
             id={queueId}>
-              Excluir Serviço
+              Excluir Contrato
             </Button>
           </Modal.Footer>
         </Modal>

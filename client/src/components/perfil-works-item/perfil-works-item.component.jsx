@@ -1,7 +1,8 @@
-import { React, useState } from 'react';
+import { useState } from 'react';
 import DeleteServiceModal from '../modals/excluir-servico.modal'
 import EditPriceModal from '../modals/editar-servico.modal'
 import Axios from 'axios'
+import React from 'react'
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
 import "./perfil-works-item.styles.css"
 

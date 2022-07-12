@@ -2,9 +2,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2rem 6rem;
-  border-bottom: 2px solid rgba(165, 165, 165, 0.1);
-  background-color: #F5DF99;
+  padding: 2rem 3.1rem 2rem 3.3rem;
+  background-color: #D6E6F2;
 }
 
 .navbar-links{
@@ -15,16 +14,15 @@
 }
 
 .navbar-links_logo{
-  margin-right: 2rem;
+  margin-right: 1.5rem;
   display: flex;
   align-items: center;  
 }
 
 .navbar-links_logo h1{
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-  font-weight: bold;
   font-size: 30px;
-  color: #4B8673;
+  color: black;
   margin-top: 10px;
 }
 
@@ -40,13 +38,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;  
-  width: 21.875rem;
+  width: 22rem;
 }
 
 .loginBtn {
-  margin-right: 2rem;
+  margin-right: 1rem;
+}
+.registerBtn {
 }
 
 .profileButton {
-  margin-right: 2rem;
+  margin-right: 1rem;
 }

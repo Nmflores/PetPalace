@@ -1,12 +1,11 @@
 import WorkListItem from "../perfil-works-item/perfil-works-item.component"
-import { React, useState } from 'react'
+import React from 'react'
 import AddServiceModal from "../modals/adicionar-servico.modal"
 
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
 import './perfil-works.styles.css'
 
 function RenderBasedOnWorks({ works, callbackPrice, callbackWorkDelete, callbackWorkAdded }) {
-
     if (works.length === 0) {
         return (
             <div>
@@ -46,7 +45,7 @@ function RenderBasedOnWorks({ works, callbackPrice, callbackWorkDelete, callback
     }
 }
 
-const WorksList = ({ works, callbackPrice, callbackWorkDelete, callbackWorkAdded }) => {    
+function WorksList ({ works, callbackPrice, callbackWorkDelete, callbackWorkAdded }){    
 
     return (
         <div>

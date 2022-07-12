@@ -3,6 +3,8 @@ import iconCat from '../../assets/cat-icon.png';
 import iconDog from '../../assets/dog-icon.png';
 import './pet.css';
 import DeletePetModal from '../modals/excluir-pet.modal'
+import { Card, Button } from 'react-bootstrap';
+
 
 
 
@@ -22,18 +24,21 @@ function titleize(text) {
 
 const Pet = ({pet, callbackPetDeleted}) => {
   return (
-    <div className='petList'>
-      <p>{titleize(pet.petName)}</p>
-      <img 
-        className='petIcon'
-        src={pet.petType === 'caninos'  ? iconDog : iconCat}
-        alt="Pet icon" 
-      />
-      <p>{titleize(pet.petType)}</p>
-      <p>{pet.petBreed}</p>
+    <Card className="petItem" style={{ width: '15rem' }}>
       <DeletePetModal pet={pet} callbackPetDeleted={callbackPetDeleted} />
-    </div>      
-  );
+      <Card.Img className="petIcon" variant="top" src={pet.petType === 'caninos'  ? iconDog : iconCat} />
+      <Card.Body>
+        <Card.Title className="mt-2 mb-3"><h4>{titleize(pet.petName)}</h4></Card.Title>
+        <Card.Text>
+        <p>Especie: {titleize(pet.petType)}</p>
+        <p>Raça: {pet.petBreed}</p>
+        </Card.Text>
+        
+      </Card.Body>
+    </Card>
+  )
 }
  
 export default Pet;
+
+

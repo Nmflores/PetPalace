@@ -30,19 +30,19 @@ function RenderBasedOnUserId({ userId, contactNbr, registerContract, workerId })
     console.log(userId, workerId)
     if (userId === workerId) {
       return (<div>
-        <h3>Você esta prestando este serviço</h3>
+        <h5>Você esta prestando este serviço</h5>
       </div>)
     } else {
       return (
         <div>
-          <h3>Telefone: {contactNbr}</h3>
+          <h5>Telefone: {contactNbr}</h5>
           <Button onClick={() => registerContract()}>Contratar</Button>
         </div>
       )
     }
   } else {
     return (
-      <div>Entre para poder contratar</div>
+      <div><h5>Entre para poder contratar</h5></div>
     )
   }
 }
@@ -99,8 +99,8 @@ const Card = ({ service, isActive }) => {
         >
           <ProfilePicture />
           <div className='card-description'>
-            <h2>{fullName}</h2>
-            <h3>{titleize(serviceName)}</h3>
+            <h4>{fullName}</h4>
+            <h5>{titleize(serviceName)}</h5>
             {/* <div className='pet-container'>
             {service.petTypes.map(element => (
               <img 
@@ -112,7 +112,7 @@ const Card = ({ service, isActive }) => {
           </div>         */}
           </div>
           <div className='price'>
-            <h3>R$ {price}</h3>
+            <h5>R$ {price}</h5>
           </div>
         </div>
         <div

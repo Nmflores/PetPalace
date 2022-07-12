@@ -24,7 +24,7 @@ services.checkUser = async (userId) => {
 
 
 services.checkUserPerEmail = async (email) => {
-  const query = "SELECT A.USER_ID FROM USERS_AUTH A WHERE EMAIL = ?;";
+  const query = "SELECT A.USER_ID FROM USERS A WHERE EMAIL = ?;";
   return new Promise((resolve) => {
     pool.query(query, email, (err, result) => {
         if (err) {

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import React from 'react'
 
 
-import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
+import { ListGroup, Button } from 'react-bootstrap';
 import './requested-contract.css'
 import AceitarContratoModal from '../modals/aceitar-contrato-modal'
 import DeleteRequiredContract from '../modals/excluir-servico-prestado';
@@ -61,30 +61,34 @@ function ReturnOnStatus({ contract, callbackContractAccepted }) {
 function ReturnBasedOnOwnerId({ contract, callbackContractAccepted, callbackRequiredContractDelete }) {
   const { queueId, workerId, ownerId, serviceId, price, status, entryDate, endDate, serviceName, workerName, ownerName, ownerContactNumber } = contract
   const userId = localStorage.getItem("userId")
-  if (workerId === userId) {
-    return (
-      <ListGroup.Item key={serviceId} className='itemContainerRequested'>
-        <div className="detailsContainerRequested" id={queueId}>
-          <div>
-            <p className="serviceRequested">{titleize(serviceName)}</p>
-            <p className="clientNameRequested">Nome do cliente: {ownerName}</p>
-            <p className="clientNumberRequested">Contato: {ownerContactNumber}</p>
-          </div>          
-          <div>
-            <p className="priceRequested">R$ {price}</p>
-            {/* <p className="statusRequested">Status: {statusShow(status)}</p>                     */}
-          </div>          
-        </div>    
-        <div className='deleteContractButton'>
-          <DeleteRequiredContract 
-            serviceName={serviceName} 
-            queueId={queueId} 
-            callbackRequiredContractDelete={callbackRequiredContractDelete}
-          />
-        </div>      
-        {/* <ReturnOnStatus contract={contract} callbackContractAccepted={callbackContractAccepted} /> */}
-      </ListGroup.Item>
-      )
+  if(typeof(contract) !== 'undefined') {
+    if (workerId === userId) {
+      return (
+        <ListGroup.Item key={serviceId} className='itemContainerRequested'>
+          <div className="detailsContainerRequested" id={queueId}>
+            <div>
+              <p className="serviceRequested">{titleize(serviceName)}</p>
+              <p className="clientNameRequested">Nome do cliente: {ownerName}</p>
+              <p className="clientNumberRequested">Contato: {ownerContactNumber}</p>
+            </div>          
+            <div>
+              <p className="priceRequested">R$ {price}</p>
+              {/* <p className="statusRequested">Status: {statusShow(status)}</p>                     */}
+            </div>          
+          </div>    
+          <div className='deleteContractButton'>
+            <DeleteRequiredContract 
+              serviceName={serviceName} 
+              queueId={queueId} 
+              callbackRequiredContractDelete={callbackRequiredContractDelete}
+            />
+          </div>      
+          {/* <ReturnOnStatus contract={contract} callbackContractAccepted={callbackContractAccepted} /> */}
+        </ListGroup.Item>
+        )
+    }
+  }else{
+    return(<p>Nenhum contrato</p>)
   }
 }
 

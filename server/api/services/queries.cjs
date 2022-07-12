@@ -22,7 +22,7 @@ module.exports = app => {
   services.logIn = async (email, password) => {
     return new Promise((resolve) => {
       const query =
-        "SELECT A.USER_ID FROM USERS_AUTH A WHERE A.EMAIL = ? AND A.PASSWORD = ?;";
+        "SELECT A.USER_ID FROM USERS A WHERE A.EMAIL = ? AND A.PASSWORD = ?;";
       pool.query(query, [email, password], (err, result) => {
         if (err) {
           resolve({
@@ -453,12 +453,13 @@ module.exports = app => {
               //console.log(`worker_id: ${elem.worker_id}\n owner_id: ${elem.owner_id}`)
               console.log(`workerName: ${elem.workerName}\n ownerName: ${elem.ownerName}`)
             })
+            console.log(result)
             setTimeout(() => {
               resolve({
                 status: 201,
                 data: result
               })
-            },500)
+            }, 500)
           } else {
             resolve({
               status: 400,
@@ -477,13 +478,13 @@ module.exports = app => {
         if (err) {
           resolve(err)
         } else {
-          if (result.length > 0) {            
+          if (result.length > 0) {
             resolve(result[0].CONTACT_NBR)
           }
         }
       })
     })
-}
+  }
 
 
   services.getQueuesByUserId = async (userId) => {
@@ -493,55 +494,53 @@ module.exports = app => {
         "SELECT A.*, B.service_name as 'serviceName' FROM SERVICES_QUEUE A, AVAILABLE_SERVICES B WHERE A.service_id = B.service_id AND A.WORKER_ID = ?;"
       pool.query(query, [userId], (err, result1) => {
         if (err) {
+          console.log(err)
           resolve({
             status: 400,
             data: []
           })
         } else {
-          if (result1.length > 0) {
-            result1.forEach(async (elem) => {
-              elem.workerName = await services.getFullName(elem.worker_id)
-              elem.ownerName = await services.getFullName(elem.owner_id)
-              elem.workerContactNumber = await services.getNumber(elem.worker_id)
-              elem.ownerContactNumber = await services.getNumber(elem.owner_id)
-            })
-            const query =
-        "SELECT A.*, B.service_name as 'serviceName' FROM SERVICES_QUEUE A, AVAILABLE_SERVICES B WHERE A.service_id = B.service_id AND A.OWNER_ID = ?;"
-      pool.query(query, [userId], (err, result) => {
-        if (err) {
-          resolve({
-            status: 400,
-            data: []
+          console.log("result1", result1)
+          result1.forEach(async (elem) => {
+            elem.workerName = await services.getFullName(elem.worker_id)
+            elem.ownerName = await services.getFullName(elem.owner_id)
+            elem.workerContactNumber = await services.getNumber(elem.worker_id)
+            elem.ownerContactNumber = await services.getNumber(elem.owner_id)
           })
-        } else {
-          if (result.length > 0) {
-            result.forEach(async (elem) => {
-              elem.workerName = await services.getFullName(elem.worker_id)
-              elem.ownerName = await services.getFullName(elem.owner_id)
-              elem.workerContactNumber = await services.getNumber(elem.worker_id)
-              elem.ownerContactNumber = await services.getNumber(elem.owner_id)
-            })
-            output = [...result1, ...result]
-            setTimeout(() => {
+          const query =
+            "SELECT A.*, B.service_name as 'serviceName' FROM SERVICES_QUEUE A, AVAILABLE_SERVICES B WHERE A.service_id = B.service_id AND A.OWNER_ID = ?;"
+          pool.query(query, [userId], (err, result) => {
+            if (err) {
+              console.log(err)
               resolve({
-                status: 200,
-                data: output
+                status: 400,
+                data: []
               })
-            }, 3000)
-          } else {
-            resolve({
-              status: 200,
-              data: []
-            })
-          }
-        }
-      })
-          } else {
-            resolve({
-              status: 200,
-              data: []
-            })
-          }
+            } else {
+              result.forEach(async (elem) => {
+                elem.workerName = await services.getFullName(elem.worker_id)
+                elem.ownerName = await services.getFullName(elem.owner_id)
+                elem.workerContactNumber = await services.getNumber(elem.worker_id)
+                elem.ownerContactNumber = await services.getNumber(elem.owner_id)
+              })
+              output = [...result1, ...result]
+              console.log("result2", result)
+              console.log("output", output)
+              if (output.length > 0) {
+                setTimeout(() => {
+                  resolve({
+                    status: 200,
+                    data: output
+                  })
+                }, 2000)
+              } else {
+                resolve({
+                  status: 200,
+                  data: []
+                })
+              }
+            }
+          })
         }
       })
     })

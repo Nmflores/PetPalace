@@ -23,7 +23,7 @@ const WorkListItem = ({work}) => {
         console.log(work)
         const { workerId, serviceId, serviceName, price } = work;  
         return(
-            <ListGroup.Item key={serviceId}>
+            <ListGroup.Item className="work-item" key={serviceId}>
                 <div className="serviceNameWork">
                     {titleize(serviceName)}
                 </div>                

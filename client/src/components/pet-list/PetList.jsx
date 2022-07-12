@@ -4,13 +4,16 @@ import './petList.css';
 import AddPetModal from '../modals/adicionar-pet.modal'
 
 function RendeBaseOnPets({ userId, pets, callbackPetAdded, callbackPetDeleted }) {
-  console.log(pets)
-  if (pets.length > 0) {
+  if (typeof(pets) !== 'undefined') {
     return (
       <div>
         <div className='petListHeader'>
+        <div classaName="petsListTitleConteiner">
           <h3>Lista de Pets</h3>
+          </div>
+          <div className="petListButtonContainer">
           <AddPetModal userId={userId} callbackPetAdded={callbackPetAdded} />
+          </div>
         </div>
         <hr />
         <div className='mainContent'>
@@ -53,3 +56,5 @@ const PetList = ({ pets, callbackPetAdded, callbackPetDeleted }) => {
 }
 
 export default PetList;
+
+

@@ -37,9 +37,9 @@ function ReturnOnStatus({ contract }) {
 }
 
 function RenderBasedOnWorkerId({contract, callbackRequiredContractDelete}) {
-  const { queueId, workerId, ownerId, serviceId, price, status, entryDate, endDate, serviceName, workerName, workerContactNumber } = contract
+  const { queueId, ownerId, serviceId, price, status, entryDate, endDate, serviceName, workerName, workerContactNumber } = contract
   const userId = localStorage.getItem("userId")
-
+  if(typeof(contract) !== 'undefined') {
   if (ownerId === userId) {
     //console.log("required, contract", contract)
     return (<ListGroup.Item key={serviceId} className='itemContainerRequired'>
@@ -63,6 +63,9 @@ function RenderBasedOnWorkerId({contract, callbackRequiredContractDelete}) {
       </div>
     </ListGroup.Item>)
   }
+  }else{
+  return(<p>Nenhum contrato</p>)
+}
 }
 
 const RequiredContractItem = ({ contract, callbackRequiredContractDelete }) => {

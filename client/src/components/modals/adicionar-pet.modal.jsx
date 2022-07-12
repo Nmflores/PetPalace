@@ -3,6 +3,7 @@ import { useState } from 'react'
 import React from 'react'
 import Select from 'react-select'
 import AutoAlert from '../alerts/auto-alert'
+import './adicionar-pet-modal.css';
 
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
 import { useRef } from 'react'
@@ -65,7 +66,7 @@ const AddPetModal = ({ userId, callbackPetAdded }) => {
 
     return (
         <>
-            <Button variant="primary" onClick={handleShow}>
+            <Button variant="primary" onClick={handleShow} className="addPetButton">
                 Adicionar Pet
             </Button>
 

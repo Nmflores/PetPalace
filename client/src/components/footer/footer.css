@@ -3,22 +3,25 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-top: 1px solid rgba(165, 165, 165, 0.1);
+  border-top: 1px solid #B9D7EA;
   margin-top: 500px;
+  background-color: #B9D7EA;
+  height: 4rem;
 }
 
 .footer-copyright{
   margin-top: 2rem;
-  text-align: center;
   width: 100%;
   display: flex;
-  justify-content: space-around;
-  border-top: 1px solid rgba(165, 165, 165, 0.1);
-  padding-top: 2rem;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding-top: 2.5rem;
 }
 .footer-copyright p{
+  margin-top: 1rem;
   font-weight: 600;
   font-size: 16px;
-  line-height: 24px;
+  line-height: 20px;
   color: #FFFFFF;
 }

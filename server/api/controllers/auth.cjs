@@ -34,16 +34,24 @@ module.exports = app => {
       if (await checkUserPerEmail(email)) {
         const result = await logIn(email, password)
         console.log("1", result)
-        const {accessToken, data, isLogged} = result
+        const {
+          accessToken,
+          data,
+          isLogged
+        } = result
         if (result.isLogged === true) {
-          {/*res.cookie('accessToken', accessToken, {
-            maxAge: 60 * 60 * 1000, // 1 hour
-            httpOnly: true,
-            secure: false,
-            sameSite: false,
-          })*/}
+          {
+            /*res.cookie('accessToken', accessToken, {
+                        maxAge: 60 * 60 * 1000, // 1 hour
+                        httpOnly: true,
+                        secure: false,
+                        sameSite: false,
+                      })*/
+          }
           res.status(200).json({
-            data: data, accessToken: accessToken, isLogged: isLogged
+            data: data,
+            accessToken: accessToken,
+            isLogged: isLogged
           })
         } else {
           res.status(result.status).json({
@@ -69,15 +77,13 @@ module.exports = app => {
 
   controller.register = async (req, res) => {
     let userId = uuidV4();
-    console.log(req.body)
+
     const {
       email,
       password,
       firstName,
       secondName,
-      userGender,
       contactNbr,
-      cpf,
     } = req.body;
 
     if (
@@ -85,85 +91,56 @@ module.exports = app => {
       password &&
       firstName &&
       secondName &&
-      userGender &&
-      contactNbr 
-      
+      contactNbr &&
+      email &&
+      password
+
     ) {
       const userParams = [
         userId,
+        email,
+        password, 
         firstName,
         secondName,
-        userGender,
-        contactNbr,
-        cpf
+        contactNbr
       ]
 
-      const loginParams = [userId, email, password];
 
-      
+      console.log("userParams: ", userParams)
+
       const callCreateLoyalty = async () => {
         await createLoyalty(userId)
       }
 
-      const callRegisterAuth = async (loginParams) => {
-        const query = `INSERT INTO USERS_AUTH(USER_ID, EMAIL, PASSWORD) VALUES(?)`;
-        pool.query(query, [loginParams], (err, result) => {
-          if (err) {
-            if (err.sqlMessage.includes('email')) {
-              res.status(400).json({
-                data: 'Usuario com este email já esta cadastrado'
-              })
-            }
-          } else {
-            console.log("query auth: ", result)
-            if (result.affectedRows > 0) {
-              //callCreateLoyalty()
-              res.status(201).json({
-                data: 'Usuario cadastrado com sucesso'
-              })
-            } else {
-              res.status(400).json({
-                data: 'Cadastro de usuario falhou'
-              })
-            }
-          }
-        })
-      }
 
-
-
-      const query = `INSERT INTO USERS(USER_ID, FIRST_NAME, SECOND_NAME, USER_GENDER, CONTACT_NBR, CPF) VALUES(?);`;
+      const query = `INSERT INTO USERS(USER_ID, EMAIL, PASSWORD, FIRST_NAME, SECOND_NAME, CONTACT_NBR) VALUES(?);`;
       pool.query(query, [userParams], (err, result) => {
-        console.log("query users:", result)
-
         if (err) {
           console.log(err)
-          if (err.sqlMessage.includes('cpf')) {
-            res.status(400).json({
-              data: 'Usuario com este CPF ja esta cadastrado'
-            })
-          } else if (err.sqlMessage.includes('user_id')) {
+          if (err.sqlMessage.includes('user_id')) {
             res.status(400).json({
               data: 'Usuario com este ID ja esta cadastrado'
             })
+          } else if (err.sqlMessage.includes('email')) {
+            res.status(400).json({
+              data: 'Usuario com este email já esta cadastrado'
+            })
           }
         } else {
-          console.log(result)
           if (result.affectedRows > 0) {
-            console.log(111)
-
-            console.log(userParams, loginParams)
-            callRegisterAuth(loginParams)
+            //callCreateLoyalty()
+            res.status(201).json({
+              data: 'Usuario cadastrado com sucesso'
+            })
           } else {
-            console.log(222)
             res.status(400).json({
-              data: "Cadastro de Usuario falhou"
+              data: 'Cadastro de usuario falhou'
             })
           }
         }
       })
     }
-  };
+  }
 
   return controller;
 };

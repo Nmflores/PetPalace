@@ -97,6 +97,7 @@ module.exports = app => {
             // GET RESULT FROM SERVICES.QUEUE GET QUEUES BY USERID FUNCTION
             const result = await getQueuesByUserId(userId)
             // SEND RESPONSE WITH RESULT DATA
+            console.log("result3" , result)
             res.status(result.status).json({
                 data: contractsResult(result.data)
             })

@@ -1,15 +1,16 @@
 .filter-container {
-  background-color: #5FD068;
-  margin-top: 0.125rem;
-  padding: 0.3125rem 0.3125rem;
+  background-color: #D6E6F2;
+  margin-top: 1rem;
+  padding:  1rem;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   color: black;
   align-items: center;
   font-size: 1.5rem;
-  border-top-left-radius: 0.3125rem;
-  border-top-right-radius: 0.3125rem;
+  border-radius: 0.3125rem;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 .filter-container p {
@@ -18,14 +19,15 @@
 
 
 .filters {
-  background-color: #5FD068;
-  border-bottom-left-radius: 0.3125rem;
-  border-bottom-right-radius: 0.3125rem;
-  padding: 0.3125rem 0.3125rem;
+  background-color: #D6E6F2;
+  border-radius: 0.3125rem;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  padding: 1rem;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.625rem;
+  margin-bottom: 1rem;
   font-size: 1.5rem;
 }
