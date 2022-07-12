@@ -2,13 +2,23 @@ import Axios from 'axios'
 import {useState} from 'react'
 import React from 'react'
 import AutoAlert from '../alerts/auto-alert' 
+import './editar-servico-modal.css';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSolid, faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
 import { useRef } from 'react';
  
 
 
-const EditPriceModal = ({userId, serviceId, price, callbackPrice}) => {
+const EditPriceModal = ({ serviceId, price, callbackPrice}) => {
+  const renderTooltip = (props) => (
+    <Tooltip id="button-tooltip" {...props}>
+      Clique para editar Serviço
+    </Tooltip>
+  )
     const [actualPrice, setPrice] = useState(price)
 
     const [message, setMessage] = useState("")
@@ -42,9 +52,15 @@ const EditPriceModal = ({userId, serviceId, price, callbackPrice}) => {
 
     return (
       <>
-        <Button variant="primary" onClick={handleShow}>
-          Editar Preço
+      <OverlayTrigger
+        placement="right"
+        delay={{ show: 250, hide: 400 }}
+        overlay={renderTooltip}
+      >
+       <Button variant="none" className="deleteButton" onClick={handleShow}>
+       <FontAwesomeIcon icon={faPenToSquare} />
         </Button>
+      </OverlayTrigger>
   
         <Modal show={show} onHide={handleClose}>
           <Modal.Header closeButton>

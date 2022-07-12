@@ -1,6 +1,9 @@
 import Axios from 'axios'
 import {useState} from 'react'
 import React from 'react'
+import './excluir-servico-modal.css';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
 
 import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
 import AutoAlert from '../alerts/auto-alert'
@@ -8,6 +11,11 @@ import { useRef } from 'react';
 
 
 const DeleteServiceModal = ({serviceName, serviceId, callbackWorkDelete}) => {
+  const renderTooltip = (props) => (
+    <Tooltip id="button-tooltip" {...props}>
+      Clique para excluir Serviço
+    </Tooltip>
+  )
     const [message, setMessage] = useState("")
 
     const [show, setShow] = useState(false);
@@ -40,9 +48,17 @@ const DeleteServiceModal = ({serviceName, serviceId, callbackWorkDelete}) => {
 
     return (
       <>
-        <Button variant="btn btn-primary" onClick={handleShow}>
-          Excluir Serviço
+      <OverlayTrigger
+        placement="right"
+        delay={{ show: 250, hide: 400 }}
+        overlay={renderTooltip}
+      >
+       <div className="deleteButtonContainer">
+       <Button variant="none" className="deleteButton" onClick={handleShow}>
+          &#10006;
         </Button>
+       </div>
+      </OverlayTrigger>
   
         <Modal show={show} onHide={handleClose}>
           <Modal.Header closeButton>
