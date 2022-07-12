@@ -42,7 +42,7 @@ function RenderBasedOnUserId({ userId, contactNbr, registerContract, workerId })
     }
   } else {
     return (
-      <div>Entre para poder Contratar</div>
+      <div>Entre para poder contratar</div>
     )
   }
 }

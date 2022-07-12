@@ -32,7 +32,7 @@ function RendeBaseOnPets({ userId, pets, callbackPetAdded, callbackPetDeleted })
           <AddPetModal userId={userId} callbackPetAdded={callbackPetAdded} />
         </div>
         <hr />
-        <div>Nenhum Pet cadastrado</div>
+        <div>Nenhum pet cadastrado</div>
       </div>
     )
   }
