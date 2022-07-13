@@ -9,30 +9,11 @@
   margin-bottom: 10px;
 }
 
-.serviceRequested {
-  font-size: 1.5rem;  
-  font-weight: 500;
+
+.ContractItem p {
+  margin: 0.3rem 0;
 }
 
-.clientNameRequested {
-  font-size: 20px;  
-  font-weight: 400;
-}
-
-.clientNumberRequested {
-  font-size: 18px;  
-  font-weight: 400;
-}
-
-.priceRequested {
-  font-size: 1.25rem;
-  font-weight: 500;
-}
-
-.statusRequested {
-  font-size: 16px;  
-  font-weight: 400;
-}
 
 .buttonsStatusZero {
   display: flex;

@@ -19,31 +19,42 @@ const DeletePetModal = ({ pet, callbackPetDeleted }) => {
       Clique para excluir Pet
     </Tooltip>
   )
+  const { petName, petId } = pet
   const [message, setMessage] = useState("")
   const [show, setShow] = useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
   const isDeleted = useRef(false)
 
-  useEffect(() => { setMessage("") }, [])
+  const handleClose = () => setShow(false);
+  const handleShow = () =>  { 
+    setShow(true)
+    setMessage("") 
+  }
 
-  const { petName, petId } = pet
+  
+  function DisplayAlert({ text }) {
+    if (text.includes('cadastrado')) {
+        return <AutoAlert text={text} type="danger" />
+    } else {
+        return <AutoAlert text={text} type="success" />
+    }
+}
+
+
 
   const deletePet = async (e) => {
     e.preventDefault()
     const petId = e.target.id
-    isDeleted.current = true
+    isDeleted.current = true  
     Axios.delete(`http://localhost:8080/api/v1/pets/${petId}`)
       .then((response) => {
-        console.log(response.data)
+        setMessage("")
         setMessage(response.data.data)
       }).catch((err) => {
-        console.log(err)
+        setMessage("")
         setMessage(err.response.data.data)
       })
-    callbackPetDeleted(isDeleted.current)
+      setTimeout(() => {callbackPetDeleted(isDeleted.current)}, 2000)     
+    
   }
 
   return (
@@ -53,18 +64,18 @@ const DeletePetModal = ({ pet, callbackPetDeleted }) => {
         delay={{ show: 250, hide: 400 }}
         overlay={renderTooltip}
       >
-       <div className="deleteButtonContainer">
-       <Button variant="none" className="deleteButton" onClick={handleShow}>
-          &#10006;
+        <div className="deleteButtonContainer">
+          <Button variant="none" className="deleteButton" onClick={handleShow}>
+            &#10006;
         </Button>
-       </div>
+        </div>
       </OverlayTrigger>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Excluir Pet</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {message.length > 0 ? <AutoAlert text={message} type="success" /> : ""}
+          <DisplayAlert text={message}/>  
           <p>Você tem certeza que deseja excluir o Pet {petName}?</p>
         </Modal.Body>
         <Modal.Footer>

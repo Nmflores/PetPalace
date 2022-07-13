@@ -1,10 +1,10 @@
 import Axios from 'axios'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import React from 'react'
 import Select from 'react-select'
 import AutoAlert from '../alerts/auto-alert'
 
-import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
+import {Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
 import { useRef } from 'react'
 
 
@@ -37,7 +37,7 @@ const AddServiceModal = ({callbackWorkAdded}) => {
             setPetTypes(removerPorId(petTypesNow, event.target.id))
         }
     }
-    console.log(petTypes)
+    
 
     const [show, setShow] = useState(false);
 
@@ -45,7 +45,12 @@ const AddServiceModal = ({callbackWorkAdded}) => {
         setShow(false)
         setMessage("")
     }
-    const handleShow = () => setShow(true);
+
+    const handleShow = () =>{ 
+        setShow(true)
+        setMessage("")
+    }
+
 
 
     function DisplayAlert({ text }) {

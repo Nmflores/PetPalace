@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import React from 'react'
 
 
-import { ListGroup, Button } from 'react-bootstrap';
+import { ListGroup, Card, Button } from 'react-bootstrap';
 import './requested-contract.css'
 import AceitarContratoModal from '../modals/aceitar-contrato-modal'
 import DeleteRequiredContract from '../modals/excluir-servico-prestado';
@@ -31,24 +31,24 @@ function ReturnOnStatus({ contract, callbackContractAccepted }) {
   const { status, endDate, serviceName, queueId } = contract
   if (status === 0) {
     return <div className='buttonsStatusZero'>
-            <div className='acceptButton'>
-              <AceitarContratoModal                   
-                serviceName={serviceName} 
-                queueId={queueId}                 
-                callbackContractAccepted={callbackContractAccepted}
-              />
-            </div>                
-            <Button 
-              className='rejectButton'
-              serviceName={serviceName}
-            >Negar Serviço
+      <div className='acceptButton'>
+        <AceitarContratoModal
+          serviceName={serviceName}
+          queueId={queueId}
+          callbackContractAccepted={callbackContractAccepted}
+        />
+      </div>
+      <Button
+        className='rejectButton'
+        serviceName={serviceName}
+      >Negar Serviço
             </Button>
-          </div>
+    </div>
   } else if (status === 1) {
-    return <div><Button 
-                  className='concludeButton'
-                  serviceName={serviceName}
-                >Concluir Serviço</Button></div>
+    return <div><Button
+      className='concludeButton'
+      serviceName={serviceName}
+    >Concluir Serviço</Button></div>
   } else if (status === 2) {
     const d = new Date(endDate);
     let onlyEndDate = d.getDay() + "/" + d.getMonth() + "/" + d.getFullYear()
@@ -61,43 +61,49 @@ function ReturnOnStatus({ contract, callbackContractAccepted }) {
 function ReturnBasedOnOwnerId({ contract, callbackContractAccepted, callbackRequiredContractDelete }) {
   const { queueId, workerId, ownerId, serviceId, price, status, entryDate, endDate, serviceName, workerName, ownerName, ownerContactNumber } = contract
   const userId = localStorage.getItem("userId")
-  if(typeof(contract) !== 'undefined') {
+  if (typeof (contract) !== 'undefined') {
     if (workerId === userId) {
       return (
-        <ListGroup.Item key={serviceId} className='itemContainerRequested'>
-          <div className="detailsContainerRequested" id={queueId}>
-            <div>
-              <p className="serviceRequested">{titleize(serviceName)}</p>
-              <p className="clientNameRequested">Nome do cliente: {ownerName}</p>
-              <p className="clientNumberRequested">Contato: {ownerContactNumber}</p>
-            </div>          
-            <div>
-              <p className="priceRequested">R$ {price}</p>
-              {/* <p className="statusRequested">Status: {statusShow(status)}</p>                     */}
-            </div>          
-          </div>    
-          <div className='deleteContractButton'>
-            <DeleteRequiredContract 
-              serviceName={serviceName} 
-              queueId={queueId} 
-              callbackRequiredContractDelete={callbackRequiredContractDelete}
-            />
-          </div>      
-          {/* <ReturnOnStatus contract={contract} callbackContractAccepted={callbackContractAccepted} /> */}
-        </ListGroup.Item>
-        )
+        <Card className="ContractItem" style={{ width: '18rem' }} id={queueId}>
+          <DeleteRequiredContract
+            serviceName={serviceName}
+            queueId={queueId}
+            callbackRequiredContractDelete={callbackRequiredContractDelete}
+          />
+          <Card.Body>
+            <Card.Title className="serviceRequested mt-2 mb-4"><h3>{titleize(serviceName)}</h3></Card.Title>
+            <Card.Text>
+              <div className="detailsContainerRequested" id={queueId}>
+                <div>
+                <ListGroup>
+                <ListGroup.Item><p className="clientNameRequested">Cliente: {ownerName}</p> </ListGroup.Item>
+                <ListGroup.Item><p className="clientNumberRequested">Contato: {ownerContactNumber}</p> </ListGroup.Item>
+                <ListGroup.Item><p className="">R$ {price}</p> </ListGroup.Item>
+               </ListGroup>
+                </div>
+                <div>
+
+                  {/* <p className="statusRequested">Status: {statusShow(status)}</p>                     */}
+                </div>
+              </div>
+
+            </Card.Text>
+
+          </Card.Body>
+        </Card>
+      )
     }
-  }else{
-    return(<p>Nenhum contrato</p>)
+  } else {
+    return (<p>Nenhum contrato</p>)
   }
 }
 
 const RequestedContractItem = ({ contract, callbackContractAccepted, callbackRequiredContractDelete }) => {
   return (
     <div>
-      <ReturnBasedOnOwnerId 
-        contract={contract} 
-        callbackContractAccepted={callbackContractAccepted} 
+      <ReturnBasedOnOwnerId
+        contract={contract}
+        callbackContractAccepted={callbackContractAccepted}
         callbackRequiredContractDelete={callbackRequiredContractDelete}
       />
     </div>
@@ -105,3 +111,5 @@ const RequestedContractItem = ({ contract, callbackContractAccepted, callbackReq
 }
 
 export default RequestedContractItem;
+
+

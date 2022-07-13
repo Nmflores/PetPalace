@@ -34,15 +34,19 @@ function RenderBasedOnUserId({ userId, contactNbr, registerContract, workerId })
       </div>)
     } else {
       return (
-        <div>
-          <h5>Telefone: {contactNbr}</h5>
+        <div className="detailsContainer">
+          <div className="contactNbrContainer">
+          <h5 className="mt-2">Telefone: {contactNbr}</h5>
+          </div>
+          <div className="contractButtonContainer" >
           <Button onClick={() => registerContract()}>Contratar</Button>
+          </div>
         </div>
       )
     }
   } else {
     return (
-      <div><h5>Entre para poder contratar</h5></div>
+      <div><h5 className="mt-2">Entre para poder contratar</h5></div>
     )
   }
 }
@@ -92,7 +96,7 @@ const Card = ({ service, isActive }) => {
       {message.length > 0 || message !== undefined ? <PrimaryDismissable text={message}/> : ""}
 
         <div
-          className='card-container mt-4 p-6'
+          className='card-container'
           {...getToggleProps({
             onClick: () => setExpanded((x) => !x)
           })}

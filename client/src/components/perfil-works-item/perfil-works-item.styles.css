@@ -1,3 +1,9 @@
+.worksListContainer{
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+}
+
 .serviceItem{
   display: flex;
   flex-direction: column;
@@ -12,7 +18,7 @@
   0 8px 16px rgba(0,0,0,0.07),
   0 16px 32px rgba(0,0,0,0.07), 
   0 32px 64px rgba(0,0,0,0.07);
-  margin-top:1rem;
+  margin:2rem 0;
   padding: 1.1rem 1.3rem;
 }
 
@@ -48,3 +54,5 @@
   justify-content: right;
   gap: 0.8rem;
 }
+
+

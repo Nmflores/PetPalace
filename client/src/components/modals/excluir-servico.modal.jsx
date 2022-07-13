@@ -1,14 +1,22 @@
 import Axios from 'axios'
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import React from 'react'
 import './excluir-servico-modal.css';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 
-import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
+import { Button, Modal, } from 'react-bootstrap';
 import AutoAlert from '../alerts/auto-alert'
 import { useRef } from 'react';
 
+
+function DisplayAlert({ text }) {
+  if (text.includes('deletar')) {
+      return <AutoAlert text={text} type="danger" />
+  } else {
+      return <AutoAlert text={text} type="success" />
+  }
+}
 
 const DeleteServiceModal = ({serviceName, serviceId, callbackWorkDelete}) => {
   const renderTooltip = (props) => (
@@ -23,7 +31,12 @@ const DeleteServiceModal = ({serviceName, serviceId, callbackWorkDelete}) => {
     const isDeleted = useRef(false)
   
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const handleShow = () => {
+      setShow(true) 
+      setMessage("")
+    }
+
+ 
 
 
     const deleteService = async (e) => {
@@ -65,7 +78,7 @@ const DeleteServiceModal = ({serviceName, serviceId, callbackWorkDelete}) => {
             <Modal.Title>Excluir Serviço</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-          {message.length > 0 ? <AutoAlert text={message} type="success"/> : ""}            
+            <DisplayAlert text={message}/>
           <p>Você tem certeza que deseja excluir o serviço {serviceName}?</p>
           </Modal.Body>
           <Modal.Footer>

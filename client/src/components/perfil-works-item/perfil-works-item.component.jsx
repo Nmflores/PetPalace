@@ -25,7 +25,7 @@ const WorkListItem = ({ work, callbackPrice, callbackWorkDelete }) => {
 
     return (
 
-        <Card className="serviceItem" style={{ width: '12rem' }}>
+        <Card className="serviceItem" style={{ width: '13rem' }}>
             <div className="buttonsContainer">
                 <EditPriceModal
                     serviceId={serviceId}
@@ -41,7 +41,7 @@ const WorkListItem = ({ work, callbackPrice, callbackWorkDelete }) => {
                 </div>
             </div>
             <Card.Body>
-                <Card.Title className="mt-2 mb-3"><h4>{titleize(serviceName)}</h4></Card.Title>
+                <Card.Title className="mt-2 mb-3"><h5>{titleize(serviceName)}</h5></Card.Title>
                 <Card.Text>
                     <p className="priceWork">R$ {price}</p>
                 </Card.Text>

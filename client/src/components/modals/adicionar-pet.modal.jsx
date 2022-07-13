@@ -1,12 +1,11 @@
 import Axios from 'axios'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import React from 'react'
 import Select from 'react-select'
 import AutoAlert from '../alerts/auto-alert'
 import './adicionar-pet-modal.css';
 
-import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
-import { useRef } from 'react'
+import { Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
 
 
 const AddPetModal = ({ userId, callbackPetAdded }) => {
@@ -24,7 +23,7 @@ const AddPetModal = ({ userId, callbackPetAdded }) => {
 
     const petBreedsOptionsDog = [
         { value: "Pastor Alemão", label: 'Pastor Alemão' },
-        { value: "Pitbull", label: 'PitBull' },        
+        { value: "Pitbull", label: 'PitBull' },
         { value: "SRD", label: 'SRD' },
     ]
 
@@ -32,19 +31,33 @@ const AddPetModal = ({ userId, callbackPetAdded }) => {
         { value: "Siames", label: 'Siames' },
         { value: "Americano", label: 'Americano' },
         { value: "SRD", label: 'SRD' },
-    ]    
+    ]
 
     const [show, setShow] = useState(false);
 
+    
+    function DisplayAlert({ text }) {
+        if (text.includes('erro')) {
+            return <AutoAlert text={text} type="danger" />
+        } else {
+            return <AutoAlert text={text} type="success" />
+        }
+    }
+
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const handleShow = () =>{ 
+        setShow(true)
+        setMessage("")
+        }
+
+
 
 
     const addPet = async (e, ownerId, petName, petType, petBreed) => {
         e.preventDefault();
         petType = parseInt(petType)
         console.log(typeof (petName), typeof (petBreed))
-        isAdded.current = true
+
         Axios.post(`http://localhost:8080/api/v1/pets`, {
             ownerId,
             petName,
@@ -59,10 +72,11 @@ const AddPetModal = ({ userId, callbackPetAdded }) => {
             console.log(err.response.data.data)
             setMessage(err.response.data.data)
         })
+        isAdded.current = true
         callbackPetAdded(isAdded.current)
     }
 
-   
+
 
     return (
         <>
@@ -75,7 +89,7 @@ const AddPetModal = ({ userId, callbackPetAdded }) => {
                     <Modal.Title>Adicionar Pet</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {message.length > 0 ? <AutoAlert text={message} type="success"/> : ""}
+                    <DisplayAlert text={message} />
                     <FloatingLabel
                         controlId="floatingInput"
                         label="Nome do Pet"
@@ -95,7 +109,7 @@ const AddPetModal = ({ userId, callbackPetAdded }) => {
                         placeholder="Selecione uma raça de Pet"
                         onChange={selectedOption => setPetBreed(selectedOption.value)}
                     />
-                    
+
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="primary"

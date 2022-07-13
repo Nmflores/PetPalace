@@ -4,13 +4,17 @@
   padding: 2rem;
   display: flex;
   flex-direction: row;
-  border-top-left-radius: 0.3125rem;
-  border-top-right-radius: 0.3125rem;
   align-items: center;
   justify-content: center;
   color: #eee;
   align-items: center;  
-  margin-top: 0.625rem;
+  margin-top: 2rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.07), 
+  0 2px 4px rgba(0,0,0,0.07), 
+  0 4px 8px rgba(0,0,0,0.07), 
+  0 8px 16px rgba(0,0,0,0.07),
+  0 16px 32px rgba(0,0,0,0.07), 
+  0 32px 64px rgba(0,0,0,0.07);
 }
 
 .picture-container{
@@ -19,6 +23,7 @@
   align-items: center;
   justify-content: center;
   width: 13%;
+
 }
 
 .card-description {
@@ -55,13 +60,33 @@
 .details {
   width: 100%;
   height: 100px;
-
+  background-color:  white;
   padding: 0 1.25rem 1rem 15rem;
   display: flex;
   flex-direction: row;
-  border-bottom-left-radius: 0.3125rem;
-  border-bottom-right-radius: 0.3125rem;
-  justify-content: left;
-  align-items: left;
+
   color: black;
+
+}
+
+.detailsContainer{
+  width: 100%;
+  background-color:  white;
+  display: flex;
+  flex-direction: row;
+
+  color: black;
+}
+
+.contactNbrContainer{
+  width: 30%;
+}
+
+.contractButtonContainer{
+  display: flex;
+  flex-direction: row;
+  align-items: right;
+  justify-content: right;
+  width: 70%;
+  height:2.5rem;
 }

@@ -3,7 +3,7 @@ import iconCat from '../../assets/cat-icon.png';
 import iconDog from '../../assets/dog-icon.png';
 import './pet.css';
 import DeletePetModal from '../modals/excluir-pet.modal'
-import { Card, Button } from 'react-bootstrap';
+import { ListGroup, Card, Button } from 'react-bootstrap';
 
 
 
@@ -29,11 +29,11 @@ const Pet = ({pet, callbackPetDeleted}) => {
       <Card.Img className="petIcon" variant="top" src={pet.petType === 'caninos'  ? iconDog : iconCat} />
       <Card.Body>
         <Card.Title className="mt-2 mb-3"><h4>{titleize(pet.petName)}</h4></Card.Title>
-        <Card.Text>
-        <p>Especie: {titleize(pet.petType)}</p>
-        <p>Raça: {pet.petBreed}</p>
-        </Card.Text>
-        
+        <ListGroup>
+        <ListGroup.Item>Especie: {titleize(pet.petType)}</ListGroup.Item>
+        <ListGroup.Item>Raça: {pet.petBreed}</ListGroup.Item>
+        </ListGroup>
+      
       </Card.Body>
     </Card>
   )

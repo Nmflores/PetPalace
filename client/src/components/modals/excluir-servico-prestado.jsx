@@ -1,13 +1,27 @@
 import Axios from 'axios'
 import {useState} from 'react'
 import React from 'react'
-
-import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
+import './excluir-servico-prestado.css'
+import { Button, Modal} from 'react-bootstrap';
 import AutoAlert from '../alerts/auto-alert'
 import { useRef } from 'react';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
 
 
+function DisplayAlert({ text }) {
+  if (text.includes('contrato')) {
+      return <AutoAlert text={text} type="danger" />
+  } else {
+      return <AutoAlert text={text} type="success" />
+  }
+}
 const DeleteRequiredContract = ({serviceName, queueId, callbackRequiredContractDelete}) => {
+  const renderTooltip = (props) => (
+    <Tooltip id="button-tooltip" {...props}>
+      Clique para excluir Contrato
+    </Tooltip>
+  )
     const [message, setMessage] = useState("")
 
     const [show, setShow] = useState(false);
@@ -15,7 +29,10 @@ const DeleteRequiredContract = ({serviceName, queueId, callbackRequiredContractD
     const isDeleted = useRef(false)
   
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const handleShow = () => {
+      setShow(true)
+      setMessage("")
+    }
 
     const deleteService = async (e) => {
         e.preventDefault()
@@ -36,16 +53,24 @@ const DeleteRequiredContract = ({serviceName, queueId, callbackRequiredContractD
 
     return (
       <>
-        <Button variant="btn btn-primary" onClick={handleShow}>
-          Excluir contrato
+      <OverlayTrigger
+        placement="right"
+        delay={{ show: 250, hide: 400 }}
+        overlay={renderTooltip}
+      >
+       <div className="deleteButtonContainer">
+       <Button variant="none" className="deleteButton" onClick={handleShow}>
+          &#10006;
         </Button>
+       </div>
+      </OverlayTrigger>
   
         <Modal show={show} onHide={handleClose}>
           <Modal.Header closeButton>
             <Modal.Title>Excluir contrato</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-          {message.length > 0 ? <AutoAlert text={message} type="success"/> : ""}            
+          <DisplayAlert text={message}/>
           <p>Você tem certeza que deseja excluir o contrato {serviceName}?</p>
           </Modal.Body>
           <Modal.Footer>

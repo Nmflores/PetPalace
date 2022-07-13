@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react'
 import React from 'react'
-import { ProfilePicture } from '../../components'
 import PetList from '../../components/pet-list/PetList'
 import WorksList from '../../components/perfil-works/perfil-works.component'
 import ContractsList from '../../components/profile-contracts-list/profile-contracts.component'
 import Axios from 'axios'
 import './profile.css';
+import { Card, Button } from 'react-bootstrap';
+import picture from '../../assets/icon.gif';
 
 
 function titleize(text) {
+  console.log("texto do titleize: ", text)
   var loweredText = text.toLowerCase();
   var words = loweredText.split(" ");
   for (var a = 0; a < words.length; a++) {
@@ -22,48 +24,60 @@ function titleize(text) {
   return words.join(" ");
 }
 
-function ReturnBasedOnUserId({ 
-                              userId, 
-                              fullName, 
-                              pets, 
-                              works, 
-                              contracts, 
-                              callbackPrice, 
-                              callbackWorkDelete, 
-                              callbackWorkAdded, 
-                              callbackPetAdded,
-                              callbackPetDeleted,
-                              callbackContractAccepted,
-                              callbackRequiredContractDelete
-                            }) 
-{
+function ReturnBasedOnUserId({
+  userId,
+  userInfo,
+  pets,
+  works,
+  contracts,
+  callbackPrice,
+  callbackWorkDelete,
+  callbackWorkAdded,
+  callbackPetAdded,
+  callbackPetDeleted,
+  callbackContractAccepted,
+  callbackRequiredContractDelete
+}) {
+  const { fullName, email, contactNbr } = userInfo
+
 
   if (userId !== "") {
     return (
       <div>
-        <h1>{fullName}</h1>
-        <div className='profilePicture'>
-          <ProfilePicture />
-        </div>
+        <Card className="userInfoContainer">
+          <Card.Body >
+              <div className="profilePictureContainer">
+                <Card.Img className="profilePicture" variant="top" src={picture} />
+              </div>
+              <div className="profileDetails">
+                <Card.Title className="mt-2 mb-3"><h2>{fullName}</h2></Card.Title>
+                <Card.Text>
+                  <p>Email: {email}</p>
+                  <p>Telefone: {contactNbr}</p>
+                </Card.Text>
+              </div>
+          </Card.Body>
+        </Card>
+
         <div className='petList mt-4'>
-          <PetList 
-            pets={pets} 
-            callbackPetAdded={callbackPetAdded} 
+          <PetList
+            pets={pets}
+            callbackPetAdded={callbackPetAdded}
             callbackPetDeleted={callbackPetDeleted}
           />
         </div>
         <div className='worksList mt-4'>
-          <WorksList 
-            works={works} 
+          <WorksList
+            works={works}
             callbackPrice={callbackPrice}
-            callbackWorkDelete={callbackWorkDelete} 
+            callbackWorkDelete={callbackWorkDelete}
             callbackWorkAdded={callbackWorkAdded}
           />
         </div>
-        <div className='ContractsListContainer'>
-          <ContractsList 
-            contracts={contracts} 
-            callbackContractAccepted={callbackContractAccepted} 
+        <div className='ContractsList'>
+          <ContractsList
+            contracts={contracts}
+            callbackContractAccepted={callbackContractAccepted}
             callbackRequiredContractDelete={callbackRequiredContractDelete}
           />
         </div>
@@ -77,7 +91,7 @@ function ReturnBasedOnUserId({
 const Profile = () => {
   // GET FROM LOCALSTORAGE
   const userId = localStorage.getItem("userId");
-  const [fullName, setFullName] = useState("")
+  const [userInfo, setUserInfo] = useState([])
   const [pets, setPets] = useState([])
   const [works, setWorks] = useState([])
   const [contracts, setContracts] = useState([])
@@ -88,13 +102,13 @@ const Profile = () => {
   const [isConfirmedPetDeleted, setIsConfirmedPetDeleted] = useState(false);
   const [isConfirmedAcceptedContract, setIsConfirmedAcceptedContract] = useState(false);
   const [isRequiredContractDelete, setIsRequiredContractDelete] = useState(false);
-  
+
 
   useEffect(() => {
     const fechApi = async () => {
       Axios.get(`http://localhost:8080/api/v1/users/pets/${userId}`)
         .then((pets) => {
-          if (typeof(pets) !== 'undefined') {
+          if (typeof (pets) !== 'undefined') {
             setPets(pets.data.data)
           } else {
             setPets([])
@@ -102,7 +116,7 @@ const Profile = () => {
         })
       Axios.get(`http://localhost:8080/api/v1/users/workers/${userId}`)
         .then((works) => {
-          if (typeof(works) !== 'undefined') {
+          if (typeof (works) !== 'undefined') {
             setWorks(works.data.data)
           } else {
             setWorks([])
@@ -110,15 +124,11 @@ const Profile = () => {
         })
       Axios.get(`http://localhost:8080/api/v1/users/${userId}`)
         .then((user) => {
-          let firstName = titleize(user.data.data[0].firstName)
-          let secondName = titleize(user.data.data[0].secondName)
-          let fullName = `${firstName} ${secondName}`
-          setFullName(fullName)
+          setUserInfo(user.data.data[0])
         })
       Axios.get(`http://localhost:8080/api/v1/contracts/${userId}`)
         .then((contracts) => {
-          if (typeof(contracts) !== 'undefined') {
-            console.log(contracts)
+          if (typeof (contracts) !== 'undefined') {
             setContracts(contracts.data.data)
           } else {
             setContracts([])
@@ -137,46 +147,46 @@ const Profile = () => {
 
   useEffect(() => {
     Axios.get(`http://localhost:8080/api/v1/users/workers/${userId}`)
-        .then((works) => {
-          if (typeof(works) !== 'undefined') {
-            setWorks(works.data.data)
-            setIsConfirmedWorkDelete(false)
-            setIsConfirmedPrice(false)
-            setIsConfirmedWorkAdded(false)
-          } else {
-            setWorks([])
-          }
-        })
-  },[isConfirmedPrice, isConfirmedWorkDelete, isConfirmedWorkAdded])
+      .then((works) => {
+        if (typeof (works) !== 'undefined') {
+          setWorks(works.data.data)
+          setIsConfirmedWorkDelete(false)
+          setIsConfirmedPrice(false)
+          setIsConfirmedWorkAdded(false)
+        } else {
+          setWorks([])
+        }
+      })
+  }, [isConfirmedPrice, isConfirmedWorkDelete, isConfirmedWorkAdded])
 
   useEffect(() => {
     Axios.get(`http://localhost:8080/api/v1/users/pets/${userId}`)
-        .then((pets) => {
-          if (typeof(pets) !== 'undefined') {
-            setPets(pets.data.data)
-            setIsConfirmedPetAdded(false)
-            setIsConfirmedPetDeleted(false)
-          } else {
-            setPets([])
-          }
-        })
-  },[isConfirmedPetAdded, isConfirmedPetDeleted])
+      .then((pets) => {
+        if (typeof (pets) !== 'undefined') {
+          setPets(pets.data.data)
+          setIsConfirmedPetAdded(false)
+          setIsConfirmedPetDeleted(false)
+        } else {
+          setPets([])
+        }
+      })
+  }, [isConfirmedPetAdded, isConfirmedPetDeleted])
 
   useEffect(() => {
     Axios.get(`http://localhost:8080/api/v1/contracts/${userId}`)
-        .then((contracts) => {
-          if (typeof(contracts) !== 'undefined') {
-            setContracts(contracts.data.data)
-            setIsConfirmedAcceptedContract(false)
-          } else {
-            setContracts([])
-          }
-        })
-  },[isConfirmedAcceptedContract, isRequiredContractDelete])
+      .then((contracts) => {
+        if (typeof (contracts) !== 'undefined') {
+          setContracts(contracts.data.data)
+          setIsConfirmedAcceptedContract(false)
+        } else {
+          setContracts([])
+        }
+      })
+  }, [isConfirmedAcceptedContract, isRequiredContractDelete])
 
   const setIsConfirmedPriceOnProfile = (flag) => {
     console.log(flag)
-    setIsConfirmedPrice(flag)    
+    setIsConfirmedPrice(flag)
   }
 
   const setIsConfirmedWorkDeleteOnProfile = (flag) => {
@@ -212,21 +222,21 @@ const Profile = () => {
   return (
     <>
       <div>
-          <ReturnBasedOnUserId 
-            userId={userId} 
-            fullName={fullName} 
-            works={works} 
-            pets={pets} 
-            contracts={contracts} 
-            callbackPrice={setIsConfirmedPriceOnProfile}
-            callbackWorkDelete={setIsConfirmedWorkDeleteOnProfile}
-            callbackWorkAdded={setIsConfirmedWorkAddedOnProfile}
-            callbackPetAdded={setIsConfirmedPetAddedOnProfile}
-            callbackPetDeleted={setIsConfirmedPetDeletedOnProfile}
-            callbackContractAccepted={setIsConfirmedAcceptedContractOnProfile}
-            callbackRequiredContractDelete={setIsRequiredContractDeleteOnProfile}
-          />
-      </div>      
+        <ReturnBasedOnUserId
+          userId={userId}
+          userInfo={userInfo}
+          works={works}
+          pets={pets}
+          contracts={contracts}
+          callbackPrice={setIsConfirmedPriceOnProfile}
+          callbackWorkDelete={setIsConfirmedWorkDeleteOnProfile}
+          callbackWorkAdded={setIsConfirmedWorkAddedOnProfile}
+          callbackPetAdded={setIsConfirmedPetAddedOnProfile}
+          callbackPetDeleted={setIsConfirmedPetDeletedOnProfile}
+          callbackContractAccepted={setIsConfirmedAcceptedContractOnProfile}
+          callbackRequiredContractDelete={setIsRequiredContractDeleteOnProfile}
+        />
+      </div>
     </>
   )
 }

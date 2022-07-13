@@ -1,7 +1,7 @@
 import Axios from 'axios'
 import { useState, useEffect } from 'react'
 import React from 'react'
-import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
+import { ListGroup, Card, Button } from 'react-bootstrap';
 import DeleteRequiredContract from '../modals/excluir-servico-prestado';
 import './required-contract.css'
 
@@ -36,36 +36,45 @@ function ReturnOnStatus({ contract }) {
   }
 }
 
-function RenderBasedOnWorkerId({contract, callbackRequiredContractDelete}) {
+function RenderBasedOnWorkerId({ contract, callbackRequiredContractDelete }) {
   const { queueId, ownerId, serviceId, price, status, entryDate, endDate, serviceName, workerName, workerContactNumber } = contract
   const userId = localStorage.getItem("userId")
-  if(typeof(contract) !== 'undefined') {
-  if (ownerId === userId) {
-    //console.log("required, contract", contract)
-    return (<ListGroup.Item key={serviceId} className='itemContainerRequired'>
-      <div className="detailsContainerRequired" id={queueId}>
-        <div>
-          <p className="serviceRequired">{titleize(serviceName)}</p>
-          <p className="clientNameRequired">Nome do prestador: {workerName}</p>
-          <p className="clientNumberRequired">Contato: {workerContactNumber}</p>
-        </div>               
-        <div className="priceStatusRequired">
-          <p className="priceRequired">R$ {price}</p>
-          {/* <ReturnOnStatus className="statusRequired" contract={contract} /> */}
-        </div>         
-      </div>
-      <div className='deleteContractButton'>
-        <DeleteRequiredContract 
-          serviceName={serviceName} 
-          queueId={queueId} 
-          callbackRequiredContractDelete={callbackRequiredContractDelete}
-        />
-      </div>
-    </ListGroup.Item>)
+  if (typeof (contract) !== 'undefined') {
+    if (ownerId === userId) {
+      return (
+        <Card className="ContractItem" style={{ width: '18rem' }} id={queueId}>
+          <DeleteRequiredContract
+            serviceName={serviceName}
+            queueId={queueId}
+            callbackRequiredContractDelete={callbackRequiredContractDelete}
+          />
+          <Card.Body>
+            <Card.Title className="serviceRequested mt-2 mb-3"><h3>{titleize(serviceName)}</h3></Card.Title>
+            <Card.Text>
+              <div className="detailsContainerRequired" id={queueId}>
+                <div>
+                  <ListGroup>
+                    <ListGroup.Item><p className="clientNameRequired">Prestador: {workerName}</p></ListGroup.Item>
+                    <ListGroup.Item><p className="clientNumberRequired">Contato: {workerContactNumber}</p></ListGroup.Item>
+                    <ListGroup.Item><p className="priceRequired">R$ {price}</p></ListGroup.Item>
+                  </ListGroup>
+                </div>
+
+                <div className="priceStatusRequired">
+
+                  {/* <ReturnOnStatus className="statusRequired" contract={contract} /> */}
+                </div>
+
+              </div>
+            </Card.Text>
+
+          </Card.Body>
+        </Card>
+      )
+    }
+  } else {
+    return (<p>Nenhum contrato</p>)
   }
-  }else{
-  return(<p>Nenhum contrato</p>)
-}
 }
 
 const RequiredContractItem = ({ contract, callbackRequiredContractDelete }) => {
@@ -73,9 +82,12 @@ const RequiredContractItem = ({ contract, callbackRequiredContractDelete }) => {
   return (
 
     <div className="itemContainer">
-      <RenderBasedOnWorkerId contract={contract} callbackRequiredContractDelete={callbackRequiredContractDelete} /> 
+      <RenderBasedOnWorkerId contract={contract} callbackRequiredContractDelete={callbackRequiredContractDelete} />
     </div>
   )
 }
 
 export default RequiredContractItem;
+
+
+

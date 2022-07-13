@@ -1,6 +1,20 @@
-.itemContainerRequired {
-  margin-bottom: 10px;
-}
+.ContractItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: left;
+    justify-content:center;
+    width: 25%;
+    border: 1px solid black;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.07), 
+    0 2px 4px rgba(0,0,0,0.07), 
+    0 4px 8px rgba(0,0,0,0.07), 
+    0 8px 16px rgba(0,0,0,0.07),
+    0 16px 32px rgba(0,0,0,0.07), 
+    0 32px 64px rgba(0,0,0,0.07);
+    margin-top:1rem;
+    padding: 1.2rem 1.3rem;
+  }
 
 .detailsContainerRequired {
   display: flex;
@@ -9,31 +23,14 @@
   margin-bottom: 10px;
 }
 
-.serviceRequired {
-  font-size: 1.5rem;  
-  font-weight: 500;
-}
-
-.clientNameRequired {
-  font-size: 20px;  
-  font-weight: 400;
-}
-
-.clientNumberRequired {
-  font-size: 18px;  
-  font-weight: 400;
-}
-
-.priceRequired {
-  font-size: 1.25rem;
-  font-weight: 500;  
-}
-
-.statusRequired {
-  font-size: 16px;  
-  font-weight: 400;
-}
-
-.deleteContractButton {
+.detailsContainerRequested {
   display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+
+.ContractItem p {
+  margin: 0.3rem 0;
 }

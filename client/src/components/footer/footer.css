@@ -3,10 +3,11 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-top: 1px solid #B9D7EA;
+  border-top: 1px solid black;
   margin-top: 500px;
-  background-color: #B9D7EA;
+  background-color: white;
   height: 4rem;
+  
 }
 
 .footer-copyright{

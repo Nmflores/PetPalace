@@ -31,8 +31,12 @@ function RendeBaseOnPets({ userId, pets, callbackPetAdded, callbackPetDeleted })
     return (
       <div>
         <div className='petListHeader'>
+        <div classaName="petsListTitleConteiner">
           <h3>Lista de Pets</h3>
+          </div>
+          <div className="petListButtonContainer">
           <AddPetModal userId={userId} callbackPetAdded={callbackPetAdded} />
+          </div>
         </div>
         <hr />
         <div>Nenhum pet cadastrado</div>

@@ -10,11 +10,15 @@ function RenderBasedOnWorks({ works, callbackPrice, callbackWorkDelete, callback
         return (
             <div>
                 <div className="createdServicesHeader">
-                    <h2>Serviços Criados</h2>
-                    <AddServiceModal callbackWorkAdded={callbackWorkAdded} />
-                    <hr />
+                    <div className="servicesListTitleContainer">
+                        <h3>Serviços Criados</h3>
+                    </div>
+                    <div className="servicesListButtonContainer">
+                        <AddServiceModal callbackWorkAdded={callbackWorkAdded} />
+                    </div>
                 </div>
-                <div className='servicesList'>
+                <hr />
+                <div className='worksListContainer'>
                     Nenhum serviço Disponivel
                 </div>
             </div >
@@ -23,19 +27,23 @@ function RenderBasedOnWorks({ works, callbackPrice, callbackWorkDelete, callback
         return (
             <div>
                 <div className="createdServicesHeader">
-                    <h2>Serviços Criados</h2>
-                    <AddServiceModal callbackWorkAdded={callbackWorkAdded} />
+                    <div className="servicesListTitleContainer">
+                        <h3>Serviços Criados</h3>
+                    </div>
+                    <div className="servicesListButtonContainer">
+                        <AddServiceModal callbackWorkAdded={callbackWorkAdded} />
+                    </div>
                 </div>
                 <hr />
                 <div>
                     <ListGroup className='worksListContainer'>
                         {works.map((work) => {
-                            return <WorkListItem 
-                                        callbackPrice={callbackPrice} 
-                                        callbackWorkDelete={callbackWorkDelete}
-                                        key={work.serviceId} 
-                                        work={work} 
-                                    />
+                            return <WorkListItem
+                                callbackPrice={callbackPrice}
+                                callbackWorkDelete={callbackWorkDelete}
+                                key={work.serviceId}
+                                work={work}
+                            />
                         })}
                     </ListGroup>
                 </div>
@@ -45,15 +53,15 @@ function RenderBasedOnWorks({ works, callbackPrice, callbackWorkDelete, callback
     }
 }
 
-function WorksList ({ works, callbackPrice, callbackWorkDelete, callbackWorkAdded }){    
+function WorksList({ works, callbackPrice, callbackWorkDelete, callbackWorkAdded }) {
 
     return (
         <div>
-            <RenderBasedOnWorks 
-                callbackPrice={callbackPrice} 
-                callbackWorkDelete={callbackWorkDelete} 
+            <RenderBasedOnWorks
+                callbackPrice={callbackPrice}
+                callbackWorkDelete={callbackWorkDelete}
                 callbackWorkAdded={callbackWorkAdded}
-                works={works} 
+                works={works}
             />
         </div >
     )

@@ -1,19 +1,21 @@
 import React from 'react'
 import RequestedContractItem from "../profile-contracts-item/requested-contract.component"
 import RequiredContractItem from "../required-contracts/required-contract.component"
+import './profile-contracts.styles.css'
 
 
 
-
-function ContractsList ({ contracts, callbackContractAccepted, callbackRequiredContractDelete }){
+function ContractsList({ contracts, callbackContractAccepted, callbackRequiredContractDelete }) {
     const userId = localStorage.getItem("userId")
-    if(typeof(contracts) !== 'undefined'){
+    if (typeof (contracts) !== 'undefined') {
         return (
-            <div className="worksList">
-                <div className="createdServicesHeader mt-5">
-                    <h2>Contratos na Fila</h2>
+            <>
+            <div className="contractsContainer mb-5">
+                <div className="createdContractsHeader">
+                    <h3>Contratos na Fila</h3>
                     <hr />
-                    <div className='servicesList'>
+                </div>
+                <div className='contractsList'>
                         {contracts.map((contract) => {
                             if(contract.workerId === userId){
                                 return <RequestedContractItem 
@@ -23,12 +25,16 @@ function ContractsList ({ contracts, callbackContractAccepted, callbackRequiredC
                                         />
                             }
                         })}
-                    </div>
                 </div>
-                <div className="createdServicesHeader mt-5">
-                    <h2>Contratos Requeridos</h2>
+            </div>
+      
+
+            <div className="contractsContainer mt-5">
+                <div className="createdContractsHeader">
+                    <h3>Contratos Requeridos</h3>
                     <hr />
-                    <div className='servicesList'>
+                </div>
+                    <div className='contractsList'>
                         {contracts.map((contract) => {
                             if(contract.ownerId === userId){
                                 return <RequiredContractItem  
@@ -38,30 +44,35 @@ function ContractsList ({ contracts, callbackContractAccepted, callbackRequiredC
                             }
                         })}
                     </div>
-                </div>
-            </div >
+            </div>
+            </>
         )
-    }else{
+    } else {
         return (
-            <div className="worksList">
-                <div className="createdServicesHeader">
-                    <h2>Contratos na Fila</h2>
+           <>
+            <div className="contractsContainer">
+                <div className="createdContractsHeader">
+                    <h3>Contratos na Fila</h3>
                     <hr />
-                    <div className='servicesList'>
+                    <div className='contractsList'>
                         <p>Nenhum contrato</p>
                     </div>
                 </div>
-                <div className="createdServicesHeader">
-                    <h2>Contratos Requeridos</h2>
+                </div>
+
+                <div className="contractsContainer mt-5">
+                <div className="createdContractsHeader">
+                    <h3>Contratos Requeridos</h3>
                     <hr />
-                    <div className='servicesList'>
+                    <div className='contractsList'>
                         <p>Nenhum contrato</p>
                     </div>
                 </div>
             </div >
+           </>
         )
     }
-    
+
 }
 
 export default ContractsList

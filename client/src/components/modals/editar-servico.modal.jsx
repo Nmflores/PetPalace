@@ -1,15 +1,14 @@
 import Axios from 'axios'
-import {useState} from 'react'
+import {useState, useEffect, useRef} from 'react'
 import React from 'react'
 import AutoAlert from '../alerts/auto-alert' 
 import './editar-servico-modal.css';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSolid, faPenToSquare } from '@fortawesome/free-solid-svg-icons'
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 
-import { ListGroup, Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
-import { useRef } from 'react';
+import { Button, Modal, Form, FloatingLabel } from 'react-bootstrap';
  
 
 
@@ -29,7 +28,8 @@ const EditPriceModal = ({ serviceId, price, callbackPrice}) => {
   
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-  
+
+
     const updatePrice = async (e) => {
         e.preventDefault()
         isConfirmed.current = true
@@ -46,7 +46,11 @@ const EditPriceModal = ({ serviceId, price, callbackPrice}) => {
         }
         ).then((response) => {
             console.log(response.data)
+            setMessage("")
             setMessage(response.data.data)
+        }).catch((err) => {
+            setMessage("")
+            setMessage(err.response.data.data)
         })
     }
 
