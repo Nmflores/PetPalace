@@ -4,21 +4,36 @@ module.exports = app => {
     //400 arquivo nao encontrado ou ja existe
     //401 proibido devido a autorização
 
+    function titleize(text) {
+      console.log("texto do titleize: ",text)
+      var loweredText = text.toLowerCase();
+      var words = loweredText.split(" ");
+      for (var a = 0; a < words.length; a++) {
+        var w = words[a];
+    
+        var firstLetter = w[0];
+        w = firstLetter.toUpperCase() + w.slice(1)
+    
+        words[a] = w;
+      }
+      return words.join(" ");
+    }
 
     services.usersResult = function async (result) {
         if (result.length > 0) {
             // CREATE A JSON RESPONSE TO SEND
             const response =
                 result.map((user) => {
+                  let fullName = `${titleize(user.first_name)} ${titleize(user.second_name)}`
                     return {
                         userId: user.user_id,
                         firstName: user.first_name,
                         secondName: user.second_name,
                         userGender: user.user_gender,
                         contactNbr: user.contact_nbr,
-                        cpf: user.cpf,
+                        email: user.email,
+                        fullName: fullName, 
                         loyalty: user.loyalty,
-                        state: user.state,
                     };
                 });
             return response;

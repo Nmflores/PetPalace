@@ -132,7 +132,7 @@ module.exports = app => {
                 } else {
                     // IN CASE CONTRACT DOESNT EXIST
                     res.status(404).json({
-                        msg: 'Nenhum contrato com este ID'
+                        data: 'Nenhum contrato com este ID'
                     })
                 }
             } else {
@@ -172,7 +172,7 @@ module.exports = app => {
                 } else {
                     // IN CASE CONTRACT DOESNT EXISTS
                     res.status(404).json({
-                        msg: 'Nenhum contrato com este ID'
+                        data: 'Nenhum contrato com este ID'
                     })
                 }
 
@@ -207,7 +207,7 @@ module.exports = app => {
         } else {
             // IN CASE CONTRACT DOESNT EXISTS
             res.status(404).json({
-                msg: 'Nenhum contrato com este ID'
+                data: 'Nenhum contrato com este ID'
             })
         }
     }
